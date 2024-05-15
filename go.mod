@@ -1,4 +1,4 @@
-module github.com/flagship-io/flagship
+module github.com/flagship-io/abtasty-cli
 
 go 1.18
 

@@ -11,9 +11,9 @@ A Tool to manage your Flagship resources built in [Go](https://go.dev/) using th
 [Website](https://flagship.io) | [Documentation](https://docs.developers.flagship.io/docs/flagship-command-line-interface) | [Installation Guide](https://docs.developers.flagship.io/docs/flagship-command-line-interface#download-and-install-the-flagship-cli) | [Twitter](https://twitter.com/feature_flags)
 
 [![Apache2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
-[![Go Report Card](https://goreportcard.com/badge/github.com/flagship-io/flagship)](https://goreportcard.com/report/github.com/flagship-io/flagship)
-[![Go Reference](https://pkg.go.dev/badge/github.com/flagship-io/flagship.svg)](https://pkg.go.dev/github.com/flagship-io/flagship)
-[![codecov](https://codecov.io/gh/flagship-io/abtasty-cli/branch/main/graph/badge.svg?token=nr9K5jvTlR)](https://codecov.io/gh/flagship-io/flagship)
+[![Go Report Card](https://goreportcard.com/badge/github.com/flagship-io/abtasty-cli)](https://goreportcard.com/report/github.com/flagship-io/abtasty-cli)
+[![Go Reference](https://pkg.go.dev/badge/github.com/flagship-io/abtasty-cli.svg)](https://pkg.go.dev/github.com/flagship-io/abtasty-cli)
+[![codecov](https://codecov.io/gh/flagship-io/abtasty-cli/branch/main/graph/badge.svg?token=nr9K5jvTlR)](https://codecov.io/gh/flagship-io/abtasty-cli)
 
 ## Overview
 
@@ -51,7 +51,7 @@ curl -sL https://raw.githubusercontent.com/flagship-io/abtasty-cli/main/install.
 #### With Homebrew
 
 ```bash
-brew tap flagship-io/flagship
+brew tap flagship-io/abtasty-cli
 brew install flagship
 ```
 
@@ -67,7 +67,7 @@ You can pull the latest docker image from docker hub: docker pull [flagshipio/cl
 
 You can pull the project from github and build it using golang latest stable version (+1.18):
 
-    git clone git@github.com:flagship-io/flagship.git
+    git clone git@github.com:flagship-io/abtasty-cli.git
     cd flagship
     go build -o flagship
 

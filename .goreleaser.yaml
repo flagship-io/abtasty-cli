@@ -26,7 +26,7 @@ universal_binaries:
 
 brews:
   - name: flagship
-    homepage: "https://github.com/flagship-io/flagship"
+    homepage: "https://github.com/flagship-io/abtasty-cli"
     tap:
       owner: flagship-io
       name: homebrew-flagship

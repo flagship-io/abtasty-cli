@@ -1,6 +1,6 @@
 FROM golang:1.18-alpine as builder
 RUN apk add --update make
-WORKDIR /go/src/github/flagship-io/flagship
+WORKDIR /go/src/github/flagship-io/abtasty-cli
 
 ARG FLAGSHIP_VERSION
 ENV FLAGSHIP_VERSION $FLAGSHIP_VERSION
