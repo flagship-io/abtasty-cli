@@ -8,8 +8,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/flagship-io/flagship/utils"
-	"github.com/flagship-io/flagship/utils/config"
+	"github.com/flagship-io/abtasty-cli/utils"
+	"github.com/flagship-io/abtasty-cli/utils/config"
 	"github.com/spf13/cobra"
 )
 

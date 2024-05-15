@@ -3,10 +3,10 @@ package feature_experimentation
 import (
 	"testing"
 
-	"github.com/flagship-io/flagship/utils/http_request/common"
-	mockfunction "github.com/flagship-io/flagship/utils/mock_function/feature_experimentation"
+	"github.com/flagship-io/abtasty-cli/utils/http_request/common"
+	mockfunction "github.com/flagship-io/abtasty-cli/utils/mock_function/feature_experimentation"
 
-	mockfunction_ "github.com/flagship-io/flagship/utils/mock_function"
+	mockfunction_ "github.com/flagship-io/abtasty-cli/utils/mock_function"
 
 	"github.com/jarcoal/httpmock"
 )

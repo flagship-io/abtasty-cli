@@ -18,5 +18,5 @@ FROM alpine:latest
 
 RUN apk --no-cache add ca-certificates
 WORKDIR /root/
-COPY --from=builder /go/src/github/flagship-io/flagship/flagship ./
+COPY --from=builder /go/src/github/flagship-io/abtasty-cli/flagship ./
 CMD ["/bin/sh"]

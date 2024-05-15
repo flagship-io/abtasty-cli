@@ -14,11 +14,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/flagship-io/flagship/models"
-	"github.com/flagship-io/flagship/models/feature_experimentation"
-	"github.com/flagship-io/flagship/models/web_experimentation"
-	"github.com/flagship-io/flagship/utils"
-	"github.com/flagship-io/flagship/utils/config"
+	"github.com/flagship-io/abtasty-cli/models"
+	"github.com/flagship-io/abtasty-cli/models/feature_experimentation"
+	"github.com/flagship-io/abtasty-cli/models/web_experimentation"
+	"github.com/flagship-io/abtasty-cli/utils"
+	"github.com/flagship-io/abtasty-cli/utils/config"
 )
 
 var UserAgent string

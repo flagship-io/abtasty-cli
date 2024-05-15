@@ -5,11 +5,11 @@ import (
 	"strconv"
 	"testing"
 
-	models "github.com/flagship-io/flagship/models/web_experimentation"
-	"github.com/flagship-io/flagship/utils"
-	"github.com/flagship-io/flagship/utils/http_request"
-	mockfunction "github.com/flagship-io/flagship/utils/mock_function"
-	mockfunction_we "github.com/flagship-io/flagship/utils/mock_function/web_experimentation"
+	models "github.com/flagship-io/abtasty-cli/models/web_experimentation"
+	"github.com/flagship-io/abtasty-cli/utils"
+	"github.com/flagship-io/abtasty-cli/utils/http_request"
+	mockfunction "github.com/flagship-io/abtasty-cli/utils/mock_function"
+	mockfunction_we "github.com/flagship-io/abtasty-cli/utils/mock_function/web_experimentation"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"

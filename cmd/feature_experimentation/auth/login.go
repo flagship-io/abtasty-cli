@@ -8,9 +8,9 @@ import (
 	"log"
 	"slices"
 
-	"github.com/flagship-io/flagship/utils"
-	"github.com/flagship-io/flagship/utils/config"
-	"github.com/flagship-io/flagship/utils/http_request/common"
+	"github.com/flagship-io/abtasty-cli/utils"
+	"github.com/flagship-io/abtasty-cli/utils/config"
+	"github.com/flagship-io/abtasty-cli/utils/http_request/common"
 	"github.com/spf13/cobra"
 )
 

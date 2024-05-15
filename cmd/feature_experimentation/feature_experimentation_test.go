@@ -3,8 +3,8 @@ package feature_experimentation
 import (
 	"testing"
 
-	"github.com/flagship-io/flagship/utils"
-	mockfunction_fe "github.com/flagship-io/flagship/utils/mock_function/feature_experimentation"
+	"github.com/flagship-io/abtasty-cli/utils"
+	mockfunction_fe "github.com/flagship-io/abtasty-cli/utils/mock_function/feature_experimentation"
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
 )

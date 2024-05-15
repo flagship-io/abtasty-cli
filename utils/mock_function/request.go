@@ -3,8 +3,8 @@ package mockfunction
 import (
 	"net/http"
 
-	"github.com/flagship-io/flagship/utils"
-	"github.com/flagship-io/flagship/utils/http_request/common"
+	"github.com/flagship-io/abtasty-cli/utils"
+	"github.com/flagship-io/abtasty-cli/utils/http_request/common"
 	"github.com/jarcoal/httpmock"
 	"github.com/spf13/viper"
 )

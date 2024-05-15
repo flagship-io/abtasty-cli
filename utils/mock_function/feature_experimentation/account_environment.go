@@ -3,9 +3,9 @@ package feature_experimentation
 import (
 	"net/http"
 
-	models_fe "github.com/flagship-io/flagship/models/feature_experimentation"
-	"github.com/flagship-io/flagship/utils"
-	mockfunction "github.com/flagship-io/flagship/utils/mock_function"
+	models_fe "github.com/flagship-io/abtasty-cli/models/feature_experimentation"
+	"github.com/flagship-io/abtasty-cli/utils"
+	mockfunction "github.com/flagship-io/abtasty-cli/utils/mock_function"
 	"github.com/jarcoal/httpmock"
 )
 

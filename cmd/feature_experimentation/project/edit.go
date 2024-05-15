@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"log"
 
-	models "github.com/flagship-io/flagship/models/feature_experimentation"
-	httprequest "github.com/flagship-io/flagship/utils/http_request"
+	models "github.com/flagship-io/abtasty-cli/models/feature_experimentation"
+	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
 )
 

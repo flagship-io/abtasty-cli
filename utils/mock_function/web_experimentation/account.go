@@ -3,9 +3,9 @@ package web_experimentation
 import (
 	"net/http"
 
-	models_ "github.com/flagship-io/flagship/models"
-	models "github.com/flagship-io/flagship/models/web_experimentation"
-	"github.com/flagship-io/flagship/utils"
+	models_ "github.com/flagship-io/abtasty-cli/models"
+	models "github.com/flagship-io/abtasty-cli/models/web_experimentation"
+	"github.com/flagship-io/abtasty-cli/utils"
 	"github.com/jarcoal/httpmock"
 )
 

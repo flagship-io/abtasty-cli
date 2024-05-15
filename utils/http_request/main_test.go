@@ -3,9 +3,9 @@ package http_request
 import (
 	"testing"
 
-	mockfunction "github.com/flagship-io/flagship/utils/mock_function"
-	"github.com/flagship-io/flagship/utils/mock_function/feature_experimentation"
-	"github.com/flagship-io/flagship/utils/mock_function/web_experimentation"
+	mockfunction "github.com/flagship-io/abtasty-cli/utils/mock_function"
+	"github.com/flagship-io/abtasty-cli/utils/mock_function/feature_experimentation"
+	"github.com/flagship-io/abtasty-cli/utils/mock_function/web_experimentation"
 
 	"github.com/jarcoal/httpmock"
 )

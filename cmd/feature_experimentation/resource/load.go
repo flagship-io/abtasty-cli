@@ -14,10 +14,10 @@ import (
 	"strings"
 
 	"github.com/d5/tengo/v2"
-	models "github.com/flagship-io/flagship/models/feature_experimentation"
-	"github.com/flagship-io/flagship/utils"
-	"github.com/flagship-io/flagship/utils/http_request"
-	"github.com/flagship-io/flagship/utils/http_request/common"
+	models "github.com/flagship-io/abtasty-cli/models/feature_experimentation"
+	"github.com/flagship-io/abtasty-cli/utils"
+	"github.com/flagship-io/abtasty-cli/utils/http_request"
+	"github.com/flagship-io/abtasty-cli/utils/http_request/common"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )

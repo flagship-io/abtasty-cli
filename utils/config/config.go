@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"regexp"
 
-	"github.com/flagship-io/flagship/models"
-	"github.com/flagship-io/flagship/utils"
+	"github.com/flagship-io/abtasty-cli/models"
+	"github.com/flagship-io/abtasty-cli/utils"
 	"github.com/spf13/viper"
 )
 

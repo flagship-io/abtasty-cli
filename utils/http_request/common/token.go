@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/flagship-io/flagship/models"
-	"github.com/flagship-io/flagship/utils"
+	"github.com/flagship-io/abtasty-cli/models"
+	"github.com/flagship-io/abtasty-cli/utils"
 )
 
 func HTTPRefreshTokenFE(client_id, refresh_token string) (models.TokenResponse, error) {

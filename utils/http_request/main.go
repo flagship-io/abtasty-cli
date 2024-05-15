@@ -1,9 +1,9 @@
 package http_request
 
 import (
-	"github.com/flagship-io/flagship/utils/http_request/common"
-	"github.com/flagship-io/flagship/utils/http_request/feature_experimentation"
-	"github.com/flagship-io/flagship/utils/http_request/web_experimentation"
+	"github.com/flagship-io/abtasty-cli/utils/http_request/common"
+	"github.com/flagship-io/abtasty-cli/utils/http_request/feature_experimentation"
+	"github.com/flagship-io/abtasty-cli/utils/http_request/web_experimentation"
 )
 
 type HTTPResource interface {

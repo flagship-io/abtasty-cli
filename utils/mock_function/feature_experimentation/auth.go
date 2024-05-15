@@ -4,9 +4,9 @@ import (
 	"log"
 	"os"
 
-	"github.com/flagship-io/flagship/models"
-	"github.com/flagship-io/flagship/utils"
-	"github.com/flagship-io/flagship/utils/config"
+	"github.com/flagship-io/abtasty-cli/models"
+	"github.com/flagship-io/abtasty-cli/utils"
+	"github.com/flagship-io/abtasty-cli/utils/config"
 )
 
 var TestAuth = models.Auth{

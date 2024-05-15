@@ -1,7 +1,7 @@
 package feature_experimentation
 
 import (
-	"github.com/flagship-io/flagship/models"
+	"github.com/flagship-io/abtasty-cli/models"
 )
 
 var TestAccount = models.AccountJSON{

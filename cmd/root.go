@@ -6,12 +6,12 @@ package cmd
 import (
 	"os"
 
-	"github.com/flagship-io/flagship/cmd/feature_experimentation"
-	"github.com/flagship-io/flagship/cmd/web_experimentation"
+	"github.com/flagship-io/abtasty-cli/cmd/feature_experimentation"
+	"github.com/flagship-io/abtasty-cli/cmd/web_experimentation"
 
-	"github.com/flagship-io/flagship/cmd/version"
-	"github.com/flagship-io/flagship/utils/config"
-	"github.com/flagship-io/flagship/utils/http_request/common"
+	"github.com/flagship-io/abtasty-cli/cmd/version"
+	"github.com/flagship-io/abtasty-cli/utils/config"
+	"github.com/flagship-io/abtasty-cli/utils/http_request/common"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"

@@ -1,6 +1,6 @@
 package config
 
-import "github.com/flagship-io/flagship/cmd/version"
+import "github.com/flagship-io/abtasty-cli/cmd/version"
 
 const (
 	OutputFormat         = "table"

@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"net/url"
 
-	models "github.com/flagship-io/flagship/models/feature_experimentation"
-	"github.com/flagship-io/flagship/utils"
-	mockfunction "github.com/flagship-io/flagship/utils/mock_function"
+	models "github.com/flagship-io/abtasty-cli/models/feature_experimentation"
+	"github.com/flagship-io/abtasty-cli/utils"
+	mockfunction "github.com/flagship-io/abtasty-cli/utils/mock_function"
 	"github.com/jarcoal/httpmock"
 )
 

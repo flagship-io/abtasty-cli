@@ -10,9 +10,9 @@ import (
 	"os"
 	"strings"
 
+	"github.com/flagship-io/abtasty-cli/utils"
 	cbaConfig "github.com/flagship-io/codebase-analyzer/pkg/config"
 	"github.com/flagship-io/codebase-analyzer/pkg/handler"
-	"github.com/flagship-io/flagship/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/thoas/go-funk"

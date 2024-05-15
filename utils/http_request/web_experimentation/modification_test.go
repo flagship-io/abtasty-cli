@@ -3,9 +3,9 @@ package web_experimentation
 import (
 	"testing"
 
-	models "github.com/flagship-io/flagship/models/web_experimentation"
-	"github.com/flagship-io/flagship/utils/http_request/common"
-	"github.com/flagship-io/flagship/utils/mock_function/web_experimentation"
+	models "github.com/flagship-io/abtasty-cli/models/web_experimentation"
+	"github.com/flagship-io/abtasty-cli/utils/http_request/common"
+	"github.com/flagship-io/abtasty-cli/utils/mock_function/web_experimentation"
 	"github.com/stretchr/testify/assert"
 )
 
