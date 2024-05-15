@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-echo "Installing Flagship CLI..."
+echo "Installing AB Tasty CLI..."
 echo "------------------------"
 
 # Determining the Linux distribution and architecture
@@ -35,7 +35,7 @@ case "$distro" in
     esac
     ;;
   "Ubuntu"|"Debian"|"Raspbian")
-  echo "Downloading Flagship CLI..."
+  echo "Downloading AB Tasty CLI..."
     case "$arch" in
       "i686")
         url="https://github.com/flagship-io/abtasty-cli/releases/download/v${version}/flagship_${version}_linux_386.tar.gz"
@@ -60,23 +60,23 @@ case "$distro" in
 esac
 
 # Downloading the archive to home directory (and check if url is not 404)
-echo "Downloading Flagship CLI..."
+echo "Downloading AB Tasty CLI..."
 wget -q --spider $url
 if [ $? -eq 0 ]; then
   wget -O ~/flagship.tar.gz $url -q --show-progress
 else
   echo "------------------------"
-  echo "Flagship CLI archive not found"
+  echo "AB Tasty CLI archive not found"
   echo "------------------------"
   exit 1
 fi
 
 # Extracting the archive (if it exists)
-echo "Extracting Flagship CLI..."
+echo "Extracting AB Tasty CLI..."
 if [ -f ~/flagship.tar.gz ]; then
   tar -xzf ~/flagship.tar.gz -C ~/
 else
-  echo "Flagship CLI archive not found"
+  echo "AB Tasty CLI archive not found"
   exit 1
 fi
 
@@ -97,5 +97,5 @@ sudo chmod +x /usr/local/bin/flagship
 
 # Sending a message to the user
 echo "-----------------------------------------"
-echo "Flagship CLI successfully installed"
+echo "AB Tasty CLI successfully installed"
 echo "-----------------------------------------"

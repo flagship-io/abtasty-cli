@@ -191,7 +191,7 @@ var createCmd = &cobra.Command{
 		}
 
 		if CustomRegexJson != "" {
-			fmt.Fprintf(cmd.OutOrStdout(), "\n%sContribution: If this custom regexes comes from a competitor or it's an improuvement of an existing regexes, we invite you to create a PR in our github repo: https://github.com/flagship-io/abtasty-cli \n", emoji.Sprint(":glowing_star:"))
+			fmt.Fprintf(cmd.OutOrStdout(), "\n%sContribution: If this custom regexes comes from a competitor or it's an improvement of an existing regexes, we invite you to create a PR in our github repo: https://github.com/flagship-io/abtasty-cli \n", emoji.Sprint(":glowing_star:"))
 		}
 
 		if OriginPlatform != "" {
