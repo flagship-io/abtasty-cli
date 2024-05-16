@@ -29,7 +29,7 @@ func (c *CampaignFERequester) HTTPEditCampaign(id, data string) ([]byte, error) 
 	return common.HTTPRequest[models.CampaignFE](http.MethodPatch, utils.GetFeatureExperimentationHost()+"/v1/accounts/"+c.AccountID+"/account_environments/"+c.AccountEnvironmentID+"/campaigns/"+id, []byte(data))
 }
 
-func (c *CampaignFERequester) HTTPSwitchCampaign(id, state string) error {
+func (c *CampaignFERequester) HTTPSwitchStateCampaign(id, state string) error {
 	campaignSwitchRequest := models.CampaignFESwitchRequest{
 		State: state,
 	}

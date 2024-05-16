@@ -32,5 +32,6 @@ func init() {
 	if err := deleteCmd.MarkFlagRequired("id"); err != nil {
 		log.Fatalf("error occurred: %v", err)
 	}
+
 	CampaignCmd.AddCommand(deleteCmd)
 }

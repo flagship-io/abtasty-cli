@@ -32,3 +32,7 @@ type DateTemplate struct {
 	Timestamp    int    `json:"timestamp"`
 	Pattern      string `json:"pattern"`
 }
+
+type CampaignState struct {
+	Active bool `json:"active"`
+}

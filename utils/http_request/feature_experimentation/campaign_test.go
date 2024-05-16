@@ -73,7 +73,7 @@ func TestHTTPDeleteCampaign(t *testing.T) {
 
 func TestHTTPSwitchCampaign(t *testing.T) {
 
-	err := campaignRequester.HTTPSwitchCampaign("testCampaignID", "active")
+	err := campaignRequester.HTTPSwitchStateCampaign("testCampaignID", "active")
 
 	assert.Nil(t, err)
 }

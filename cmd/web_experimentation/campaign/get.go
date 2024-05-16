@@ -33,5 +33,6 @@ func init() {
 	if err := getCmd.MarkFlagRequired("id"); err != nil {
 		log.Fatalf("error occurred: %v", err)
 	}
+
 	CampaignCmd.AddCommand(getCmd)
 }

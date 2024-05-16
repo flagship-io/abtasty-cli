@@ -17,10 +17,10 @@ var SwitchCmd = &cobra.Command{
 	Short: "Switch a campaign state",
 	Long:  `Switch a campaign state`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if !(Status == "active" || Status == "paused" || Status == "interrupted") {
-			fmt.Fprintln(cmd.OutOrStdout(), "Status can only have 3 values: active or paused or interrupted")
+		if !(Status == "active" || Status == "paused") {
+			fmt.Fprintln(cmd.OutOrStdout(), "Status can only have 2 values: active or paused")
 		} else {
-			err := httprequest.CampaignFERequester.HTTPSwitchStateCampaign(CampaignID, Status)
+			err := httprequest.CampaignWERequester.HTTPSwitchStateCampaign(CampaignID, Status)
 			if err != nil {
 				log.Fatalf("error occurred: %v", err)
 			}
@@ -33,7 +33,7 @@ var SwitchCmd = &cobra.Command{
 func init() {
 
 	SwitchCmd.Flags().StringVarP(&CampaignID, "id", "i", "", "id of the campaign you want to switch state")
-	SwitchCmd.Flags().StringVarP(&Status, "status", "s", "", "status you want set to the campaign. Only 3 values are possible: active, paused and interrupted")
+	SwitchCmd.Flags().StringVarP(&Status, "status", "s", "", "status you want set to the campaign. Only 2 values are possible: active and paused")
 
 	if err := SwitchCmd.MarkFlagRequired("id"); err != nil {
 		log.Fatalf("error occurred: %v", err)
