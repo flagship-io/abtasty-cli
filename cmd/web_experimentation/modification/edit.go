@@ -1,0 +1,42 @@
+/*
+Copyright © 2022 Flagship Team flagship@abtasty.com
+*/
+package modification
+
+import (
+	"fmt"
+	"log"
+
+	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
+	"github.com/spf13/cobra"
+)
+
+// editCmd represents the edit command
+var editCmd = &cobra.Command{
+	Use:   "edit [-i <modification-id> | --id=<modification-id>] [--campaign-id=<campaign-id>] [ -d <data-raw> | --data-raw=<data-raw>]",
+	Short: "Edit a modification",
+	Long:  `Edit a modification`,
+	Run: func(cmd *cobra.Command, args []string) {
+		body, err := httprequest.ModificationRequester.HTTPEditModificationDataRaw(CampaignID, ModificationID, DataRaw)
+		if err != nil {
+			log.Fatalf("error occurred: %v", err)
+		}
+		fmt.Fprintf(cmd.OutOrStdout(), "%s\n", body)
+	},
+}
+
+func init() {
+
+	editCmd.Flags().IntVarP(&ModificationID, "id", "i", 0, "id of the modification you want to edit")
+	editCmd.Flags().StringVarP(&DataRaw, "data-raw", "d", "", "raw data contains all the info to edit your modification, check the doc for details")
+
+	if err := editCmd.MarkFlagRequired("id"); err != nil {
+		log.Fatalf("error occurred: %v", err)
+	}
+
+	if err := editCmd.MarkFlagRequired("data-raw"); err != nil {
+		log.Fatalf("error occurred: %v", err)
+	}
+
+	ModificationCmd.AddCommand(editCmd)
+}
