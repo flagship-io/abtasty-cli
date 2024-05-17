@@ -24,4 +24,4 @@ jobs:
           local-prefix: github.com/flagship-io/abtasty-cli
           threshold-total: 70
           git-branch: badges
-          git-token: ${{ github.ref_name == 'main' && secrets.GITHUBTOKEN || '' }}
+          git-token: ${{ github.ref_name == 'main' && secrets.ABTASTY_CLI_BADGE || '' }}
