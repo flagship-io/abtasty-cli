@@ -21,3 +21,8 @@ jobs:
       - uses: codecov/codecov-action@v2
         with:
           file: ./cover.out
+      - uses: vladopajic/go-test-coverage@v2
+        with:
+          profile: ./cover.out
+          local-prefix: github.com/flagship-io/abtasty-cli
+          threshold-total: 70
