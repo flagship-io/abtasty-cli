@@ -73,6 +73,17 @@ func TestFlagCreateCommand(t *testing.T) {
 	assert.Equal(t, mockfunction_fe.TestFlag, testFlag)
 }
 
+func TestFlagCreate_Command(t *testing.T) {
+
+	successOutput, _ := utils.ExecuteCommand(FlagCmd, "create", "--name=testFlagName", "--type=string", "--description=testFlagDescription", "--default-value=default")
+
+	err := json.Unmarshal([]byte(successOutput), &testFlag)
+
+	assert.Nil(t, err)
+
+	assert.Equal(t, mockfunction_fe.TestFlag, testFlag)
+}
+
 func TestFlagEditCommand(t *testing.T) {
 
 	failOutput, _ := utils.ExecuteCommand(FlagCmd, "edit")
