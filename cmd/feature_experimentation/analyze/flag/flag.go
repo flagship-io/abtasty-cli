@@ -88,7 +88,7 @@ var FlagCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		err := handler.AnalyzeCode(FSConfig)
 		if err != nil {
-			log.Fatalf("error occured when analyzing: %s", err)
+			log.Fatalf("error occurred when analyzing: %s", err)
 		}
 	},
 }

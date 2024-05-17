@@ -15,8 +15,8 @@ import (
 // getCmd represents the list command
 var useCmd = &cobra.Command{
 	Use:   "use",
-	Short: "use a specific account envrionment id",
-	Long:  `use a specific account envrionment id`,
+	Short: "use a specific account environment id",
+	Long:  `use a specific account environment id`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if AccountEnvironmentID == "" {
 			fmt.Fprintln(cmd.OutOrStderr(), "required flag account-id or account-environment-id")
