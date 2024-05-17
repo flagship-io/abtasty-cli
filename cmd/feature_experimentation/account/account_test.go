@@ -50,6 +50,8 @@ func TestAccountUseCommand(t *testing.T) {
 
 func TestAccountCurrentCommand(t *testing.T) {
 
+	utils.ExecuteCommand(AccountCmd, "use", "-i=account_id")
+
 	output, _ := utils.ExecuteCommand(AccountCmd, "current")
 
 	err := json.Unmarshal([]byte(output), &testAccount)
