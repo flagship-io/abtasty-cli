@@ -1,5 +1,5 @@
 build:
-	CGO_ENABLED=0 GOOS=linux go build -ldflags "-X 'github.com/flagship-io/abtasty-cli/cmd/version.Version=${FLAGSHIP_VERSION}'" -o flagship
+	CGO_ENABLED=0 GOOS=linux go build -ldflags "-X 'github.com/flagship-io/abtasty-cli/cmd/version.Version=${ABTASTY_CLI_VERSION}'" -o abtasty-cli
 
 test: SHELL:=/bin/bash
 test:

@@ -29,7 +29,7 @@ jobs:
         run: echo ::set-output name=tag::${GITHUB_REF##*/}
 
       - name: Print env
-        run: echo $FLAGSHIP_VERSION
+        run: echo $ABTASTY_CLI_VERSION
 
       - name: Build and push
         id: docker_build
@@ -37,7 +37,7 @@ jobs:
         with:
           context: ./
           build-args: |
-            FLAGSHIP_VERSION=${{ github.ref_name }}
+            ABTASTY_CLI_VERSION=${{ github.ref_name }}
           push: true
           tags: flagshipio/cli:${{ steps.vars.outputs.tag }}
 
@@ -63,4 +63,4 @@ jobs:
           args: release --rm-dist
         env:
           GITHUB_TOKEN: ${{ secrets.PUBLISHER_TOKEN }}
-          FLAGSHIP_VERSION: ${{ github.ref_name }}
+          ABTASTY_CLI_VERSION: ${{ github.ref_name }}

@@ -7,7 +7,7 @@ builds:
     # Default is the name of the project directory.
     binary: abtasty-cli
     ldflags:
-      - -s -w -X 'github.com/flagship-io/abtasty-cli/cmd/version.Version={{ .Env.FLAGSHIP_VERSION }}'
+      - -s -w -X 'github.com/flagship-io/abtasty-cli/cmd/version.Version={{ .Env.ABTASTY_CLI_VERSION }}'
 
     # GOOS list to build for.
     # For more info refer to: https://golang.org/doc/install/source#environment

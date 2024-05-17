@@ -20,6 +20,6 @@ var VersionCmd = &cobra.Command{
 	Short: "CLI version",
 	Long:  `CLI version`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Fprintf(cmd.OutOrStdout(), "Flagship CLI version: %s\n", Version)
+		fmt.Fprintf(cmd.OutOrStdout(), "ABTasty CLI version: %s\n", Version)
 	},
 }
