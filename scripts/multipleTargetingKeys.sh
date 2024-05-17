@@ -7,5 +7,5 @@ readarray -t description <<< $(jq -r '.[].description' $1)
 
 for (( i=0; i<${#name[@]}; i++))
 do
-    flagship tk create -d $"{\"name\":\"${name[$i]}\",\"type\":\"${type[$i]}\", \"description\":\"${description[$i]}\"}"
+    abtasty-cli fe tk create -d $"{\"name\":\"${name[$i]}\",\"type\":\"${type[$i]}\", \"description\":\"${description[$i]}\"}"
 done

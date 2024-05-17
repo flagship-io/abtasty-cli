@@ -40,7 +40,7 @@ func initConfig() {
 
 	v.BindPFlag("working_dir", CampaignGlobalCodeCmd.PersistentFlags().Lookup("working-dir"))
 
-	v.SetConfigFile(homeDir + "/.flagship/credentials/" + utils.WEB_EXPERIMENTATION + "/.cli.yaml")
+	v.SetConfigFile(homeDir + "/.abtasty/credentials/" + utils.WEB_EXPERIMENTATION + "/.cli.yaml")
 	v.MergeInConfig()
 
 	err := v.WriteConfig()

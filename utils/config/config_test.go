@@ -41,12 +41,12 @@ func TestMain(m *testing.M) {
 		log.Fatalf("Failed to get user home directory: %v", err)
 	}
 
-	if _, err := os.Stat(homeDir + "/.flagship/credentials/" + product); errors.Is(err, os.ErrNotExist) {
-		os.MkdirAll(homeDir+"/.flagship/credentials/"+product, os.ModePerm)
+	if _, err := os.Stat(homeDir + "/.abtasty/credentials/" + product); errors.Is(err, os.ErrNotExist) {
+		os.MkdirAll(homeDir+"/.abtasty/credentials/"+product, os.ModePerm)
 	}
 
 	defer os.RemoveAll(currentDir + "/abtasty")
-	defer os.RemoveAll(homeDir + "/.flagship/credentials/" + product)
+	defer os.RemoveAll(homeDir + "/.abtasty/credentials/" + product)
 
 	m.Run()
 }
@@ -63,9 +63,9 @@ func TestCheckABTastyHomeDirectory(t *testing.T) {
 	}
 
 	assert.Equal(t, homeDir, abtastyHome)
-	assert.Equal(t, homeDir+"/.flagship/credentials/"+utils.FEATURE_EXPERIMENTATION, abtastyHome+"/.flagship/credentials/"+utils.FEATURE_EXPERIMENTATION)
-	assert.Equal(t, homeDir+"/.flagship/credentials/"+utils.WEB_EXPERIMENTATION, abtastyHome+"/.flagship/credentials/"+utils.WEB_EXPERIMENTATION)
-	assert.Equal(t, homeDir+"/.flagship/credentials/"+product, abtastyHome+"/.flagship/credentials/"+product)
+	assert.Equal(t, homeDir+"/.abtasty/credentials/"+utils.FEATURE_EXPERIMENTATION, abtastyHome+"/.abtasty/credentials/"+utils.FEATURE_EXPERIMENTATION)
+	assert.Equal(t, homeDir+"/.abtasty/credentials/"+utils.WEB_EXPERIMENTATION, abtastyHome+"/.abtasty/credentials/"+utils.WEB_EXPERIMENTATION)
+	assert.Equal(t, homeDir+"/.abtasty/credentials/"+product, abtastyHome+"/.abtasty/credentials/"+product)
 
 }
 
@@ -81,7 +81,7 @@ func TestCredentialPath(t *testing.T) {
 		t.Errorf("CredentialPath() error = %v", err)
 	}
 
-	expectedPath := homeDir + "/.flagship/credentials/" + product + "/" + username + ".yaml"
+	expectedPath := homeDir + "/.abtasty/credentials/" + product + "/" + username + ".yaml"
 	assert.Equal(t, expectedPath, filepath)
 
 }
@@ -115,7 +115,7 @@ func TestCreateAuthFile(t *testing.T) {
 		t.Fatalf("Failed to get user home directory: %v", err)
 	}
 
-	fileContent, err := os.ReadFile(homeDir + "/.flagship/credentials/" + product + "/" + username + ".yaml")
+	fileContent, err := os.ReadFile(homeDir + "/.abtasty/credentials/" + product + "/" + username + ".yaml")
 	if err != nil {
 		t.Fatalf("Failed to read file: %v", err)
 	}

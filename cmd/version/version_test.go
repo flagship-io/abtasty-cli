@@ -9,5 +9,5 @@ import (
 
 func TestVersionCommand(t *testing.T) {
 	output, _ := utils.ExecuteCommand(VersionCmd)
-	assert.Contains(t, output, "Flagship CLI version:")
+	assert.Contains(t, output, "ABTasty CLI version:")
 }

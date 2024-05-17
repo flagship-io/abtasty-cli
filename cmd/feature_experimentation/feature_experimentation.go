@@ -72,7 +72,7 @@ func initConfig() {
 	homeDir, _ := os.UserHomeDir()
 	var requestConfig = common.RequestConfig{Product: utils.FEATURE_EXPERIMENTATION}
 
-	v.SetConfigFile(homeDir + "/.flagship/credentials/" + utils.FEATURE_EXPERIMENTATION + "/.cli.yaml")
+	v.SetConfigFile(homeDir + "/.abtasty/credentials/" + utils.FEATURE_EXPERIMENTATION + "/.cli.yaml")
 	v.MergeInConfig()
 	if v.GetString("current_used_credential") != "" {
 		vL, err := config.ReadAuth(utils.FEATURE_EXPERIMENTATION, v.GetString("current_used_credential"))

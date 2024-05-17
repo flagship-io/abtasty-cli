@@ -15,15 +15,15 @@ import (
 func CheckABTastyHomeDirectory() (string, error) {
 	homeDir, err := os.UserHomeDir()
 
-	if _, err := os.Stat(homeDir + "/.flagship/credentials/" + utils.FEATURE_EXPERIMENTATION); errors.Is(err, os.ErrNotExist) {
-		err := os.MkdirAll(homeDir+"/.flagship/credentials/"+utils.FEATURE_EXPERIMENTATION, os.ModePerm)
+	if _, err := os.Stat(homeDir + "/.abtasty/credentials/" + utils.FEATURE_EXPERIMENTATION); errors.Is(err, os.ErrNotExist) {
+		err := os.MkdirAll(homeDir+"/.abtasty/credentials/"+utils.FEATURE_EXPERIMENTATION, os.ModePerm)
 		if err != nil {
 			return "", err
 		}
 	}
 
-	if _, err := os.Stat(homeDir + "/.flagship/credentials/" + utils.WEB_EXPERIMENTATION); errors.Is(err, os.ErrNotExist) {
-		err := os.MkdirAll(homeDir+"/.flagship/credentials/"+utils.WEB_EXPERIMENTATION, os.ModePerm)
+	if _, err := os.Stat(homeDir + "/.abtasty/credentials/" + utils.WEB_EXPERIMENTATION); errors.Is(err, os.ErrNotExist) {
+		err := os.MkdirAll(homeDir+"/.abtasty/credentials/"+utils.WEB_EXPERIMENTATION, os.ModePerm)
 		if err != nil {
 			return "", err
 		}
@@ -38,7 +38,7 @@ func CredentialPath(product, username string) (string, error) {
 		return "", err
 	}
 
-	filepath, err := filepath.Abs(homeDir + "/.flagship/credentials/" + product + "/" + username + ".yaml")
+	filepath, err := filepath.Abs(homeDir + "/.abtasty/credentials/" + product + "/" + username + ".yaml")
 	if err != nil {
 		return "", err
 	}
@@ -55,7 +55,7 @@ func GetUsernames(product string) ([]string, error) {
 	r := regexp.MustCompile(`(?P<Username>[^/]+)\.yaml`)
 	var fileNames []string
 
-	f, err := os.Open(homeDir + "/.flagship/credentials/" + product)
+	f, err := os.Open(homeDir + "/.abtasty/credentials/" + product)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error occurred: %s", err)
 		return nil, err

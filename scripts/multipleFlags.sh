@@ -7,5 +7,5 @@ source=( $(jq -r '.[].source' $1) )
 
 for (( i=0; i<${#name[@]}; i++))
 do 
-    flagship flag create -d $"{\"name\":\"${name[$i]}\",\"type\":\"${type[$i]}\", \"description\":\"${description[$i]}\", \"source\":\"${source[$i]}\"}"
+    abtasty-cli fe flag create -d $"{\"name\":\"${name[$i]}\",\"type\":\"${type[$i]}\", \"description\":\"${description[$i]}\", \"source\":\"${source[$i]}\"}"
 done
