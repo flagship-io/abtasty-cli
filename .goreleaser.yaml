@@ -29,7 +29,7 @@ brews:
     homepage: "https://github.com/flagship-io/abtasty-cli"
     tap:
       owner: flagship-io
-      name: homebrew-flagship
+      name: homebrew-abtasty-cli
     commit_author:
       name: flagship
       email: flagship@abtasty.com
