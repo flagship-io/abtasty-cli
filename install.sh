@@ -11,7 +11,7 @@ echo "Distribution: $distro"
 echo "Architecture: $arch"
 
 # Flagship CLI version
-version="1.0.2"
+version="1.0.0"
 
 echo "Version: v$version"
 echo "------------------------"
@@ -23,10 +23,10 @@ case "$distro" in
   "Darwin")
     case "$arch" in
       "x86_64")
-        url="https://github.com/flagship-io/abtasty-cli/releases/download/v${version}/flagship_${version}_darwin_amd64.tar.gz"
+        url="https://github.com/flagship-io/abtasty-cli/releases/download/v${version}/abtasty-cli_${version}_darwin_amd64.tar.gz"
         ;;
       "arm64")
-        url="https://github.com/flagship-io/abtasty-cli/releases/download/v${version}/flagship_${version}_darwin_arm64.tar.gz"
+        url="https://github.com/flagship-io/abtasty-cli/releases/download/v${version}/abtasty-cli_${version}_darwin_arm64.tar.gz"
         ;;
       *)
         echo "Unsupported architecture"
@@ -38,14 +38,14 @@ case "$distro" in
   echo "Downloading AB Tasty CLI..."
     case "$arch" in
       "i686")
-        url="https://github.com/flagship-io/abtasty-cli/releases/download/v${version}/flagship_${version}_linux_386.tar.gz"
+        url="https://github.com/flagship-io/abtasty-cli/releases/download/v${version}/abtasty-cli_${version}_linux_386.tar.gz"
         ;;
       "x86_64")
-        url="https://github.com/flagship-io/abtasty-cli/releases/download/v${version}/flagship_${version}_linux_amd64.tar.gz"
+        url="https://github.com/flagship-io/abtasty-cli/releases/download/v${version}/abtasty-cli_${version}_linux_amd64.tar.gz"
         echo $url
         ;;
       "arm64")
-        url="https://github.com/flagship-io/abtasty-cli/releases/download/v${version}/flagship_${version}_linux_arm64.tar.gz"
+        url="https://github.com/flagship-io/abtasty-cli/releases/download/v${version}/abtasty-cli_${version}_linux_arm64.tar.gz"
         ;;
       *)
         echo "Unsupported architecture"

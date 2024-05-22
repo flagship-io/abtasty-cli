@@ -2,3 +2,5 @@ config.yaml
 fixtures
 coverage
 /bin
+configuration-*
+abtasty-cli
