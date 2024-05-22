@@ -155,7 +155,7 @@ func flagCreatedTable(cmd *cobra.Command, listedFlags []models.Flag) error {
 	if flagNotCreatedLen != 0 {
 		fmt.Fprintf(cmd.OutOrStdout(), "\n%sTips: To create these flags use these commands: \n", emoji.Sprint(":bulb:"))
 		for _, flagKey := range flagKeyNotCreated {
-			fmt.Fprintf(cmd.OutOrStdout(), "flagship flag create --data-raw '{\"name\": \"%s\",\"type\":\"<TYPE>\",\"description\":\"<DESCRIPTION>\",\"source\":\"cli\"}'\n", flagKey)
+			fmt.Fprintf(cmd.OutOrStdout(), "abtasty-cli feature-experimentation flag create --data-raw '{\"name\": \"%s\",\"type\":\"<TYPE>\",\"description\":\"<DESCRIPTION>\",\"source\":\"cli\"}'\n", flagKey)
 		}
 	}
 
@@ -165,7 +165,7 @@ func flagCreatedTable(cmd *cobra.Command, listedFlags []models.Flag) error {
 			fmt.Fprintf(cmd.OutOrStdout(), "%s\n", flag)
 		}
 
-		fmt.Fprintf(cmd.OutOrStdout(), "\n\n%sTips: To create these flags use these commands: flagship flag create --data-raw '{\"name\": \"<NAME>\",\"type\":\"<TYPE>\",\"description\":\"<DESCRIPTION>\",\"source\":\"cli\"}' \n", emoji.Sprint(":bulb:"))
+		fmt.Fprintf(cmd.OutOrStdout(), "\n\n%sTips: To create these flags use these commands: abtasty-cli feature-experimentation flag create --data-raw '{\"name\": \"<NAME>\",\"type\":\"<TYPE>\",\"description\":\"<DESCRIPTION>\",\"source\":\"cli\"}' \n", emoji.Sprint(":bulb:"))
 	}
 
 	return nil
@@ -175,7 +175,7 @@ func flagCreatedTable(cmd *cobra.Command, listedFlags []models.Flag) error {
 var createCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Analyze your codebase and automatically create flags detected",
-	Long:  `Analyze your codebase and automatically create flags detected to Flagship platform`,
+	Long:  `Analyze your codebase and automatically create flags detected to ABTasty feature experimentation platform`,
 	PreRun: func(cmd *cobra.Command, args []string) {
 		PreRunConfiguration()
 	},

@@ -20,8 +20,9 @@ import (
 var outputFormat string
 
 // rootCmd represents the base command when called without any subcommands
+// TODO: change description
 var rootCmd = &cobra.Command{
-	Use:   "flagship",
+	Use:   "abtasty-cli",
 	Short: "flagship manage your campaigns, project, users etc...",
 	Long: `flagship is the main command, used to manage campaigns, projects, users, variation groups and variations
 	
