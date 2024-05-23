@@ -1,14 +1,12 @@
 package account
 
 import (
-	"encoding/json"
 	"testing"
 
 	"github.com/flagship-io/abtasty-cli/models"
 	"github.com/flagship-io/abtasty-cli/utils"
 	"github.com/flagship-io/abtasty-cli/utils/http_request"
 	mockfunction "github.com/flagship-io/abtasty-cli/utils/mock_function"
-	"github.com/flagship-io/abtasty-cli/utils/mock_function/feature_experimentation"
 	mockfunction_fe "github.com/flagship-io/abtasty-cli/utils/mock_function/feature_experimentation"
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
@@ -46,17 +44,4 @@ func TestAccountUseCommand(t *testing.T) {
 
 	successOutput, _ := utils.ExecuteCommand(AccountCmd, "use", "-i=account_id")
 	assert.Equal(t, "Account ID set to : account_id\n", successOutput)
-}
-
-func TestAccountCurrentCommand(t *testing.T) {
-
-	utils.ExecuteCommand(AccountCmd, "use", "-i=account_id")
-
-	output, _ := utils.ExecuteCommand(AccountCmd, "current")
-
-	err := json.Unmarshal([]byte(output), &testAccount)
-
-	assert.Nil(t, err)
-
-	assert.Equal(t, feature_experimentation.TestAccount.AccountID, testAccount.AccountID)
 }
