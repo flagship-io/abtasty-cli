@@ -6,8 +6,8 @@ package cmd
 import (
 	"os"
 
-	"github.com/flagship-io/abtasty-cli/cmd/feature_experimentation"
-	"github.com/flagship-io/abtasty-cli/cmd/web_experimentation"
+	feature_experimentation "github.com/flagship-io/abtasty-cli/cmd/feature-experimentation"
+	web_experimentation "github.com/flagship-io/abtasty-cli/cmd/web-experimentation"
 
 	"github.com/flagship-io/abtasty-cli/cmd/version"
 	"github.com/flagship-io/abtasty-cli/utils/config"
@@ -19,11 +19,12 @@ import (
 
 var outputFormat string
 
-// rootCmd represents the base command when called without any subcommands
+// RootCmd represents the base command when called without any subcommands
 // TODO: change description
-var rootCmd = &cobra.Command{
-	Use:   "abtasty-cli",
-	Short: "flagship manage your campaigns, project, users etc...",
+var RootCmd = &cobra.Command{
+	Use:     "abtasty-cli",
+	Aliases: []string{"abt", "abtasty"},
+	Short:   "flagship manage your campaigns, project, users etc...",
 	Long: `flagship is the main command, used to manage campaigns, projects, users, variation groups and variations
 	
 	Flagship is a feature flagging platform for modern developers. 
@@ -38,25 +39,25 @@ var rootCmd = &cobra.Command{
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	err := rootCmd.Execute()
+	err := RootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
 	}
 }
 
 func addSubCommandPalettes() {
-	rootCmd.AddCommand(version.VersionCmd)
-	rootCmd.AddCommand(feature_experimentation.FeatureExperimentationCmd)
-	rootCmd.AddCommand(web_experimentation.WebExperimentationCmd)
+	RootCmd.AddCommand(version.VersionCmd)
+	RootCmd.AddCommand(feature_experimentation.FeatureExperimentationCmd)
+	RootCmd.AddCommand(web_experimentation.WebExperimentationCmd)
 }
 
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	rootCmd.PersistentFlags().StringVarP(&outputFormat, "output-format", "f", config.OutputFormat, "output format for the get and list subcommands for flagship resources. Only 3 format are possible: table, json, json-pretty")
-	rootCmd.PersistentFlags().StringVarP(&common.UserAgent, "user-agent", "", config.DefaultUserAgent, "custom user agent")
+	RootCmd.PersistentFlags().StringVarP(&outputFormat, "output-format", "f", config.OutputFormat, "output format for the get and list subcommands for flagship resources. Only 3 format are possible: table, json, json-pretty")
+	RootCmd.PersistentFlags().StringVarP(&common.UserAgent, "user-agent", "", config.DefaultUserAgent, "custom user agent")
 
-	viper.BindPFlag("output_format", rootCmd.PersistentFlags().Lookup("output-format"))
+	viper.BindPFlag("output_format", RootCmd.PersistentFlags().Lookup("output-format"))
 
 	addSubCommandPalettes()
 }
