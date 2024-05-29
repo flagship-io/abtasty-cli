@@ -23,8 +23,8 @@ var variationID string
 // pushCmd represents get command
 var pushCmd = &cobra.Command{
 	Use:   "push [-i <modification-id> | --id <modification-id>] [--campaign-id <campaign-id>]",
-	Short: "push modification code",
-	Long:  `push modification code`,
+	Short: "Push modification code",
+	Long:  `Push modification code`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var codeByte []byte
 

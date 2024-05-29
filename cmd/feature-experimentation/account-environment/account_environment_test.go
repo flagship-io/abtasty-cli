@@ -33,7 +33,7 @@ var testAccountEnvironmentList []models_fe.AccountEnvironmentFE
 
 func TestAccountEnvironmentCommand(t *testing.T) {
 	output, _ := utils.ExecuteCommand(AccountEnvironmentCmd)
-	assert.Contains(t, output, "Manage your CLI authentication\n\nUsage:\n  account-environment [use|list|current]")
+	assert.Contains(t, output, "Manage your account environment \n\nUsage:\n  account-environment [use|list|current]")
 }
 
 func TestAccountEnvironmentHelpCommand(t *testing.T) {

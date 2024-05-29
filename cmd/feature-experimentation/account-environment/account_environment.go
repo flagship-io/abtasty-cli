@@ -13,8 +13,8 @@ var (
 // AccountEnvironmentCmd represents the account environment command
 var AccountEnvironmentCmd = &cobra.Command{
 	Use:   "account-environment [use|list|current]",
-	Short: "Manage your CLI authentication",
-	Long:  `Manage your CLI authentication`,
+	Short: "Manage your account environment",
+	Long:  `Manage your account environment`,
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
 	},

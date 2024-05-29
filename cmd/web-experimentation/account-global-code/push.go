@@ -20,7 +20,7 @@ var filePath string
 var pushCmd = &cobra.Command{
 	Use:   "push [-i <account-id> | --id <account-id>]",
 	Short: "Push account global code",
-	Long:  `push account global code`,
+	Long:  `Push account global code`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var codeByte []byte
 

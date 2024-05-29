@@ -18,8 +18,8 @@ import (
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "list all auth",
-	Long:  `list all auth`,
+	Short: "list all auth for feature experimentation",
+	Long:  `list all auth for feature experimentation`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		var auths []models.Auth

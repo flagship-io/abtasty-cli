@@ -19,8 +19,8 @@ var filePath string
 // pushCmd represents push command
 var pushCmd = &cobra.Command{
 	Use:   "push [-i <campaign-id> | --id <campaign-id>]",
-	Short: "push campaign global code",
-	Long:  `push campaign global code`,
+	Short: "Push campaign global code",
+	Long:  `Push campaign global code`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var codeByte []byte
 
