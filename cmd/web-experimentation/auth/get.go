@@ -19,7 +19,7 @@ import (
 var getCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Get an auth credential for web experimentation",
-	Long:  `get an auth credential for web experimentation`,
+	Long:  `Get an auth credential for web experimentation`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		var authYaml models.AuthYaml
