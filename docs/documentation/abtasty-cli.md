@@ -4,16 +4,18 @@ hide:
 ---
 ## abtasty-cli
 
-flagship manage your campaigns, project, users etc...
+abtasty-cli let you manage your campaigns, project, flags, etc... on both product web experimentation and feature experimentation
 
 ### Synopsis
 
-flagship is the main command, used to manage campaigns, projects, users, variation groups and variations
+abtasty-cli is the main command, used to manage campaigns, projects, flags, etc... on both product web experimentation and feature experimentation
 	
-	Flagship is a feature flagging platform for modern developers. 
+	- Web Experimentation is a customer experience optimization product that blends advanced testing with simple experience building to reach conversion goals confidently and quickly.
+
+	- Feature Experimentation and Rollout is a feature flagging platform for modern developers. 
 	Separate code deployments from feature releases to accelerate development cycles and mitigate risks.
 	
-	Complete documentation is available at https://docs.developers.flagship.io/docs/flagship-command-line-interface
+	Complete documentation is available at https://docs.developers.flagship.io/docs/abtasty-cli-command-line-interface
 
 ```
 abtasty-cli [flags]
@@ -23,8 +25,8 @@ abtasty-cli [flags]
 
 ```
   -h, --help                   help for abtasty-cli
-  -f, --output-format string   output format for the get and list subcommands for flagship resources. Only 3 format are possible: table, json, json-pretty (default "table")
-      --user-agent string      custom user agent (default "flagship-cli/main")
+  -f, --output-format string   output format for the get and list subcommands for AB Tasty resources. Only 3 format are possible: table, json, json-pretty (default "table")
+      --user-agent string      custom user agent (default "abtasty-cli/main")
 ```
 
 ### SEE ALSO

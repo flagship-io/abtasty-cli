@@ -60,17 +60,13 @@ brew install flagship
 
 Please download the binary from the [release page](https://github.com/flagship-io/abtasty-cli/releases)
 
-### Using a Docker image
-
-You can pull the latest docker image from docker hub: docker pull [flagshipio/cli](https://hub.docker.com/repository/docker/flagshipio/cli)
-
 ### Using Golang from source
 
 You can pull the project from github and build it using golang latest stable version (+1.18):
 
     git clone git@github.com:flagship-io/abtasty-cli.git
-    cd flagship
-    go build -o flagship
+    cd abtasty-cli
+    go build -o abtasty-cli
 
 ## Contributors
 

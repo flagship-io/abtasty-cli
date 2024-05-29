@@ -17,8 +17,8 @@ var accountID string
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "list all account environment id associated to your account",
-	Long:  `list all account environment id associated to your account`,
+	Short: "List all account environment id associated to your account",
+	Long:  `List all account environment id associated to your account`,
 	Run: func(cmd *cobra.Command, args []string) {
 		body, err := httprequest.AccountEnvironmentFERequester.HTTPListAccountEnvironment(accountID)
 		if err != nil {

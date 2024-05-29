@@ -17,15 +17,15 @@ abtasty-cli web-experimentation modification [get|list|delete] [flags]
 ### Options
 
 ```
-      --campaign-id int   id of the campaign where you want to manage your modifications
+      --campaign-id int   the campaign id of your modifications
   -h, --help              help for modification
 ```
 
 ### Options inherited from parent commands
 
 ```
-  -f, --output-format string   output format for the get and list subcommands for flagship resources. Only 3 format are possible: table, json, json-pretty (default "table")
-      --user-agent string      custom user agent (default "flagship-cli/main")
+  -f, --output-format string   output format for the get and list subcommands for AB Tasty resources. Only 3 format are possible: table, json, json-pretty (default "table")
+      --user-agent string      custom user agent (default "abtasty-cli/main")
 ```
 
 ### SEE ALSO

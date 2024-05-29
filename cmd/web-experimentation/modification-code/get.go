@@ -71,7 +71,7 @@ func init() {
 		log.Fatalf("error occurred: %v", err)
 	}
 
-	getCmd.Flags().StringVarP(&ModificationID, "id", "i", "", "id of the  modification code you want to display")
+	getCmd.Flags().StringVarP(&ModificationID, "id", "i", "", "id of the modification code you want to display")
 
 	if err := getCmd.MarkFlagRequired("id"); err != nil {
 		log.Fatalf("error occurred: %v", err)

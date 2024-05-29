@@ -17,7 +17,7 @@ abtasty-cli feature-experimentation variation [create|edit|get|list|delete] [fla
 ### Options
 
 ```
-      --campaign-id string          id of the campaign where you want to manage your variation
+      --campaign-id string          the campaign id of your variation
   -h, --help                        help for variation
       --variation-group-id string   id of the variation group where you want to manage your variation
 ```
@@ -25,8 +25,8 @@ abtasty-cli feature-experimentation variation [create|edit|get|list|delete] [fla
 ### Options inherited from parent commands
 
 ```
-  -f, --output-format string   output format for the get and list subcommands for flagship resources. Only 3 format are possible: table, json, json-pretty (default "table")
-      --user-agent string      custom user agent (default "flagship-cli/main")
+  -f, --output-format string   output format for the get and list subcommands for AB Tasty resources. Only 3 format are possible: table, json, json-pretty (default "table")
+      --user-agent string      custom user agent (default "abtasty-cli/main")
 ```
 
 ### SEE ALSO

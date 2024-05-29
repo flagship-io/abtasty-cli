@@ -18,7 +18,7 @@ import (
 // getCmd represents the list command
 var getCmd = &cobra.Command{
 	Use:   "get",
-	Short: "get an auth credential for web experimentation",
+	Short: "Get an auth credential for web experimentation",
 	Long:  `get an auth credential for web experimentation`,
 	Run: func(cmd *cobra.Command, args []string) {
 

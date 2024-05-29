@@ -29,10 +29,10 @@ abtasty-cli feature-experimentation analyze flag create [flags]
       --directory string           directory to analyze in your codebase (default ".")
       --files-exclude string       list of files to exclude in analysis (default "[\".git\", \".github\", \".vscode\", \".idea\", \".yarn\", \"node_modules\"]")
       --origin-platform string     analyze flags made with feature flag platform, we support launchdarkly, optimizely, split and vwo (latest version only)
-  -f, --output-format string       output format for the get and list subcommands for flagship resources. Only 3 format are possible: table, json, json-pretty (default "table")
+  -f, --output-format string       output format for the get and list subcommands for AB Tasty resources. Only 3 format are possible: table, json, json-pretty (default "table")
       --repository-branch string   branch of the code you want to analyze, and is used to track the links of the files where your flags are used (default "main")
       --repository-url string      root URL of your repository, and is used to track the links of the files where your flags are used (default "https://github.com/org/repo")
-      --user-agent string          custom user agent (default "flagship-cli/main")
+      --user-agent string          custom user agent (default "abtasty-cli/main")
 ```
 
 ### SEE ALSO

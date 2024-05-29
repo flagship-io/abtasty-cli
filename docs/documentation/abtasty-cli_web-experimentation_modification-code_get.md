@@ -20,15 +20,15 @@ abtasty-cli web-experimentation modification-code get [-i <modification-id> | --
       --campaign-id string   id of the campaign
       --create-file          create a file that contains modification global code
   -h, --help                 help for get
-  -i, --id string            id of the  modification code you want to display
+  -i, --id string            id of the modification code you want to display
       --override             override existing modification code file
 ```
 
 ### Options inherited from parent commands
 
 ```
-  -f, --output-format string   output format for the get and list subcommands for flagship resources. Only 3 format are possible: table, json, json-pretty (default "table")
-      --user-agent string      custom user agent (default "flagship-cli/main")
+  -f, --output-format string   output format for the get and list subcommands for AB Tasty resources. Only 3 format are possible: table, json, json-pretty (default "table")
+      --user-agent string      custom user agent (default "abtasty-cli/main")
       --working-dir string     Directory where the file will be generated and pushed from (default "/Users/chadi.laoulaou/abtasty-cli")
 ```
 

@@ -4,11 +4,11 @@ hide:
 ---
 ## abtasty-cli feature-experimentation account-environment list
 
-list all account environment id associated to your account
+List all account environment id associated to your account
 
 ### Synopsis
 
-list all account environment id associated to your account
+List all account environment id associated to your account
 
 ```
 abtasty-cli feature-experimentation account-environment list [flags]
@@ -24,8 +24,8 @@ abtasty-cli feature-experimentation account-environment list [flags]
 ### Options inherited from parent commands
 
 ```
-  -f, --output-format string   output format for the get and list subcommands for flagship resources. Only 3 format are possible: table, json, json-pretty (default "table")
-      --user-agent string      custom user agent (default "flagship-cli/main")
+  -f, --output-format string   output format for the get and list subcommands for AB Tasty resources. Only 3 format are possible: table, json, json-pretty (default "table")
+      --user-agent string      custom user agent (default "abtasty-cli/main")
 ```
 
 ### SEE ALSO

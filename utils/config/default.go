@@ -14,4 +14,4 @@ const (
 	AccountEnvironmentID = "accountEnvironmentID"
 )
 
-var DefaultUserAgent = "flagship-cli/" + version.Version
+var DefaultUserAgent = "abtasty-cli/" + version.Version

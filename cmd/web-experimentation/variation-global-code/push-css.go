@@ -100,12 +100,12 @@ var pushCSSCmd = &cobra.Command{
 }
 
 func init() {
-	pushCSSCmd.Flags().StringVarP(&CampaignID, "campaign-id", "", "", "id of the global code campaign you want to display")
+	pushCSSCmd.Flags().StringVarP(&CampaignID, "campaign-id", "", "", "id of the campaign")
 	if err := pushCSSCmd.MarkFlagRequired("campaign-id"); err != nil {
 		log.Fatalf("error occurred: %v", err)
 	}
 
-	pushCSSCmd.Flags().StringVarP(&VariationID, "id", "i", "", "id of the global code variation you want to display")
+	pushCSSCmd.Flags().StringVarP(&VariationID, "id", "i", "", "id of variation")
 	if err := pushCSSCmd.MarkFlagRequired("id"); err != nil {
 		log.Fatalf("error occurred: %v", err)
 	}

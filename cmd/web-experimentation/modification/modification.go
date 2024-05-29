@@ -27,7 +27,7 @@ var ModificationCmd = &cobra.Command{
 }
 
 func init() {
-	ModificationCmd.PersistentFlags().IntVarP(&CampaignID, "campaign-id", "", 0, "id of the campaign where you want to manage your modifications")
+	ModificationCmd.PersistentFlags().IntVarP(&CampaignID, "campaign-id", "", 0, "the campaign id of your modifications")
 
 	if err := ModificationCmd.MarkPersistentFlagRequired("campaign-id"); err != nil {
 		log.Fatalf("error occurred: %v", err)

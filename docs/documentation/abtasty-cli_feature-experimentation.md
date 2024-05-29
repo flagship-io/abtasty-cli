@@ -23,13 +23,13 @@ abtasty-cli feature-experimentation [auth|account|account-environment|project|ca
 ### Options inherited from parent commands
 
 ```
-  -f, --output-format string   output format for the get and list subcommands for flagship resources. Only 3 format are possible: table, json, json-pretty (default "table")
-      --user-agent string      custom user agent (default "flagship-cli/main")
+  -f, --output-format string   output format for the get and list subcommands for AB Tasty resources. Only 3 format are possible: table, json, json-pretty (default "table")
+      --user-agent string      custom user agent (default "abtasty-cli/main")
 ```
 
 ### SEE ALSO
 
-* [abtasty-cli](abtasty-cli.md)	 - flagship manage your campaigns, project, users etc...
+* [abtasty-cli](abtasty-cli.md)	 - abtasty-cli let you manage your campaigns, project, flags, etc... on both product web experimentation and feature experimentation
 * [abtasty-cli feature-experimentation account](abtasty-cli_feature-experimentation_account.md)	 - Manage your account
 * [abtasty-cli feature-experimentation account-environment](abtasty-cli_feature-experimentation_account-environment.md)	 - Manage your account environment
 * [abtasty-cli feature-experimentation analyze](abtasty-cli_feature-experimentation_analyze.md)	 - Analyze your codebase

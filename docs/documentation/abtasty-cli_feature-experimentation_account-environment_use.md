@@ -4,11 +4,11 @@ hide:
 ---
 ## abtasty-cli feature-experimentation account-environment use
 
-use a specific account environment id
+Use a specific account environment id
 
 ### Synopsis
 
-use a specific account environment id
+Use a specific account environment id
 
 ```
 abtasty-cli feature-experimentation account-environment use [flags]
@@ -18,14 +18,14 @@ abtasty-cli feature-experimentation account-environment use [flags]
 
 ```
   -h, --help        help for use
-  -i, --id string   account env id of the credentials you want to manage
+  -i, --id string   account environment id of the credentials
 ```
 
 ### Options inherited from parent commands
 
 ```
-  -f, --output-format string   output format for the get and list subcommands for flagship resources. Only 3 format are possible: table, json, json-pretty (default "table")
-      --user-agent string      custom user agent (default "flagship-cli/main")
+  -f, --output-format string   output format for the get and list subcommands for AB Tasty resources. Only 3 format are possible: table, json, json-pretty (default "table")
+      --user-agent string      custom user agent (default "abtasty-cli/main")
 ```
 
 ### SEE ALSO

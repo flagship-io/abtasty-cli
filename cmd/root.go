@@ -20,17 +20,18 @@ import (
 var outputFormat string
 
 // RootCmd represents the base command when called without any subcommands
-// TODO: change description
 var RootCmd = &cobra.Command{
 	Use:     "abtasty-cli",
 	Aliases: []string{"abt", "abtasty"},
-	Short:   "flagship manage your campaigns, project, users etc...",
-	Long: `flagship is the main command, used to manage campaigns, projects, users, variation groups and variations
+	Short:   "abtasty-cli let you manage your campaigns, project, flags, etc... on both product web experimentation and feature experimentation",
+	Long: `abtasty-cli is the main command, used to manage campaigns, projects, flags, etc... on both product web experimentation and feature experimentation
 	
-	Flagship is a feature flagging platform for modern developers. 
+	- Web Experimentation is a customer experience optimization product that blends advanced testing with simple experience building to reach conversion goals confidently and quickly.
+
+	- Feature Experimentation and Rollout is a feature flagging platform for modern developers. 
 	Separate code deployments from feature releases to accelerate development cycles and mitigate risks.
 	
-	Complete documentation is available at https://docs.developers.flagship.io/docs/flagship-command-line-interface`,
+	Complete documentation is available at https://docs.developers.flagship.io/docs/abtasty-cli-command-line-interface`,
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Root().Help()
 	},
@@ -54,7 +55,7 @@ func addSubCommandPalettes() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	RootCmd.PersistentFlags().StringVarP(&outputFormat, "output-format", "f", config.OutputFormat, "output format for the get and list subcommands for flagship resources. Only 3 format are possible: table, json, json-pretty")
+	RootCmd.PersistentFlags().StringVarP(&outputFormat, "output-format", "f", config.OutputFormat, "output format for the get and list subcommands for AB Tasty resources. Only 3 format are possible: table, json, json-pretty")
 	RootCmd.PersistentFlags().StringVarP(&common.UserAgent, "user-agent", "", config.DefaultUserAgent, "custom user agent")
 
 	viper.BindPFlag("output_format", RootCmd.PersistentFlags().Lookup("output-format"))

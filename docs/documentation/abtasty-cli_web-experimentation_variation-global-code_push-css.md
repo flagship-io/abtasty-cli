@@ -17,18 +17,18 @@ abtasty-cli web-experimentation variation-global-code push-css [-i <variation-id
 ### Options
 
 ```
-      --campaign-id string   id of the global code campaign you want to display
+      --campaign-id string   id of the campaign
   -c, --code string          new code to push in the variation
       --file string          file that contains new code to push in the variation
   -h, --help                 help for push-css
-  -i, --id string            id of the global code variation you want to display
+  -i, --id string            id of variation
 ```
 
 ### Options inherited from parent commands
 
 ```
-  -f, --output-format string   output format for the get and list subcommands for flagship resources. Only 3 format are possible: table, json, json-pretty (default "table")
-      --user-agent string      custom user agent (default "flagship-cli/main")
+  -f, --output-format string   output format for the get and list subcommands for AB Tasty resources. Only 3 format are possible: table, json, json-pretty (default "table")
+      --user-agent string      custom user agent (default "abtasty-cli/main")
       --working-dir string     Directory where the file will be generated and pushed from (default "/Users/chadi.laoulaou/abtasty-cli")
 ```
 

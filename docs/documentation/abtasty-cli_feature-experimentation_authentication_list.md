@@ -4,11 +4,11 @@ hide:
 ---
 ## abtasty-cli feature-experimentation authentication list
 
-list all auth for feature experimentation
+List all auth for feature experimentation
 
 ### Synopsis
 
-list all auth for feature experimentation
+List all auth for feature experimentation
 
 ```
 abtasty-cli feature-experimentation authentication list [flags]
@@ -23,8 +23,8 @@ abtasty-cli feature-experimentation authentication list [flags]
 ### Options inherited from parent commands
 
 ```
-  -f, --output-format string   output format for the get and list subcommands for flagship resources. Only 3 format are possible: table, json, json-pretty (default "table")
-      --user-agent string      custom user agent (default "flagship-cli/main")
+  -f, --output-format string   output format for the get and list subcommands for AB Tasty resources. Only 3 format are possible: table, json, json-pretty (default "table")
+      --user-agent string      custom user agent (default "abtasty-cli/main")
 ```
 
 ### SEE ALSO
