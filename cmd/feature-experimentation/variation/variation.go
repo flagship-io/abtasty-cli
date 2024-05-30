@@ -35,7 +35,7 @@ func init() {
 		log.Fatalf("error occurred: %v", err)
 	}
 
-	VariationCmd.PersistentFlags().StringVarP(&VariationGroupID, "variation-group-id", "", "", "id of the variation group where you want to manage your variation")
+	VariationCmd.PersistentFlags().StringVarP(&VariationGroupID, "variation-group-id", "", "", "the variation group id of your variation")
 
 	if err := VariationCmd.MarkPersistentFlagRequired("variation-group-id"); err != nil {
 		log.Fatalf("error occurred: %v", err)

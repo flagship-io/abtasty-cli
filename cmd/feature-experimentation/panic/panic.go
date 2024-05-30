@@ -34,7 +34,7 @@ var PanicCmd = &cobra.Command{
 
 func init() {
 
-	PanicCmd.Flags().StringVarP(&panicStatus, "status", "s", "", "status you want to set the your feature experimentation environment. Only 2 values are possible: on and off")
+	PanicCmd.Flags().StringVarP(&panicStatus, "status", "s", "", "status you want to set to your feature experimentation environment. Only 2 values are possible: on and off")
 
 	if err := PanicCmd.MarkFlagRequired("status"); err != nil {
 		log.Fatalf("error occurred: %v", err)

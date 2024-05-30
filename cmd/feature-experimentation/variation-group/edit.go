@@ -27,7 +27,7 @@ var editCmd = &cobra.Command{
 
 func init() {
 
-	editCmd.Flags().StringVarP(&VariationGroupID, "id", "i", "", "id of the variation group you want to edit")
+	editCmd.Flags().StringVarP(&VariationGroupID, "id", "i", "", "the variation group id of your variation")
 	editCmd.Flags().StringVarP(&DataRaw, "data-raw", "d", "", "raw data contains all the info to edit your variation group, check the doc for details")
 
 	if err := editCmd.MarkFlagRequired("id"); err != nil {

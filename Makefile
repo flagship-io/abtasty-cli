@@ -1,3 +1,5 @@
+doc: 
+	go run docs/gen.go
 build:
 	CGO_ENABLED=0 GOOS=linux go build -ldflags "-X 'github.com/flagship-io/abtasty-cli/cmd/version.Version=${ABTASTY_CLI_VERSION}'" -o abtasty-cli
 
