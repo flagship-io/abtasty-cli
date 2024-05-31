@@ -150,7 +150,7 @@ func init() {
 	loginCmd.Flags().StringVarP(&Username, "username", "u", "", "auth username")
 	loginCmd.Flags().StringVarP(&ClientID, "client-id", "i", "", "client ID of an auth")
 	loginCmd.Flags().StringVarP(&ClientSecret, "client-secret", "s", "", "client secret of an auth")
-	loginCmd.Flags().StringVarP(&AccountId, "account-id", "a", "", "account id of an auth")
+	loginCmd.Flags().StringVarP(&AccountId, "account-id", "a", "", "account ID of an auth")
 
 	loginCmd.Flags().StringVarP(&credentialsFile, "credential-file", "p", "", "config file to create")
 	AuthCmd.AddCommand(loginCmd)

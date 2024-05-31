@@ -65,13 +65,13 @@ var getCmd = &cobra.Command{
 }
 
 func init() {
-	getCmd.Flags().StringVarP(&CampaignID, "campaign-id", "", "", "id of the campaign")
+	getCmd.Flags().StringVarP(&CampaignID, "campaign-id", "", "", "campaign id of the modification")
 
 	if err := getCmd.MarkFlagRequired("campaign-id"); err != nil {
 		log.Fatalf("error occurred: %v", err)
 	}
 
-	getCmd.Flags().StringVarP(&ModificationID, "id", "i", "", "id of the modification code you want to display")
+	getCmd.Flags().StringVarP(&ModificationID, "id", "i", "", "id of the modification you want to display")
 
 	if err := getCmd.MarkFlagRequired("id"); err != nil {
 		log.Fatalf("error occurred: %v", err)

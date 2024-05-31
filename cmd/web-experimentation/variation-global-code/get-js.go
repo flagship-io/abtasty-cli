@@ -57,13 +57,13 @@ var getJSCmd = &cobra.Command{
 }
 
 func init() {
-	getJSCmd.Flags().StringVarP(&CampaignID, "campaign-id", "", "", "id of the global code campaign you want to display")
+	getJSCmd.Flags().StringVarP(&CampaignID, "campaign-id", "", "", "id of the campaign you want to display")
 
 	if err := getJSCmd.MarkFlagRequired("campaign-id"); err != nil {
 		log.Fatalf("error occurred: %v", err)
 	}
 
-	getJSCmd.Flags().StringVarP(&VariationID, "id", "i", "", "id of the global code variation you want to display")
+	getJSCmd.Flags().StringVarP(&VariationID, "id", "i", "", "id of the variation you want to display")
 
 	if err := getJSCmd.MarkFlagRequired("id"); err != nil {
 		log.Fatalf("error occurred: %v", err)

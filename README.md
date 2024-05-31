@@ -53,7 +53,7 @@ curl -sL https://raw.githubusercontent.com/flagship-io/abtasty-cli/main/install.
 
 ```bash
 brew tap flagship-io/abtasty-cli
-brew install flagship
+brew install abtasty-cli
 ```
 
 - Other Operating Systems

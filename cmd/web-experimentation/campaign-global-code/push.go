@@ -51,7 +51,7 @@ var pushCmd = &cobra.Command{
 }
 
 func init() {
-	pushCmd.Flags().StringVarP(&CampaignID, "id", "i", "", "id of the global code campaign")
+	pushCmd.Flags().StringVarP(&CampaignID, "id", "i", "", "id of the campaign")
 	if err := pushCmd.MarkFlagRequired("id"); err != nil {
 		log.Fatalf("error occurred: %v", err)
 	}
