@@ -4,11 +4,11 @@ hide:
 ---
 ## abtasty-cli web-experimentation account list
 
-List all account id associated to your AB Tasty account
+List all account ids associated to your AB Tasty account
 
 ### Synopsis
 
-List all account id associated to your AB Tasty account
+List all account ids associated to your AB Tasty account
 
 ```
 abtasty-cli web-experimentation account list [flags]

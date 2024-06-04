@@ -4,11 +4,11 @@ hide:
 ---
 ## abtasty-cli feature-experimentation authentication list
 
-List all auth for feature experimentation
+List all authentications for feature experimentation
 
 ### Synopsis
 
-List all auth for feature experimentation
+List all authentications for feature experimentation
 
 ```
 abtasty-cli feature-experimentation authentication list [flags]

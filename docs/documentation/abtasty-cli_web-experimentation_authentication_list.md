@@ -4,11 +4,11 @@ hide:
 ---
 ## abtasty-cli web-experimentation authentication list
 
-List all auth for web experimentation
+List all authentications for web experimentation
 
 ### Synopsis
 
-List all auth for web experimentation
+List all authentications for web experimentation
 
 ```
 abtasty-cli web-experimentation authentication list [flags]
