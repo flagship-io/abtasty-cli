@@ -1,0 +1,5 @@
+profile: cover.out
+local-prefix: "github.com/flagship-io/abtasty-cli"
+
+threshold:
+  total: 70

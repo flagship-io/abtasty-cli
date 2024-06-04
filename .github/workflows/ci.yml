@@ -1,4 +1,4 @@
-name: CI pipeline
+name: Test pipeline
 # This workflow is triggered on pushes to the repository.
 on:
   push:
@@ -15,13 +15,8 @@ jobs:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
       - name: Run tests
-        run: go test -race `go list ./... | grep -v cmd/feature-experimentation/analyze | grep -v cmd/feature-experimentation/resource` -coverprofile cover.out.tmp
-      - name: Removes mocks from tests
-        run: cat cover.out.tmp | grep -v "mock_\|cmd/feature-experimentation/analyze" | grep -v "mock_\|cmd/feature-experimentation/resource" > cover.out
-      - uses: vladopajic/go-test-coverage@v2
-        with:
-          profile: ./cover.out
-          local-prefix: github.com/flagship-io/abtasty-cli
-          threshold-total: 70
-          git-branch: badges
-          git-token: ${{ github.ref_name == 'main' && secrets.ABTASTY_CLI_BADGE || '' }}
+        run: |
+          mkdir -p coverage
+          go test -v -race `go list ./... | grep -v cmd/feature-experimentation/analyze | grep -v cmd/feature-experimentation/resource` -coverprofile coverage/cover.out.tmp
+          cat coverage/cover.out.tmp | grep -v "mock_\|cmd/feature-experimentation/analyze" | grep -v "mock_\|cmd/feature-experimentation/resource" > coverage/cover.out
+          go tool cover -func=coverage/cover.out
