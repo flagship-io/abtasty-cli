@@ -4,11 +4,11 @@ hide:
 ---
 ## abtasty-cli feature-experimentation account-environment list
 
-List all account environment ids associated to your account
+List all account environment ids associated with your account
 
 ### Synopsis
 
-List all account environment ids associated to your account
+List all account environment ids associated with your account
 
 ```
 abtasty-cli feature-experimentation account-environment list [flags]

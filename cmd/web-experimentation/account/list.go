@@ -15,8 +15,8 @@ import (
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "List all account ids associated to your AB Tasty account",
-	Long:  `List all account ids associated to your AB Tasty account`,
+	Short: "List all account ids associated with your AB Tasty account",
+	Long:  `List all account ids associated with your AB Tasty account`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		body, err := httprequest.AccountWERequester.HTTPListAccount()

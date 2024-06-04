@@ -52,6 +52,8 @@ func TestAccountEnvironmentUseCommand(t *testing.T) {
 
 func TestAccountEnvironmentCurrentCommand(t *testing.T) {
 
+	utils.ExecuteCommand(AccountEnvironmentCmd, "use", "--id=account_environment_id")
+
 	output, _ := utils.ExecuteCommand(AccountEnvironmentCmd, "current")
 
 	err := json.Unmarshal([]byte(output), &testAccount)
