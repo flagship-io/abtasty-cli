@@ -14,8 +14,8 @@ jobs:
       - uses: actions/checkout@master
       - name: Copy the Readmes
         run: |
-          cp ./abtasty-cli/README.md ./abtasty-cli/docs/index.md
-          cp ./abtasty-cli/CONTRIBUTING.md ./abtasty-cli/docs
+          cp ./README.md ./docs/index.md
+          cp ./CONTRIBUTING.md ./docs
       - name: Commit files
         run: |
           git config --local user.email "action@github.com"
