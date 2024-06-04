@@ -63,7 +63,7 @@ esac
 echo "Downloading AB Tasty CLI..."
 wget -q --spider $url
 if [ $? -eq 0 ]; then
-  wget -O ~/flagship.tar.gz $url -q --show-progress
+  wget -O ~/abtasty-cli.tar.gz $url -q --show-progress
 else
   echo "------------------------"
   echo "AB Tasty CLI archive not found"
@@ -74,7 +74,7 @@ fi
 # Extracting the archive (if it exists)
 echo "Extracting AB Tasty CLI..."
 if [ -f ~/flagship.tar.gz ]; then
-  tar -xzf ~/flagship.tar.gz -C ~/
+  tar -xzf ~/abtasty-cli.tar.gz -C ~/
 else
   echo "AB Tasty CLI archive not found"
   exit 1
@@ -85,15 +85,15 @@ set -e
 
 # Removing the archive
 echo "Removing archive..."
-rm ~/flagship.tar.gz
+rm ~/abtasty-cli.tar.gz
 
 # Moving the binary to /usr/local/bin
 echo "Moving Flagship CLI to /usr/local/bin..."
-sudo mv ~/flagship /usr/local/bin/
+sudo mv ~/abtasty-cli /usr/local/bin/
 
 # Making the binary executable
 echo "Making Flagship CLI executable..."
-sudo chmod +x /usr/local/bin/flagship
+sudo chmod +x /usr/local/bin/abtasty-cli
 
 # Sending a message to the user
 echo "-----------------------------------------"
