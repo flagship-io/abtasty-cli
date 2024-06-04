@@ -28,6 +28,7 @@ jobs:
           github_token: ${{ secrets.PUBLISHER_TOKEN }}
 
   deploy:
+    needs: docit
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
