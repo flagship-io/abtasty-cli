@@ -84,7 +84,7 @@ var getCmd = &cobra.Command{
 }
 
 func init() {
-	getCmd.Flags().StringVarP(&CampaignID, "id", "i", "", "id of the global code campaign you want to display")
+	getCmd.Flags().StringVarP(&CampaignID, "id", "i", "", "id of the campaign you want to display")
 
 	if err := getCmd.MarkFlagRequired("id"); err != nil {
 		log.Fatalf("error occurred: %v", err)

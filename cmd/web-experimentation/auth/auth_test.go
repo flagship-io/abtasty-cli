@@ -34,14 +34,14 @@ func TestAuthCommand(t *testing.T) {
 	output, err := utils.ExecuteCommand(AuthCmd)
 
 	assert.Nil(t, err)
-	assert.Contains(t, output, "Manage your CLI authentication for web experimentation\n\nUsage:\n  authentication [login|get|list|delete]")
+	assert.Contains(t, output, "Manage authentication for web experimentation\n\nUsage:\n  authentication [login|get|list|delete]")
 }
 
 func TestAuthHelpCommand(t *testing.T) {
 	output, err := utils.ExecuteCommand(AuthCmd, "--help")
 
 	assert.Nil(t, err)
-	assert.Contains(t, output, "Manage your CLI authentication for web experimentation\n\nUsage:\n  authentication [login|get|list|delete]")
+	assert.Contains(t, output, "Manage authentication for web experimentation\n\nUsage:\n  authentication [login|get|list|delete]")
 }
 
 func TestAuthLoginCommand(t *testing.T) {

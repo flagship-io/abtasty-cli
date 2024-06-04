@@ -19,9 +19,9 @@ var AccountID string
 // AccountGlobalCodeCmd represents the account global code command
 var AccountGlobalCodeCmd = &cobra.Command{
 	Use:     "account-global-code [get|push]",
-	Short:   "Get account global code",
+	Short:   "Manage account global code",
 	Aliases: []string{"agc"},
-	Long:    `Get account global code`,
+	Long:    `Manage account global code`,
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
 	},

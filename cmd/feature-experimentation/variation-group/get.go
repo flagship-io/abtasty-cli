@@ -28,7 +28,7 @@ var getCmd = &cobra.Command{
 }
 
 func init() {
-	getCmd.Flags().StringVarP(&VariationGroupID, "id", "i", "", "id of the variation group you want to display")
+	getCmd.Flags().StringVarP(&VariationGroupID, "id", "i", "", "the variation group id of your variation")
 
 	if err := getCmd.MarkFlagRequired("id"); err != nil {
 		log.Fatalf("error occurred: %v", err)

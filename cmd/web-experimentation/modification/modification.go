@@ -18,7 +18,7 @@ var (
 
 // modificationCmd represents the modification command
 var ModificationCmd = &cobra.Command{
-	Use:   "modification [get|list|delete]",
+	Use:   "modification [create|edit|get|list|delete]",
 	Short: "Manage your modifications",
 	Long:  `Manage your modifications`,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -27,7 +27,7 @@ var ModificationCmd = &cobra.Command{
 }
 
 func init() {
-	ModificationCmd.PersistentFlags().IntVarP(&CampaignID, "campaign-id", "", 0, "id of the campaign where you want to manage your modifications")
+	ModificationCmd.PersistentFlags().IntVarP(&CampaignID, "campaign-id", "", 0, "campaign id of your modifications")
 
 	if err := ModificationCmd.MarkPersistentFlagRequired("campaign-id"); err != nil {
 		log.Fatalf("error occurred: %v", err)

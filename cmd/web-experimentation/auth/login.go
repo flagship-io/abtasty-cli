@@ -22,8 +22,8 @@ var (
 // createCmd represents the create command
 var loginCmd = &cobra.Command{
 	Use:   "login [--credential-file] | [-u <username> | --username=<username>] [-i <clientID> | --client-id=<clientID>] [-s <clientSecret> | --client-secret=<clientSecret>] [-a <accountID> | --account-id=<accountID>]",
-	Short: "login",
-	Long:  `login`,
+	Short: "Create auth file based on the credentials",
+	Long:  `Create auth file based on the credentials in $HOME/.abtasty/credentials/we`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if !utils.CheckSingleFlag(credentialsFile != "", Username != "") {
 			log.Fatalf("error occurred: %s", "1 flag is required. (browser, username)")

@@ -19,8 +19,8 @@ var filePath string
 // pushCmd represents push command
 var pushCmd = &cobra.Command{
 	Use:   "push [-i <campaign-id> | --id <campaign-id>]",
-	Short: "push campaign global code",
-	Long:  `push campaign global code`,
+	Short: "Push campaign global code",
+	Long:  `Push campaign global code`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var codeByte []byte
 
@@ -51,7 +51,7 @@ var pushCmd = &cobra.Command{
 }
 
 func init() {
-	pushCmd.Flags().StringVarP(&CampaignID, "id", "i", "", "id of the global code campaign")
+	pushCmd.Flags().StringVarP(&CampaignID, "id", "i", "", "id of the campaign")
 	if err := pushCmd.MarkFlagRequired("id"); err != nil {
 		log.Fatalf("error occurred: %v", err)
 	}

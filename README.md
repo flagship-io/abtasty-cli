@@ -8,7 +8,7 @@
 
 A Tool to manage your Flagship resources built in [Go](https://go.dev/) using the library [Cobra](https://cobra.dev/).
 
-[Website](https://flagship.io) | [Documentation](https://docs.developers.flagship.io/docs/flagship-command-line-interface) | [Installation Guide](https://docs.developers.flagship.io/docs/flagship-command-line-interface#download-and-install-the-flagship-cli) | [Twitter](https://twitter.com/feature_flags)
+[Website](https://flagship.io) | [Website Documentation](https://docs.developers.flagship.io/docs/flagship-command-line-interface) | [Command Documentation](https://flagship-io.github.io/abtasty-cli/documentation/abtasty-cli) | [Installation Guide](https://docs.developers.flagship.io/docs/flagship-command-line-interface#download-and-install-the-flagship-cli) | [Twitter](https://twitter.com/feature_flags)
 
 [![Apache2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 [![Go Report Card](https://goreportcard.com/badge/github.com/flagship-io/abtasty-cli)](https://goreportcard.com/report/github.com/flagship-io/abtasty-cli)
@@ -53,24 +53,20 @@ curl -sL https://raw.githubusercontent.com/flagship-io/abtasty-cli/main/install.
 
 ```bash
 brew tap flagship-io/abtasty-cli
-brew install flagship
+brew install abtasty-cli
 ```
 
 - Other Operating Systems
 
 Please download the binary from the [release page](https://github.com/flagship-io/abtasty-cli/releases)
 
-### Using a Docker image
-
-You can pull the latest docker image from docker hub: docker pull [flagshipio/cli](https://hub.docker.com/repository/docker/flagshipio/cli)
-
 ### Using Golang from source
 
 You can pull the project from github and build it using golang latest stable version (+1.18):
 
     git clone git@github.com:flagship-io/abtasty-cli.git
-    cd flagship
-    go build -o flagship
+    cd abtasty-cli
+    go build -o abtasty-cli
 
 ## Contributors
 
@@ -106,7 +102,8 @@ Please read our [contributing guide](./CONTRIBUTING.md).
   **To learn more:**
   ​
 - [Solution overview](https://www.flagship.io/#showvideo) - A 5mn video demo :movie_camera:
-- [Documentation](https://docs.developers.flagship.io/) - Our dev portal with guides, how tos, API and SDK references
+- [Website Documentation](https://docs.developers.flagship.io/) - Our dev portal with guides, how tos, API and SDK references
+- [Command Documentation](https://flagship-io.github.io/abtasty-cli/documentation/abtasty-cli) - Command references
 - [Sign up for a free trial](https://www.flagship.io/sign-up/) - Create your free account
 - [Guide to feature flagging](https://www.flagship.io/feature-flags/) - Everything you need to know about feature flag related use cases
 - [Blog](https://www.flagship.io/blog/) - Additional resources about release management

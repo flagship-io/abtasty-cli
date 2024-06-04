@@ -30,12 +30,12 @@ var testModification models.Modification
 
 func TestVariationGlobalCodeCommand(t *testing.T) {
 	output, _ := utils.ExecuteCommand(VariationGlobalCodeCmd)
-	assert.Contains(t, output, "Get variation global code")
+	assert.Contains(t, output, "Manage variation global code")
 }
 
 func TestVariationGlobalCodeHelpCommand(t *testing.T) {
 	output, _ := utils.ExecuteCommand(VariationGlobalCodeCmd, "--help")
-	assert.Contains(t, output, "Get variation global code")
+	assert.Contains(t, output, "Manage variation global code")
 }
 
 func TestVariationGlobalCodeGetJSCommand(t *testing.T) {

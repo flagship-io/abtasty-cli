@@ -1,11 +1,31 @@
-name: ci
+name: documentation
 on:
   push:
     branches:
       - main
+
 permissions:
   contents: write
 jobs:
+  docit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@master
+      - name: Copy the Readmes
+        run: |
+          cp ./abtasty-cli/README.md ./abtasty-cli/docs/index.md
+          cp ./abtasty-cli/CONTRIBUTING.md ./abtasty-cli/docs
+      - name: Commit files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git commit -m "Add changes" -a
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.PUBLISHER_TOKEN }}
+
   deploy:
     runs-on: ubuntu-latest
     steps:

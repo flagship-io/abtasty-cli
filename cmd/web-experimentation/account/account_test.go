@@ -33,12 +33,12 @@ var testAccounts []models_we.AccountWE
 
 func TestAccountCommand(t *testing.T) {
 	output, _ := utils.ExecuteCommand(AccountCmd)
-	assert.Contains(t, output, "Manage your CLI authentication\n\nUsage:\n  account [use|list|current]")
+	assert.Contains(t, output, "Manage your account\n\nUsage:\n  account [use|list|current]")
 }
 
 func TestAccountHelpCommand(t *testing.T) {
 	output, _ := utils.ExecuteCommand(AccountCmd, "--help")
-	assert.Contains(t, output, "Manage your CLI authentication\n\nUsage:\n  account [use|list|current]")
+	assert.Contains(t, output, "Manage your account\n\nUsage:\n  account [use|list|current]")
 }
 
 func TestAccountUseCommand(t *testing.T) {

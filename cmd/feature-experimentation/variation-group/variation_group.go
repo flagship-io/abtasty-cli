@@ -29,7 +29,7 @@ var VariationGroupCmd = &cobra.Command{
 }
 
 func init() {
-	VariationGroupCmd.PersistentFlags().StringVarP(&CampaignID, "campaign-id", "", "", "id of the campaign where you want to manage your variation group")
+	VariationGroupCmd.PersistentFlags().StringVarP(&CampaignID, "campaign-id", "", "", "the campaign id of your variation group")
 
 	if err := VariationGroupCmd.MarkPersistentFlagRequired("campaign-id"); err != nil {
 		log.Fatalf("error occurred: %v", err)

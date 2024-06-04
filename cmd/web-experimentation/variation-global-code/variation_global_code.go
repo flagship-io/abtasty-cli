@@ -22,9 +22,9 @@ var Override bool
 // VariationGlobalCodeCmd represents the variation global code command
 var VariationGlobalCodeCmd = &cobra.Command{
 	Use:     "variation-global-code [get-js | get-css]",
-	Short:   "Get variation global code",
+	Short:   "Manage variation global code",
 	Aliases: []string{"vgc"},
-	Long:    `Get variation global code`,
+	Long:    `Manage variation global code`,
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
 	},

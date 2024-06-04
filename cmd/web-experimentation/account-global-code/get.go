@@ -41,7 +41,7 @@ var getCmd = &cobra.Command{
 }
 
 func init() {
-	getCmd.Flags().StringVarP(&AccountID, "id", "i", "", "id of the global code account you want to display")
+	getCmd.Flags().StringVarP(&AccountID, "id", "i", "", "id of the account you want to display")
 	if err := getCmd.MarkFlagRequired("id"); err != nil {
 		log.Fatalf("error occurred: %v", err)
 	}

@@ -19,9 +19,9 @@ var CampaignID string
 // CampaignGlobalCodeCmd represents the campaign global code command
 var CampaignGlobalCodeCmd = &cobra.Command{
 	Use:     "campaign-global-code [get|push]",
-	Short:   "Get campaign global code",
+	Short:   "Manage campaign global code",
 	Aliases: []string{"cgc"},
-	Long:    `Get campaign global code`,
+	Long:    `Manage campaign global code`,
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
 	},

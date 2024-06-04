@@ -21,8 +21,8 @@ var cssFilePath string
 // pushCSSCmd represents push command
 var pushCSSCmd = &cobra.Command{
 	Use:   "push-css [-i <variation-id> | --id <variation-id>] [--campaign-id <campaign-id>]",
-	Short: "push variation global css code",
-	Long:  `push variation global css code`,
+	Short: "Push variation global css code",
+	Long:  `Push variation global css code`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var modificationId int
 		var codeByte []byte
@@ -100,12 +100,12 @@ var pushCSSCmd = &cobra.Command{
 }
 
 func init() {
-	pushCSSCmd.Flags().StringVarP(&CampaignID, "campaign-id", "", "", "id of the global code campaign you want to display")
+	pushCSSCmd.Flags().StringVarP(&CampaignID, "campaign-id", "", "", "id of the campaign")
 	if err := pushCSSCmd.MarkFlagRequired("campaign-id"); err != nil {
 		log.Fatalf("error occurred: %v", err)
 	}
 
-	pushCSSCmd.Flags().StringVarP(&VariationID, "id", "i", "", "id of the global code variation you want to display")
+	pushCSSCmd.Flags().StringVarP(&VariationID, "id", "i", "", "id of variation")
 	if err := pushCSSCmd.MarkFlagRequired("id"); err != nil {
 		log.Fatalf("error occurred: %v", err)
 	}

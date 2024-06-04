@@ -33,8 +33,8 @@ func checkSingleFlag(bool1, bool2 bool) bool {
 // createCmd represents the create command
 var loginCmd = &cobra.Command{
 	Use:   "login [--credential-file] | [-u <username> | --username=<username>] [-i <clientID> | --client-id=<clientID>] [-s <clientSecret> | --client-secret=<clientSecret>] [-a <accountID> | --account-id=<accountID>]",
-	Short: "login",
-	Long:  `login`,
+	Short: "Create auth file",
+	Long:  `Create auth file based on the credentials in $HOME/.abtasty/credentials/fe`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if !checkSingleFlag(credentialsFile != "", Username != "") {
 			fmt.Fprintf(cmd.OutOrStderr(), "error occurred: %s", "1 flag is required. (username, credential-file)")
@@ -150,7 +150,7 @@ func init() {
 	loginCmd.Flags().StringVarP(&Username, "username", "u", "", "auth username")
 	loginCmd.Flags().StringVarP(&ClientID, "client-id", "i", "", "client ID of an auth")
 	loginCmd.Flags().StringVarP(&ClientSecret, "client-secret", "s", "", "client secret of an auth")
-	loginCmd.Flags().StringVarP(&AccountId, "account-id", "a", "", "account id of an auth")
+	loginCmd.Flags().StringVarP(&AccountId, "account-id", "a", "", "account ID of an auth")
 
 	loginCmd.Flags().StringVarP(&credentialsFile, "credential-file", "p", "", "config file to create")
 	AuthCmd.AddCommand(loginCmd)

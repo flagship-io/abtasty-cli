@@ -21,8 +21,8 @@ var jsFilePath string
 // pushJsCmd represents push command
 var pushJSCmd = &cobra.Command{
 	Use:   "push-js [-i <variation-id> | --id <variation-id>] [--campaign-id <campaign-id>]",
-	Short: "push variation global js code",
-	Long:  `push variation global js code`,
+	Short: "Push variation global js code",
+	Long:  `Push variation global js code`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var modificationId int
 		var codeByte []byte
@@ -100,12 +100,12 @@ var pushJSCmd = &cobra.Command{
 }
 
 func init() {
-	pushJSCmd.Flags().StringVarP(&CampaignID, "campaign-id", "", "", "id of the global code campaign you want to display")
+	pushJSCmd.Flags().StringVarP(&CampaignID, "campaign-id", "", "", "id of the campaign")
 	if err := pushJSCmd.MarkFlagRequired("campaign-id"); err != nil {
 		log.Fatalf("error occurred: %v", err)
 	}
 
-	pushJSCmd.Flags().StringVarP(&VariationID, "id", "i", "", "id of the global code variation you want to display")
+	pushJSCmd.Flags().StringVarP(&VariationID, "id", "i", "", "id of variation")
 	if err := pushJSCmd.MarkFlagRequired("id"); err != nil {
 		log.Fatalf("error occurred: %v", err)
 	}

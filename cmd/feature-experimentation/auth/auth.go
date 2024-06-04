@@ -16,8 +16,8 @@ var (
 var AuthCmd = &cobra.Command{
 	Use:     "authentication [login|get|list|delete]",
 	Aliases: []string{"auth"},
-	Short:   "Manage your CLI authentication for feature experimentation",
-	Long:    `Manage your CLI authentication for feature experimentation`,
+	Short:   "Manage authentication for feature experimentation",
+	Long:    `Manage authentication for feature experimentation`,
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
 	},

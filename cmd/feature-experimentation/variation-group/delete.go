@@ -27,7 +27,7 @@ var deleteCmd = &cobra.Command{
 
 func init() {
 
-	deleteCmd.Flags().StringVarP(&VariationGroupID, "id", "i", "", "id of the variation group you want to delete")
+	deleteCmd.Flags().StringVarP(&VariationGroupID, "id", "i", "", "the variation group id of your variation")
 
 	if err := deleteCmd.MarkFlagRequired("id"); err != nil {
 		fmt.Fprintf(deleteCmd.OutOrStderr(), "error occurred: %s", err)
