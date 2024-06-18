@@ -2,11 +2,52 @@ package common
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
+	"log"
 	"net/http"
+	"os"
+	"os/exec"
+	"runtime"
+	"time"
 
 	"github.com/flagship-io/abtasty-cli/models"
 	"github.com/flagship-io/abtasty-cli/utils"
 )
+
+func openLink(url string) error {
+	var cmd *exec.Cmd
+	switch runtime.GOOS {
+	case "linux":
+		cmd = exec.Command("xdg-open", url)
+	case "darwin":
+		cmd = exec.Command("open", url)
+	case "windows":
+		cmd = exec.Command("cmd", "/c", "start", url)
+	default:
+		return fmt.Errorf("unsupported operating system")
+	}
+	err := cmd.Run()
+	return err
+}
+
+func handleCallback(w http.ResponseWriter, r *http.Request, codeChan chan<- string) {
+	code := r.URL.Query().Get("code")
+	if code == "" {
+		http.Error(w, "No token found in URL", http.StatusBadRequest)
+		os.Exit(0)
+		return
+	}
+
+	codeChan <- code
+
+	http.Redirect(w, r, "https://app2.abtasty.com/dashboard", http.StatusSeeOther)
+
+	go func() {
+		time.Sleep(5 * time.Second)
+		close(codeChan)
+	}()
+}
 
 func HTTPRefreshTokenFE(client_id, refresh_token string) (models.TokenResponse, error) {
 	var authenticationResponse models.TokenResponse
@@ -33,22 +74,32 @@ func HTTPRefreshTokenFE(client_id, refresh_token string) (models.TokenResponse, 
 	return authenticationResponse, err
 }
 
-/* func HTTPRefreshTokenWE(client_id, client_secret, refresh_token string) (models.TokenResponse, error) {
+func HTTPRefreshTokenWE(cred RequestConfig) (models.TokenResponse, error) {
 	var authenticationResponse models.TokenResponse
 	authRequest := models.RefreshTokenRequestWE{
-		ClientID:     client_id,
+		ClientID:     cred.ClientID,
 		GrantType:    "refresh_token",
-		RefreshToken: refresh_token,
-		ClientSecret: client_secret,
+		RefreshToken: cred.RefreshToken,
+		ClientSecret: cred.ClientSecret,
 	}
 	authRequestJSON, err := json.Marshal(authRequest)
 	if err != nil {
 		return models.TokenResponse{}, err
 	}
 
-	respBody, err := HTTPRequest[models.TokenWE](http.MethodPost, utils.GetHostWebExperimentationAuth()+"/v1"+"/token", authRequestJSON)
+	respBody, err := HTTPRequest[models.Token](http.MethodPost, utils.GetHostWebExperimentationAuth()+"/v1"+"/token", authRequestJSON)
 	if err != nil {
-		return models.TokenResponse{}, err
+		authResponse, err := InitiateBrowserAuth(cred.Username, cred.ClientID, cred.ClientSecret, cred.AccountID)
+		if err != nil {
+			return models.TokenResponse{}, err
+		}
+
+		err = json.Unmarshal(respBody, &authResponse)
+		if err != nil {
+			return models.TokenResponse{}, err
+		}
+
+		return authenticationResponse, err
 	}
 
 	err = json.Unmarshal(respBody, &authenticationResponse)
@@ -57,7 +108,48 @@ func HTTPRefreshTokenFE(client_id, refresh_token string) (models.TokenResponse, 
 	}
 
 	return authenticationResponse, err
-} */
+}
+
+func InitiateBrowserAuth(username, clientID, clientSecret, accountID string) (models.TokenResponse, error) {
+	if clientID == "" || clientSecret == "" || accountID == "" {
+		log.Fatal("Error while login, required fields (username, client ID, client secret, account id)")
+	}
+
+	codeChan := make(chan string)
+	var url = fmt.Sprintf("https://auth.abtasty.com/authorize?client_id=%s&client_secret=%s&redirect_uri=http://localhost:8010/auth/callback", clientID, clientSecret)
+
+	if err := openLink(url); err != nil {
+		log.Fatalf("Error opening link: %s", err)
+	}
+
+	go func() {
+		http.HandleFunc("/auth/callback", func(w http.ResponseWriter, r *http.Request) {
+			handleCallback(w, r, codeChan)
+		})
+
+		if err := http.ListenAndServe("127.0.0.1:8010", nil); err != nil {
+			log.Fatalf("Error starting callback server: %s", err)
+		}
+	}()
+
+	code := <-codeChan
+
+	if code != "" {
+
+		authenticationResponse, err := HTTPCreateTokenWEAuthorizationCode(clientID, clientSecret, code)
+		if err != nil {
+			return models.TokenResponse{}, err
+		}
+
+		if authenticationResponse.AccessToken == "" {
+			return models.TokenResponse{}, errors.New("Credentials not valid.")
+		}
+
+		return authenticationResponse, nil
+	}
+
+	return models.TokenResponse{}, errors.New("Error occurred.")
+}
 
 func HTTPCreateTokenFE(clientId, clientSecret, accountId string) (models.TokenResponse, error) {
 	var authenticationResponse models.TokenResponse
@@ -85,7 +177,7 @@ func HTTPCreateTokenFE(clientId, clientSecret, accountId string) (models.TokenRe
 	return authenticationResponse, err
 }
 
-func HTTPCreateTokenWE(clientId, clientSecret, accountId string) (models.TokenResponse, error) {
+/* func HTTPCreateTokenWE(clientId, clientSecret, accountId string) (models.TokenResponse, error) {
 	var authenticationResponse models.TokenResponse
 	authRequest := models.ClientCredentialsRequest{
 		ClientID:     clientId,
@@ -109,9 +201,9 @@ func HTTPCreateTokenWE(clientId, clientSecret, accountId string) (models.TokenRe
 	}
 
 	return authenticationResponse, err
-}
+} */
 
-/* func HTTPCreateTokenWEAuthorizationCode(client_id, client_secret, code string) (models.TokenResponse, error) {
+func HTTPCreateTokenWEAuthorizationCode(client_id, client_secret, code string) (models.TokenResponse, error) {
 	var authenticationResponse models.TokenResponse
 	authRequest := models.AuthorizationCodeRequest{
 		ClientID:     client_id,
@@ -124,7 +216,7 @@ func HTTPCreateTokenWE(clientId, clientSecret, accountId string) (models.TokenRe
 		return models.TokenResponse{}, err
 	}
 
-	respBody, err := HTTPRequest[models.TokenWE](http.MethodPost, utils.GetHostWebExperimentationAuth()+"/v1/token", authRequestJSON)
+	respBody, err := HTTPRequest[models.Token](http.MethodPost, utils.GetHostWebExperimentationAuth()+"/v1/token", authRequestJSON)
 	if err != nil {
 		return models.TokenResponse{}, err
 	}
@@ -135,7 +227,7 @@ func HTTPCreateTokenWE(clientId, clientSecret, accountId string) (models.TokenRe
 	}
 
 	return authenticationResponse, err
-} */
+}
 
 /* func HTTPCreateTokenWEPassword(client_id, client_secret, username, password, mfaCode string) (models.TokenResponse, error) {
 	var authenticationResponse models.TokenResponse

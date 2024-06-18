@@ -55,7 +55,7 @@ func addSubCommandPalettes() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	RootCmd.PersistentFlags().StringVarP(&outputFormat, "output-format", "f", config.OutputFormat, "output format for the get and list subcommands for AB Tasty resources. Only 3 format are possible: table, json, json-pretty")
+	RootCmd.PersistentFlags().StringVarP(&outputFormat, "output-format", "", config.OutputFormat, "output format for the get and list subcommands for AB Tasty resources. Only 3 format are possible: table, json, json-pretty")
 	RootCmd.PersistentFlags().StringVarP(&common.UserAgent, "user-agent", "", config.DefaultUserAgent, "custom user agent")
 
 	viper.BindPFlag("output_format", RootCmd.PersistentFlags().Lookup("output-format"))

@@ -113,6 +113,7 @@ var loginCmd = &cobra.Command{
 				fmt.Fprintln(cmd.OutOrStderr(), "Error while login, required fields (username, client ID, client secret, account id)")
 				return
 			}
+
 			authenticationResponse, err := common.HTTPCreateTokenFE(ClientID, ClientSecret, AccountId)
 			if err != nil {
 				fmt.Fprintln(cmd.OutOrStderr(), err)
@@ -139,6 +140,13 @@ var loginCmd = &cobra.Command{
 				log.Fatalf("error occurred: %s", err)
 			}
 
+			if AccountEnvID != "" {
+				err = config.SetAccountEnvID(utils.FEATURE_EXPERIMENTATION, AccountEnvID)
+				if err != nil {
+					log.Fatalf("error occurred: %s", err)
+				}
+			}
+
 			fmt.Fprintln(cmd.OutOrStdout(), "Credential created successfully")
 		}
 
@@ -151,6 +159,7 @@ func init() {
 	loginCmd.Flags().StringVarP(&ClientID, "client-id", "i", "", "client ID of an auth")
 	loginCmd.Flags().StringVarP(&ClientSecret, "client-secret", "s", "", "client secret of an auth")
 	loginCmd.Flags().StringVarP(&AccountId, "account-id", "a", "", "account ID of an auth")
+	loginCmd.Flags().StringVarP(&AccountEnvID, "account-environment-id", "e", "", "account environment ID of an auth")
 
 	loginCmd.Flags().StringVarP(&credentialsFile, "credential-file", "p", "", "config file to create")
 	AuthCmd.AddCommand(loginCmd)

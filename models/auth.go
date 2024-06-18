@@ -28,4 +28,5 @@ type AccountJSON struct {
 	CurrentUsedCredential string `json:"current_used_credential"`
 	AccountID             string `json:"account_id"`
 	AccountEnvironmentID  string `json:"account_environment_id"`
+	Token                 string `json:"token"`
 }

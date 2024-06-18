@@ -28,7 +28,7 @@ var createCmd = &cobra.Command{
 			if FlagPredefinedValues != "" {
 				err := json.Unmarshal([]byte(FlagPredefinedValues), &predefinedValues_)
 				if err != nil {
-					log.Fatalf("error occurred1: %s", err)
+					log.Fatalf("error occurred: %s", err)
 				}
 			}
 

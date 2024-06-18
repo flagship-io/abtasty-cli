@@ -10,6 +10,7 @@ var (
 	ClientID     string
 	ClientSecret string
 	AccountId    string
+	AccountEnvID string
 )
 
 // AuthCmd represents the auth command

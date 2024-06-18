@@ -6,6 +6,7 @@ package auth
 import (
 	"fmt"
 	"log"
+	"os"
 	"slices"
 
 	"github.com/flagship-io/abtasty-cli/utils"
@@ -16,7 +17,7 @@ import (
 
 var (
 	credentialsFile string
-	accountId       string
+	AccountID       string
 )
 
 // createCmd represents the create command
@@ -25,11 +26,11 @@ var loginCmd = &cobra.Command{
 	Short: "Create auth file based on the credentials",
 	Long:  `Create auth file based on the credentials in $HOME/.abtasty/credentials/we`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if !utils.CheckSingleFlag(credentialsFile != "", Username != "") {
-			log.Fatalf("error occurred: %s", "1 flag is required. (browser, username)")
-		}
+		/* 		if !utils.CheckSingleFlag(credentialsFile != "", Username != "") {
+			log.Fatalf("error occurred: %s", "1 flag is required. (username)")
+		} */
 
-		if credentialsFile != "" {
+		/* if credentialsFile != "" {
 			v, err := config.ReadCredentialsFromFile(credentialsFile)
 			if err != nil {
 				log.Fatalf("error occurred: %v", err)
@@ -63,7 +64,7 @@ var loginCmd = &cobra.Command{
 
 			fmt.Fprintln(cmd.OutOrStdout(), "Credential created successfully")
 			return
-		}
+		} */
 
 		if Username != "" {
 			existingCredentials, err := config.GetUsernames(utils.WEB_EXPERIMENTATION)
@@ -73,13 +74,13 @@ var loginCmd = &cobra.Command{
 			}
 
 			if slices.Contains(existingCredentials, Username) {
-				if accountId != "" {
+				if AccountID != "" {
 					err := config.SelectAuth(utils.WEB_EXPERIMENTATION, Username)
 					if err != nil {
 						log.Fatalf("error occurred: %v", err)
 					}
 
-					err = config.SetAccountID(utils.WEB_EXPERIMENTATION, accountId)
+					err = config.SetAccountID(utils.WEB_EXPERIMENTATION, AccountID)
 					if err != nil {
 						log.Fatalf("error occurred: %s", err)
 					}
@@ -92,20 +93,9 @@ var loginCmd = &cobra.Command{
 				return
 			}
 
-			if ClientID == "" || ClientSecret == "" || accountId == "" {
-				fmt.Fprintln(cmd.OutOrStderr(), "Error while login, required fields (username, client ID, client secret, account id)")
-				return
-			}
-
-			authenticationResponse, err := common.HTTPCreateTokenWE(ClientID, ClientSecret, accountId)
+			authenticationResponse, err := common.InitiateBrowserAuth(Username, ClientID, ClientSecret, AccountID)
 			if err != nil {
-				fmt.Fprintln(cmd.OutOrStderr(), err)
-				return
-			}
-
-			if authenticationResponse.AccessToken == "" {
-				fmt.Fprintln(cmd.OutOrStderr(), "Error while login, client_id or client_secret not valid")
-				return
+				log.Fatalf("error occurred: %v", err)
 			}
 
 			err = config.CreateAuthFile(utils.WEB_EXPERIMENTATION, Username, ClientID, ClientSecret, authenticationResponse)
@@ -118,13 +108,15 @@ var loginCmd = &cobra.Command{
 				log.Fatalf("error occurred: %v", err)
 			}
 
-			err = config.SetAccountID(utils.WEB_EXPERIMENTATION, accountId)
+			err = config.SetAccountID(utils.WEB_EXPERIMENTATION, AccountID)
 			if err != nil {
 				log.Fatalf("error occurred: %s", err)
 			}
 
-			fmt.Fprintln(cmd.OutOrStdout(), "Credential created successfully")
+			fmt.Fprintln(os.Stdout, "Credential created successfully")
+			return
 		}
+
 	},
 }
 
@@ -134,8 +126,8 @@ func init() {
 
 	loginCmd.Flags().StringVarP(&ClientID, "client-id", "i", "", "client ID of an auth")
 	loginCmd.Flags().StringVarP(&ClientSecret, "client-secret", "s", "", "client secret of an auth")
-	loginCmd.Flags().StringVarP(&accountId, "account-id", "a", "", "account id of an auth")
-	loginCmd.Flags().StringVarP(&credentialsFile, "credential-file", "p", "", "config file to create")
+	loginCmd.Flags().StringVarP(&AccountID, "account-id", "a", "", "account id of an auth")
+	//loginCmd.Flags().StringVarP(&credentialsFile, "credential-file", "p", "", "config file to create")
 
 	AuthCmd.AddCommand(loginCmd)
 }

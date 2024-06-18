@@ -78,12 +78,12 @@ func regenerateToken(product, configName string) {
 	var err error
 
 	if product == utils.FEATURE_EXPERIMENTATION {
-		authenticationResponse, err = HTTPRefreshTokenFE(cred.ClientID, cred.RefreshToken)
+		authenticationResponse, err = HTTPCreateTokenFE(cred.ClientID, cred.ClientSecret, cred.AccountID)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
 	} else {
-		authenticationResponse, err = HTTPCreateTokenWE(cred.ClientID, cred.ClientSecret, cred.AccountID)
+		authenticationResponse, err = HTTPRefreshTokenWE(cred)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}

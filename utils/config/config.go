@@ -110,7 +110,10 @@ func ReadAuth(product, AuthName string) (*viper.Viper, error) {
 	}
 
 	if _, err := os.Stat(configFilepath); errors.Is(err, os.ErrNotExist) {
-		fmt.Fprintf(os.Stderr, "error occurred: %v \n", err)
+		if viper.GetString("output_format") != "json" {
+			fmt.Fprintf(os.Stderr, "error occurred: %v \n", err)
+		}
+
 	}
 	v.SetConfigFile(configFilepath)
 	v.MergeInConfig()
