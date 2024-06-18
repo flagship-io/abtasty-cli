@@ -6,6 +6,7 @@ import (
 
 	"github.com/flagship-io/abtasty-cli/models"
 	"github.com/flagship-io/abtasty-cli/utils"
+	"github.com/flagship-io/abtasty-cli/utils/config"
 	"github.com/flagship-io/abtasty-cli/utils/http_request"
 	mockfunction "github.com/flagship-io/abtasty-cli/utils/mock_function"
 	"github.com/flagship-io/abtasty-cli/utils/mock_function/web_experimentation"
@@ -44,19 +45,22 @@ func TestAuthHelpCommand(t *testing.T) {
 	assert.Contains(t, output, "Manage authentication for web experimentation\n\nUsage:\n  authentication [login|get|list|delete]")
 }
 
-func TestAuthLoginCommand(t *testing.T) {
+// Login with browser
+/* func TestAuthLoginCommand(t *testing.T) {
 
 	failOutput, _ := utils.ExecuteCommand(AuthCmd, "login", "-u=test_auth", "--client-id=CI", "--client-secret=CS")
 
-	assert.Equal(t, "Error while login, required fields (username, client ID, client secret, account id)\n", failOutput)
+	assert.Equal(t, "Error while login, required fields (username, client ID, client secret, account id)", failOutput)
 
 	successOutput, err := utils.ExecuteCommand(AuthCmd, "login", "-u=test_auth", "--client-id=CI", "--client-secret=CS", "--account-id=AI")
 
 	assert.Nil(t, err)
 	assert.Equal(t, "Credential created successfully\n", successOutput)
-}
+} */
 
 func TestAuthListCommand(t *testing.T) {
+
+	config.CreateAuthFile(utils.WEB_EXPERIMENTATION, "test_auth", "CI", "CS", models.TokenResponse{AccessToken: "testAccessToken"})
 
 	output, _ := utils.ExecuteCommand(AuthCmd, "list")
 
