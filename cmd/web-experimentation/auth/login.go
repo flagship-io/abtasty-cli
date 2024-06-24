@@ -8,10 +8,13 @@ import (
 	"log"
 	"os"
 	"slices"
+	"strconv"
 
 	"github.com/flagship-io/abtasty-cli/utils"
 	"github.com/flagship-io/abtasty-cli/utils/config"
 	"github.com/flagship-io/abtasty-cli/utils/http_request/common"
+
+	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
 )
 
@@ -93,7 +96,7 @@ var loginCmd = &cobra.Command{
 				return
 			}
 
-			authenticationResponse, err := common.InitiateBrowserAuth(Username, ClientID, ClientSecret, AccountID)
+			authenticationResponse, err := common.InitiateBrowserAuth(Username, ClientID, ClientSecret)
 			if err != nil {
 				log.Fatalf("error occurred: %v", err)
 			}
@@ -108,7 +111,12 @@ var loginCmd = &cobra.Command{
 				log.Fatalf("error occurred: %v", err)
 			}
 
-			err = config.SetAccountID(utils.WEB_EXPERIMENTATION, AccountID)
+			currentAccount, err := httprequest.AccountWERequester.HTTPCurrentAccount()
+			if err != nil {
+				log.Fatalf("error occurred: %v", err)
+			}
+
+			err = config.SetAccountID(utils.WEB_EXPERIMENTATION, strconv.Itoa(currentAccount.Id))
 			if err != nil {
 				log.Fatalf("error occurred: %s", err)
 			}

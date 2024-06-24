@@ -138,7 +138,7 @@ func HTTPRequest[T any](method string, url string, body []byte) ([]byte, error) 
 	}
 
 	if cred.Product == utils.WEB_EXPERIMENTATION {
-		if resourceType != reflect.TypeOf(web_experimentation.AccountWE{}) && !strings.Contains(url, "token") && cred.AccountID == "" {
+		if resourceType != reflect.TypeOf(web_experimentation.AccountWE{}) && resourceType != reflect.TypeOf(web_experimentation.CurrentAccountWE{}) && !strings.Contains(url, "token") && cred.AccountID == "" {
 			log.Fatalf("username, account_id required, Please authenticate your CLI")
 		}
 	}
