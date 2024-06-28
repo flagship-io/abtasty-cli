@@ -112,7 +112,7 @@ func HTTPRefreshTokenWE(cred RequestConfig) (models.TokenResponse, error) {
 
 func InitiateBrowserAuth(username, clientID, clientSecret string) (models.TokenResponse, error) {
 	if clientID == "" || clientSecret == "" {
-		log.Fatal("Error while login, required fields (username, client ID, client secret, account id)")
+		log.Fatal("Error while login, required fields (username, client ID, client secret)")
 	}
 
 	codeChan := make(chan string)

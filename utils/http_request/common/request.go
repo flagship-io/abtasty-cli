@@ -34,11 +34,13 @@ type PageResultFE struct {
 type ResourceRequest struct {
 	AccountID            string `mapstructure:"account_id"`
 	AccountEnvironmentID string `mapstructure:"account_environment_id"`
+	WorkingDir           string `mapstructure:"working_dir"`
 }
 
 func (c *ResourceRequest) Init(cL *RequestConfig) {
 	c.AccountEnvironmentID = cL.AccountEnvironmentID
 	c.AccountID = cL.AccountID
+	c.WorkingDir = cL.WorkingDirectory
 }
 
 type PageResultWE struct {
@@ -65,6 +67,7 @@ type RequestConfig struct {
 	RefreshToken          string `mapstructure:"refresh_token"`
 	CurrentUsedCredential string `mapstructure:"current_used_credential"`
 	OutputFormat          string `mapstructure:"output_format"`
+	WorkingDirectory      string `mapstructure:"working_dir"`
 }
 
 var cred RequestConfig
@@ -139,7 +142,7 @@ func HTTPRequest[T any](method string, url string, body []byte) ([]byte, error) 
 
 	if cred.Product == utils.WEB_EXPERIMENTATION {
 		if resourceType != reflect.TypeOf(web_experimentation.AccountWE{}) && resourceType != reflect.TypeOf(web_experimentation.CurrentAccountWE{}) && !strings.Contains(url, "token") && cred.AccountID == "" {
-			log.Fatalf("username, account_id required, Please authenticate your CLI")
+			log.Fatalf("username, account_id required, Please use the account command to select your account")
 		}
 	}
 

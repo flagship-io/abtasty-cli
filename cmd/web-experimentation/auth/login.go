@@ -8,13 +8,11 @@ import (
 	"log"
 	"os"
 	"slices"
-	"strconv"
 
 	"github.com/flagship-io/abtasty-cli/utils"
 	"github.com/flagship-io/abtasty-cli/utils/config"
 	"github.com/flagship-io/abtasty-cli/utils/http_request/common"
 
-	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
 )
 
@@ -77,22 +75,24 @@ var loginCmd = &cobra.Command{
 			}
 
 			if slices.Contains(existingCredentials, Username) {
-				if AccountID != "" {
-					err := config.SelectAuth(utils.WEB_EXPERIMENTATION, Username)
-					if err != nil {
-						log.Fatalf("error occurred: %v", err)
-					}
+				err := config.SelectAuth(utils.WEB_EXPERIMENTATION, Username)
+				if err != nil {
+					log.Fatalf("error occurred: %v", err)
+				}
 
+				if AccountID != "" {
 					err = config.SetAccountID(utils.WEB_EXPERIMENTATION, AccountID)
 					if err != nil {
 						log.Fatalf("error occurred: %s", err)
 					}
-
-					fmt.Fprintln(cmd.OutOrStdout(), "Credential changed successfully to "+Username)
-					return
 				}
 
-				fmt.Fprintln(cmd.OutOrStderr(), "Error while login, required fields (account id)")
+				err = config.SetWorkingDir(utils.WEB_EXPERIMENTATION, utils.DefaultGlobalCodeWorkingDir())
+				if err != nil {
+					log.Fatalf("error occurred: %s", err)
+				}
+
+				fmt.Fprintln(cmd.OutOrStdout(), "Credential changed successfully to "+Username)
 				return
 			}
 
@@ -111,12 +111,14 @@ var loginCmd = &cobra.Command{
 				log.Fatalf("error occurred: %v", err)
 			}
 
-			currentAccount, err := httprequest.AccountWERequester.HTTPCurrentAccount()
-			if err != nil {
-				log.Fatalf("error occurred: %v", err)
+			if AccountID != "" {
+				err = config.SetAccountID(utils.WEB_EXPERIMENTATION, AccountID)
+				if err != nil {
+					log.Fatalf("error occurred: %s", err)
+				}
 			}
 
-			err = config.SetAccountID(utils.WEB_EXPERIMENTATION, strconv.Itoa(currentAccount.Id))
+			err = config.SetWorkingDir(utils.WEB_EXPERIMENTATION, utils.DefaultGlobalCodeWorkingDir())
 			if err != nil {
 				log.Fatalf("error occurred: %s", err)
 			}
@@ -125,6 +127,8 @@ var loginCmd = &cobra.Command{
 			return
 		}
 
+		fmt.Fprintln(cmd.OutOrStderr(), "Error while login, required fields (username)")
+		return
 	},
 }
 

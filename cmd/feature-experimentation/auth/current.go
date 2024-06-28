@@ -62,7 +62,7 @@ var currentCmd = &cobra.Command{
 
 		account.Token = authYaml.Token
 
-		utils.FormatItem([]string{"CurrentUsedCredential"}, account, viper.GetString("output_format"), cmd.OutOrStdout())
+		utils.FormatItem([]string{"CurrentUsedCredential", "AccountID", "AccountEnvironmentID", "Token"}, account, viper.GetString("output_format"), cmd.OutOrStdout())
 
 	},
 }

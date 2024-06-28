@@ -158,6 +158,26 @@ func SetAccountID(product, accountID string) error {
 	return nil
 }
 
+func SetWorkingDir(product, path string) error {
+	var v = viper.New()
+	configFilepath, err := CredentialPath(product, utils.HOME_CLI)
+	if err != nil {
+		return err
+	}
+
+	v.SetConfigFile(configFilepath)
+	v.MergeInConfig()
+
+	v.Set("working_dir", path)
+
+	err = v.WriteConfigAs(configFilepath)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func SetAccountEnvID(product, accountEnvID string) error {
 	var v = viper.New()
 	configFilepath, err := CredentialPath(product, utils.HOME_CLI)
