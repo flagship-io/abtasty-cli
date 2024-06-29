@@ -11,7 +11,6 @@ import (
 	"github.com/flagship-io/abtasty-cli/utils/config"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 // getJsCmd represents get command
@@ -44,7 +43,7 @@ var getJSCmd = &cobra.Command{
 		}
 
 		if CreateFile {
-			variationCodeDir, err := config.VariationGlobalCodeDirectoryJS(viper.GetString("working_dir"), httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, VariationID, jsCode, Override)
+			variationCodeDir, err := config.VariationGlobalCodeDirectoryJS(httprequest.ModificationRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, VariationID, jsCode, Override)
 			if err != nil {
 				log.Fatalf("error occurred: %v", err)
 			}

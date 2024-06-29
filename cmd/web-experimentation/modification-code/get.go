@@ -12,7 +12,6 @@ import (
 	"github.com/flagship-io/abtasty-cli/utils/config"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var override bool
@@ -51,7 +50,7 @@ var getCmd = &cobra.Command{
 
 		if CreateFile {
 			fileCode := config.AddHeaderSelectorComment(modif.Selector, modif.Value)
-			modificationCodeDir, err := config.ModificationCodeDirectory(viper.GetString("working_dir"), httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, strconv.Itoa(modif.VariationID), ModificationID, modif.Selector, fileCode, override)
+			modificationCodeDir, err := config.ModificationCodeDirectory(httprequest.ModificationRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, strconv.Itoa(modif.VariationID), ModificationID, modif.Selector, fileCode, override)
 			if err != nil {
 				log.Fatalf("error occurred: %v", err)
 			}

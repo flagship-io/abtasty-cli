@@ -10,7 +10,6 @@ import (
 	"github.com/flagship-io/abtasty-cli/utils/config"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var createFile bool
@@ -28,7 +27,7 @@ var getCmd = &cobra.Command{
 		}
 
 		if createFile {
-			accountCodeDir, err := config.AccountGlobalCodeDirectory(viper.GetString("working_dir"), AccountID, body, override)
+			accountCodeDir, err := config.AccountGlobalCodeDirectory(httprequest.AccountGlobalCodeRequester.WorkingDir, AccountID, body, override)
 			if err != nil {
 				log.Fatalf("error occurred: %s", err)
 			}

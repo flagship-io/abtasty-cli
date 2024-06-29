@@ -11,7 +11,6 @@ import (
 	"github.com/flagship-io/abtasty-cli/utils/config"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 // getCSSCmd represents get command
@@ -43,7 +42,7 @@ var getCSSCmd = &cobra.Command{
 		}
 
 		if CreateFile {
-			campaignCodeDir, err := config.VariationGlobalCodeDirectoryCSS(viper.GetString("working_dir"), httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, VariationID, cssCode, Override)
+			campaignCodeDir, err := config.VariationGlobalCodeDirectoryCSS(httprequest.ModificationRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, VariationID, cssCode, Override)
 			if err != nil {
 				log.Fatalf("error occurred: %v", err)
 			}

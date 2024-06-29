@@ -17,6 +17,7 @@ import (
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/token"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/variation"
 	variation_global_code "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/variation-global-code"
+	working_directory "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/working-directory"
 	"github.com/flagship-io/abtasty-cli/utils"
 	"github.com/flagship-io/abtasty-cli/utils/config"
 	"github.com/flagship-io/abtasty-cli/utils/http_request"
@@ -51,6 +52,7 @@ func addSubCommandPalettes() {
 	WebExperimentationCmd.AddCommand(modification_code.ModificationCodeCmd)
 	WebExperimentationCmd.AddCommand(token.TokenCmd)
 	WebExperimentationCmd.AddCommand(modification.ModificationCmd)
+	WebExperimentationCmd.AddCommand(working_directory.WorkingDirectoryCmd)
 }
 
 func init() {

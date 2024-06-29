@@ -11,7 +11,6 @@ import (
 	"github.com/flagship-io/abtasty-cli/utils/config"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var createFile bool
@@ -30,7 +29,7 @@ var getCmd = &cobra.Command{
 		}
 
 		if createFile {
-			campaignCodeDir, err := config.CampaignGlobalCodeDirectory(viper.GetString("working_dir"), httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, body, override)
+			campaignCodeDir, err := config.CampaignGlobalCodeDirectory(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, body, override)
 			if err != nil {
 				log.Fatalf("error occurred: %v", err)
 			}
@@ -44,7 +43,7 @@ var getCmd = &cobra.Command{
 				log.Fatalf("error occurred: %v", err)
 			}
 
-			_, err = config.CampaignGlobalCodeDirectory(viper.GetString("working_dir"), httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, body, override)
+			_, err = config.CampaignGlobalCodeDirectory(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, body, override)
 			if err != nil {
 				log.Fatalf("error occurred: %v", err)
 			}
@@ -56,7 +55,7 @@ var getCmd = &cobra.Command{
 
 			for _, modification := range body {
 				if modification.Type == "customScriptNew" && modification.Selector == "" {
-					_, err := config.VariationGlobalCodeDirectoryJS(viper.GetString("working_dir"), httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, strconv.Itoa(modification.VariationID), modification.Value, override)
+					_, err := config.VariationGlobalCodeDirectoryJS(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, strconv.Itoa(modification.VariationID), modification.Value, override)
 					if err != nil {
 						log.Fatalf("error occurred: %v", err)
 					}
@@ -64,7 +63,7 @@ var getCmd = &cobra.Command{
 				}
 
 				if modification.Type == "addCSS" && modification.Selector == "" {
-					_, err := config.VariationGlobalCodeDirectoryCSS(viper.GetString("working_dir"), httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, strconv.Itoa(modification.VariationID), modification.Value, override)
+					_, err := config.VariationGlobalCodeDirectoryCSS(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, strconv.Itoa(modification.VariationID), modification.Value, override)
 					if err != nil {
 						log.Fatalf("error occurred: %v", err)
 					}
@@ -72,10 +71,10 @@ var getCmd = &cobra.Command{
 				}
 
 				fileCode := config.AddHeaderSelectorComment(modification.Selector, modification.Value)
-				config.ModificationCodeDirectory(viper.GetString("working_dir"), httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, strconv.Itoa(modification.VariationID), strconv.Itoa(modification.Id), modification.Selector, fileCode, override)
+				config.ModificationCodeDirectory(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, strconv.Itoa(modification.VariationID), strconv.Itoa(modification.Id), modification.Selector, fileCode, override)
 			}
 
-			fmt.Fprintln(cmd.OutOrStdout(), "Sub files code generated successfully: "+viper.GetString("working_dir")+"/abtasty")
+			fmt.Fprintln(cmd.OutOrStdout(), "Sub files code generated successfully: "+httprequest.CampaignGlobalCodeRequester.WorkingDir+"/abtasty")
 			return
 		}
 
