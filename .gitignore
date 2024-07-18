@@ -4,4 +4,4 @@ coverage
 /bin
 configuration-*
 abtasty-cli
-abtasty/**
+.abtasty/**
