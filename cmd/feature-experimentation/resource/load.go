@@ -280,7 +280,7 @@ func init() {
 		log.Fatalf("error occurred: %v", err)
 	}
 
-	loadCmd.Flags().StringVarP(&outputFile, "output-file", "", "", "result of the command that contains all resource informations")
+	loadCmd.Flags().StringVarP(&outputFile, "output-file", "", "", "result of the command that contains all resource information")
 
 	loadCmd.Flags().StringVarP(&inputParams, "input-params", "", "", "params to replace resource loader file")
 	loadCmd.Flags().StringVarP(&inputParamsFile, "input-params-file", "", "", "file that contains params to replace resource loader file")

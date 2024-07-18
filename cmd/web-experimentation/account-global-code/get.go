@@ -26,16 +26,19 @@ var getCmd = &cobra.Command{
 			log.Fatalf("error occurred: %v", err)
 		}
 
-		if createFile {
-			accountCodeDir, err := config.AccountGlobalCodeDirectory(httprequest.AccountGlobalCodeRequester.WorkingDir, AccountID, body, override)
+		if createFile && len(body) > 0 {
+			_, err := config.AccountGlobalCodeDirectory(httprequest.AccountGlobalCodeRequester.WorkingDir, AccountID, body, override)
 			if err != nil {
 				log.Fatalf("error occurred: %s", err)
 			}
-			fmt.Fprintln(cmd.OutOrStdout(), "Account code file generated successfully: ", accountCodeDir)
+
 			return
 		}
 
-		fmt.Fprintln(cmd.OutOrStdout(), body)
+		if len(body) > 0 {
+			fmt.Fprintln(cmd.OutOrStdout(), body)
+			return
+		}
 	},
 }
 

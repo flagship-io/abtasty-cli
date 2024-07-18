@@ -82,6 +82,7 @@ func HTTPRefreshTokenWE(cred RequestConfig) (models.TokenResponse, error) {
 		RefreshToken: cred.RefreshToken,
 		ClientSecret: cred.ClientSecret,
 	}
+
 	authRequestJSON, err := json.Marshal(authRequest)
 	if err != nil {
 		return models.TokenResponse{}, err
@@ -94,12 +95,7 @@ func HTTPRefreshTokenWE(cred RequestConfig) (models.TokenResponse, error) {
 			return models.TokenResponse{}, err
 		}
 
-		err = json.Unmarshal(respBody, &authResponse)
-		if err != nil {
-			return models.TokenResponse{}, err
-		}
-
-		return authenticationResponse, err
+		return authResponse, nil
 	}
 
 	err = json.Unmarshal(respBody, &authenticationResponse)

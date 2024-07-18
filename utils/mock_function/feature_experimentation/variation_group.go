@@ -40,21 +40,21 @@ var targeting = models.Targeting{
 var TestVariationGroup = models.VariationGroup{
 	Id:         "testVariationGroupID",
 	Name:       "testVariationGroupName",
-	Variations: &variations,
+	Variations: variations,
 	Targeting:  targeting,
 }
 
 var TestVariationGroup1 = models.VariationGroup{
 	Id:         "testVariationGroupID1",
 	Name:       "testVariationGroupName1",
-	Variations: &variations,
+	Variations: variations,
 	Targeting:  targeting,
 }
 
 var TestVariationGroupEdit = models.VariationGroup{
 	Id:         "testVariationGroupID",
 	Name:       "testVariationGroupName1",
-	Variations: &variations,
+	Variations: variations,
 	Targeting:  targeting,
 }
 

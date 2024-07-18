@@ -41,17 +41,19 @@ var getCSSCmd = &cobra.Command{
 			}
 		}
 
-		if CreateFile {
-			campaignCodeDir, err := config.VariationGlobalCodeDirectoryCSS(httprequest.ModificationRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, VariationID, cssCode, Override)
+		if CreateFile && len(cssCode) > 0 {
+			_, err := config.VariationGlobalCodeDirectoryCSS(httprequest.ModificationRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, VariationID, cssCode, Override)
 			if err != nil {
 				log.Fatalf("error occurred: %v", err)
 			}
 
-			fmt.Fprintln(cmd.OutOrStdout(), "Variation code file generated successfully: ", campaignCodeDir)
 			return
 		}
 
-		fmt.Fprintln(cmd.OutOrStdout(), cssCode)
+		if len(cssCode) > 0 {
+			fmt.Fprintln(cmd.OutOrStdout(), cssCode)
+			return
+		}
 	},
 }
 

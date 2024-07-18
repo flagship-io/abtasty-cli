@@ -28,12 +28,11 @@ var getCmd = &cobra.Command{
 			log.Fatalf("error occurred: %v", err)
 		}
 
-		if createFile {
-			campaignCodeDir, err := config.CampaignGlobalCodeDirectory(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, body, override)
+		if createFile && len(body) > 0 {
+			_, err := config.CampaignGlobalCodeDirectory(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, body, override)
 			if err != nil {
 				log.Fatalf("error occurred: %v", err)
 			}
-			fmt.Fprintln(cmd.OutOrStdout(), "Campaign code file generated successfully: ", campaignCodeDir)
 			return
 		}
 
@@ -43,9 +42,11 @@ var getCmd = &cobra.Command{
 				log.Fatalf("error occurred: %v", err)
 			}
 
-			_, err = config.CampaignGlobalCodeDirectory(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, body, override)
-			if err != nil {
-				log.Fatalf("error occurred: %v", err)
+			if len(body) > 0 {
+				_, err = config.CampaignGlobalCodeDirectory(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, body, override)
+				if err != nil {
+					log.Fatalf("error occurred: %v", err)
+				}
 			}
 
 			body, err := httprequest.ModificationRequester.HTTPListModification(campaignID)
@@ -74,11 +75,14 @@ var getCmd = &cobra.Command{
 				config.ModificationCodeDirectory(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, strconv.Itoa(modification.VariationID), strconv.Itoa(modification.Id), modification.Selector, fileCode, override)
 			}
 
-			fmt.Fprintln(cmd.OutOrStdout(), "Sub files code generated successfully: "+httprequest.CampaignGlobalCodeRequester.WorkingDir+"/abtasty")
+			fmt.Fprintln(cmd.OutOrStdout(), "Sub files code generated successfully: "+httprequest.CampaignGlobalCodeRequester.WorkingDir+"/.abtasty")
 			return
 		}
 
-		fmt.Fprintln(cmd.OutOrStdout(), body)
+		if len(body) > 0 {
+			fmt.Fprintln(cmd.OutOrStdout(), body)
+			return
+		}
 	},
 }
 

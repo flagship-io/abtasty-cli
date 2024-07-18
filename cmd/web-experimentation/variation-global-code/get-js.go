@@ -42,16 +42,19 @@ var getJSCmd = &cobra.Command{
 			}
 		}
 
-		if CreateFile {
-			variationCodeDir, err := config.VariationGlobalCodeDirectoryJS(httprequest.ModificationRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, VariationID, jsCode, Override)
+		if CreateFile && len(jsCode) > 0 {
+			_, err := config.VariationGlobalCodeDirectoryJS(httprequest.ModificationRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, VariationID, jsCode, Override)
 			if err != nil {
 				log.Fatalf("error occurred: %v", err)
 			}
-			fmt.Fprintln(cmd.OutOrStdout(), "Variation code file generated successfully: ", variationCodeDir)
+
 			return
 		}
 
-		fmt.Fprintln(cmd.OutOrStdout(), jsCode)
+		if len(jsCode) > 0 {
+			fmt.Fprintln(cmd.OutOrStdout(), jsCode)
+			return
+		}
 	},
 }
 

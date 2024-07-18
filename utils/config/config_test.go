@@ -45,7 +45,7 @@ func TestMain(m *testing.M) {
 		os.MkdirAll(homeDir+"/.abtasty/credentials/"+product, os.ModePerm)
 	}
 
-	defer os.RemoveAll(currentDir + "/abtasty")
+	defer os.RemoveAll(currentDir + "/.abtasty")
 	defer os.RemoveAll(homeDir + "/.abtasty/credentials/" + product)
 
 	m.Run()

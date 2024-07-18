@@ -71,7 +71,7 @@ func TestCheckGlobalCodeDirectory(t *testing.T) {
 		{
 			name:       "ExistingDirectory",
 			workingDir: currentDir,
-			want:       currentDir + "/abtasty",
+			want:       currentDir + "/.abtasty",
 			wantErr:    false,
 		},
 		{
@@ -108,7 +108,7 @@ func TestAccountGlobalCodeDirectory(t *testing.T) {
 			workingDir: currentDir,
 			code:       "console.log('Hello, World!')", // Content of JavaScript file
 			accountID:  mockAccountID,
-			want:       currentDir + "/abtasty/" + mockAccountID + "/accountGlobalCode.js",
+			want:       currentDir + "/.abtasty/" + mockAccountID + "/accountGlobalCode.js",
 			wantErr:    false,
 		},
 		{
@@ -147,7 +147,7 @@ func TestCampaignGlobalCodeDirectory(t *testing.T) {
 			code:       "console.log('Hello, World!')", // Content of JavaScript file
 			accountID:  "123456",
 			campaignID: "100000",
-			want:       currentDir + "/abtasty/" + mockAccountID + "/" + mockCampaignID + "/campaignGlobalCode.js",
+			want:       currentDir + "/.abtasty/" + mockAccountID + "/" + mockCampaignID + "/campaignGlobalCode.js",
 			wantErr:    false,
 		},
 		{
@@ -191,7 +191,7 @@ func TestVariationGlobalCodeDirectoryJS(t *testing.T) {
 			accountID:   mockAccountID,
 			campaignID:  mockCampaignID,
 			variationID: mockVariationID,
-			want:        currentDir + "/abtasty/" + mockAccountID + "/" + mockCampaignID + "/" + mockVariationID + "/variationGlobalCode.js",
+			want:        currentDir + "/.abtasty/" + mockAccountID + "/" + mockCampaignID + "/" + mockVariationID + "/variationGlobalCode.js",
 			wantErr:     false,
 		},
 		{
@@ -236,7 +236,7 @@ func TestVariationGlobalCodeDirectoryCSS(t *testing.T) {
 			accountID:   mockAccountID,
 			campaignID:  mockCampaignID,
 			variationID: mockVariationID,
-			want:        currentDir + "/abtasty/" + mockAccountID + "/" + mockCampaignID + "/" + mockVariationID + "/variationGlobalCode.css",
+			want:        currentDir + "/.abtasty/" + mockAccountID + "/" + mockCampaignID + "/" + mockVariationID + "/variationGlobalCode.css",
 			wantErr:     false,
 		},
 		{
@@ -283,7 +283,7 @@ func TestModificationCodeDirectory(t *testing.T) {
 			variationID:    mockVariationID,
 			modificationID: mockModificationID,
 			selector:       mockSelector,
-			want:           currentDir + "/abtasty/" + mockAccountID + "/" + mockCampaignID + "/" + mockVariationID + "/" + mockModificationID + "/element.js",
+			want:           currentDir + "/.abtasty/" + mockAccountID + "/" + mockCampaignID + "/" + mockVariationID + "/" + mockModificationID + "/element.js",
 			wantErr:        false,
 		},
 		{

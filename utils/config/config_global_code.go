@@ -23,7 +23,7 @@ func CheckGlobalCodeDirectory(workingDir string) (string, error) {
 		return "", err
 	}
 
-	gcWorkingDir := wd + "/abtasty"
+	gcWorkingDir := wd + "/.abtasty"
 
 	err = os.MkdirAll(gcWorkingDir, os.ModePerm)
 	if err != nil {

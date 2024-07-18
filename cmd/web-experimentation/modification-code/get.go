@@ -50,12 +50,11 @@ var getCmd = &cobra.Command{
 
 		if CreateFile {
 			fileCode := config.AddHeaderSelectorComment(modif.Selector, modif.Value)
-			modificationCodeDir, err := config.ModificationCodeDirectory(httprequest.ModificationRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, strconv.Itoa(modif.VariationID), ModificationID, modif.Selector, fileCode, override)
+			_, err := config.ModificationCodeDirectory(httprequest.ModificationRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, strconv.Itoa(modif.VariationID), ModificationID, modif.Selector, fileCode, override)
 			if err != nil {
 				log.Fatalf("error occurred: %v", err)
 			}
 
-			fmt.Fprintln(cmd.OutOrStdout(), "modification code file generated successfully: ", modificationCodeDir)
 			return
 		}
 
