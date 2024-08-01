@@ -28,5 +28,5 @@ func (a *AccountGlobalCodeRequester) HTTPPushAccountGlobalCode(id string, code [
 		return nil, err
 	}
 
-	return common.HTTPRequest[models.AccountWE](http.MethodPatch, utils.GetWebExperimentationHost()+"/v1/accounts/"+a.AccountID, []byte(data))
+	return common.HTTPRequest[models.AccountWE](http.MethodPatch, utils.GetWebExperimentationHost()+"/v1/accounts/"+id, []byte(data))
 }
