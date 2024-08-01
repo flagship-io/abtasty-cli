@@ -6,6 +6,7 @@ package modification_code
 import (
 	"fmt"
 	"log"
+	"regexp"
 	"strconv"
 
 	"github.com/flagship-io/abtasty-cli/models/web_experimentation"
@@ -49,7 +50,10 @@ var getCmd = &cobra.Command{
 		}
 
 		if CreateFile {
-			fileCode := config.AddHeaderSelectorComment(modif.Selector, modif.Value)
+			pattern := `/\*\s*Selector: (.+)*\s*\*/`
+			re := regexp.MustCompile(pattern)
+
+			fileCode := config.AddHeaderSelectorComment(modif.Selector, []byte(modif.Value), re)
 			_, err := config.ModificationCodeDirectory(httprequest.ModificationRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, strconv.Itoa(modif.VariationID), ModificationID, modif.Selector, fileCode, override)
 			if err != nil {
 				log.Fatalf("error occurred: %v", err)

@@ -6,6 +6,7 @@ package campaign_global_code
 import (
 	"fmt"
 	"log"
+	"regexp"
 	"strconv"
 
 	"github.com/flagship-io/abtasty-cli/utils/config"
@@ -70,8 +71,10 @@ var getCmd = &cobra.Command{
 					}
 					continue
 				}
+				pattern := `/\*\s*Selector: (.+)*\s*\*/`
+				re := regexp.MustCompile(pattern)
 
-				fileCode := config.AddHeaderSelectorComment(modification.Selector, modification.Value)
+				fileCode := config.AddHeaderSelectorComment(modification.Selector, []byte(modification.Value), re)
 				config.ModificationCodeDirectory(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, strconv.Itoa(modification.VariationID), strconv.Itoa(modification.Id), modification.Selector, fileCode, override)
 			}
 
