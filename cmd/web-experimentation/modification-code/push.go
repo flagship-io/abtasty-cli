@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"regexp"
 	"strconv"
 
 	"github.com/flagship-io/abtasty-cli/models/web_experimentation"
@@ -19,6 +20,20 @@ var code string
 var filePath string
 var selector string
 var variationID string
+
+func readAndExtractSelector(filePath string, re *regexp.Regexp) (string, error) {
+	fileContent, err := os.ReadFile(filePath)
+	if err != nil {
+		log.Fatalf("error occurred: %v", err)
+	}
+
+	match := re.FindStringSubmatch(string(fileContent))
+	if len(match) < 2 {
+		return "", fmt.Errorf("selector value not found in %s", filePath)
+	}
+
+	return match[1], nil
+}
 
 // pushCmd represents get command
 var pushCmd = &cobra.Command{
@@ -44,6 +59,12 @@ var pushCmd = &cobra.Command{
 			}
 
 			codeByte = fileContent
+			pattern := `/\*\s*Selector: (.+)*\s*\*/`
+			re := regexp.MustCompile(pattern)
+
+			currentsSelector, err := readAndExtractSelector(filePath, re)
+			selector = currentsSelector
+
 		}
 
 		if code != "" {
