@@ -14,7 +14,7 @@ type CampaignWERequester struct {
 }
 
 func (t *CampaignWERequester) HTTPListCampaign() ([]models.CampaignWE, error) {
-	return common.HTTPGetAllPagesWE[models.CampaignWE](utils.GetWebExperimentationHost() + "/v1/accounts/" + t.AccountID + "/tests")
+	return common.HTTPGetAllPagesWE[models.CampaignWE](utils.GetWebExperimentationHost() + "/v1/accounts/" + t.AccountID + "/tests?state=play,pause,~unarchive&")
 }
 
 func (t *CampaignWERequester) HTTPCreateCampaign(data string) ([]byte, error) {
