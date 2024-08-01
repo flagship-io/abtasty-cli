@@ -237,7 +237,7 @@ func HTTPGetAllPagesWE[T any](resource string) ([]T, error) {
 	currentPage := 1
 	results := []T{}
 	for {
-		respBody, err := HTTPRequest[T](http.MethodGet, fmt.Sprintf("%s?_page=%d&_max_per_page=100", resource, currentPage), nil)
+		respBody, err := HTTPRequest[T](http.MethodGet, fmt.Sprintf("%s_page=%d&_max_per_page=100", resource, currentPage), nil)
 		if err != nil {
 			return nil, err
 		}

@@ -2,6 +2,7 @@ package config
 
 import (
 	"os"
+	"regexp"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -317,7 +318,8 @@ func TestModificationCodeDirectory(t *testing.T) {
 }
 
 func TestAddHeaderSelectorComment(t *testing.T) {
-	fileCode := AddHeaderSelectorComment("example selector", "console.log('Hello World !')")
+	re := regexp.MustCompile(`/\*\s*Selector: (.+)*\s*\*/`)
+	fileCode := AddHeaderSelectorComment("example selector", []byte("console.log('Hello World !')"), re)
 	fileContent := []byte("/* Selector: example selector */\nconsole.log('Hello World !')")
 	assert.Equal(t, fileContent, fileCode)
 }

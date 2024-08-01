@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"regexp"
 )
 
 func CheckWorkingDirectory(workingDir string) (string, error) {
@@ -93,6 +94,26 @@ func CampaignGlobalCodeDirectory(workingDir, accountID, campaignID, code string,
 
 	fmt.Fprintln(os.Stdout, "File created: "+jsFilePath)
 	return jsFilePath, nil
+}
+
+func DeleteCampaignGlobalCodeDirectory(workingDir, accountID, campaignID string) (string, error) {
+	gcWorkingDir, err := CheckGlobalCodeDirectory(workingDir)
+	if err != nil {
+		return "", err
+	}
+
+	accountCodeDir := gcWorkingDir + "/" + accountID
+	campaignCodeDir := accountCodeDir + "/" + campaignID
+
+	if _, err := os.Stat(campaignCodeDir); err == nil {
+		err := os.RemoveAll(campaignCodeDir)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "Error deleting file: ", err)
+			return "", err
+		}
+	}
+
+	return "campaign directory for " + campaignID + " deleted", nil
 }
 
 func VariationGlobalCodeDirectoryJS(workingDir, accountID, campaignID, variationID, code string, override bool) (string, error) {
@@ -192,10 +213,39 @@ func ModificationCodeDirectory(workingDir, accountID, campaignID, variationID, m
 	return jsFilePath, nil
 }
 
-func AddHeaderSelectorComment(selector, code string) []byte {
-	selectorComment := "/* Selector: " + selector + " */\n"
-	headerComment := []byte(selectorComment)
+func DeleteModificationCodeDirectory(workingDir, accountID, campaignID, variationID, modificationID string) (string, error) {
+	gcWorkingDir, err := CheckGlobalCodeDirectory(workingDir)
+	if err != nil {
+		return "", err
+	}
 
-	fileCode := append(headerComment, []byte(code)...)
-	return fileCode
+	accountCodeDir := gcWorkingDir + "/" + accountID
+	campaignCodeDir := accountCodeDir + "/" + campaignID
+	variationCodeDir := campaignCodeDir + "/" + variationID
+	elementCodeDir := variationCodeDir + "/" + modificationID
+
+	if _, err := os.Stat(elementCodeDir); err == nil {
+		err := os.RemoveAll(elementCodeDir)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "Error deleting file: ", err)
+			return "", err
+		}
+	}
+
+	return "modification directory for " + modificationID + " deleted", nil
+
+}
+
+func AddHeaderSelectorComment(selector string, code []byte, re *regexp.Regexp) []byte {
+
+	if !re.Match(code) {
+		selectorComment := "/* Selector: " + selector + " */\n"
+		headerComment := []byte(selectorComment)
+
+		fileCode := append(headerComment, []byte(code)...)
+		return fileCode
+	}
+
+	return code
+
 }

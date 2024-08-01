@@ -41,7 +41,7 @@ func handleCallback(w http.ResponseWriter, r *http.Request, codeChan chan<- stri
 
 	codeChan <- code
 
-	http.Redirect(w, r, "https://app2.abtasty.com/dashboard", http.StatusSeeOther)
+	http.Redirect(w, r, "https://auth.abtasty.com/authorization-granted", http.StatusSeeOther)
 
 	go func() {
 		time.Sleep(5 * time.Second)
