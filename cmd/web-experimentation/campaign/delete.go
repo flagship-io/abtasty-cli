@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/flagship-io/abtasty-cli/utils/config"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
 )
@@ -23,6 +24,8 @@ var deleteCmd = &cobra.Command{
 		}
 
 		fmt.Fprintln(cmd.OutOrStdout(), "Campaign deleted")
+
+		config.DeleteCampaignGlobalCodeDirectory(httprequest.CampaignWERequester.WorkingDir, httprequest.CampaignWERequester.AccountID, CampaignID)
 	},
 }
 
