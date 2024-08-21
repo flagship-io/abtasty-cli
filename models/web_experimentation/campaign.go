@@ -7,6 +7,7 @@ type CampaignWE struct {
 	Description        string        `json:"description"`
 	Type               string        `json:"type"`
 	SubType            string        `json:"sub_type"`
+	Master             *CampaignWE   `json:"master"`
 	State              string        `json:"state"`
 	Traffic            *Traffic      `json:"traffic"`
 	Variations         []VariationWE `json:"variations"`
