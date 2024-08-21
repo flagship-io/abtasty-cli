@@ -72,7 +72,7 @@ var pushCSSCmd = &cobra.Command{
 				Value:       string(codeByte),
 				Selector:    "",
 				Type:        "addCSS",
-				Engine:      "",
+				Engine:      string(codeByte),
 				VariationID: variationID,
 			}
 
@@ -88,6 +88,7 @@ var pushCSSCmd = &cobra.Command{
 		modificationToPush := web_experimentation.ModificationCodeEditStruct{
 			InputType: "modification",
 			Value:     string(codeByte),
+			Engine:    string(codeByte),
 		}
 
 		body, err := httprequest.ModificationRequester.HTTPEditModification(campaignID, modificationId, modificationToPush)

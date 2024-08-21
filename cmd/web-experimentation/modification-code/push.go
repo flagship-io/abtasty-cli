@@ -87,7 +87,7 @@ var pushCmd = &cobra.Command{
 				Value:       string(codeByte),
 				Selector:    selector,
 				Type:        "customScriptNew",
-				Engine:      "",
+				Engine:      string(codeByte),
 				VariationID: variationID_,
 			}
 
@@ -127,7 +127,7 @@ var pushCmd = &cobra.Command{
 			Value:     string(codeByte),
 			Selector:  selector_,
 			Type:      modification.Type,
-			Engine:    modification.Engine,
+			Engine:    string(codeByte),
 		}
 
 		body, err := httprequest.ModificationRequester.HTTPEditModification(campaignID, modification.Id, modificationToPush)
