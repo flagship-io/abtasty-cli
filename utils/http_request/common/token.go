@@ -41,7 +41,7 @@ func handleCallback(w http.ResponseWriter, r *http.Request, codeChan chan<- stri
 
 	codeChan <- code
 
-	http.Redirect(w, r, "https://auth.abtasty.com/authorization-granted", http.StatusSeeOther)
+	http.Redirect(w, r, utils.GetWebExperimentationBrowserAuthSuccess(), http.StatusSeeOther)
 
 	go func() {
 		time.Sleep(5 * time.Second)
@@ -112,7 +112,7 @@ func InitiateBrowserAuth(username, clientID, clientSecret string) (models.TokenR
 	}
 
 	codeChan := make(chan string)
-	var url = fmt.Sprintf("https://auth.abtasty.com/authorize?client_id=%s&client_secret=%s&redirect_uri=http://localhost:8010/auth/callback", clientID, clientSecret)
+	var url = utils.GetWebExperimentationBrowserAuth(clientID, clientSecret)
 
 	if err := openLink(url); err != nil {
 		log.Fatalf("Error opening link: %s", err)
