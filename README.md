@@ -6,7 +6,7 @@
 
 <h3 align="center">Bring your features to life</h3>
 
-A Tool to manage your Flagship resources built in [Go](https://go.dev/) using the library [Cobra](https://cobra.dev/).
+A Tool to manage your AB Tasty resources built in [Go](https://go.dev/) using the library [Cobra](https://cobra.dev/).
 
 [Website](https://flagship.io) | [Website Documentation](https://docs.developers.flagship.io/docs/flagship-command-line-interface) | [Command Documentation](https://flagship-io.github.io/abtasty-cli/documentation/abtasty-cli) | [Installation Guide](https://docs.developers.flagship.io/docs/flagship-command-line-interface#download-and-install-the-flagship-cli) | [Twitter](https://twitter.com/feature_flags)
 
@@ -18,20 +18,27 @@ A Tool to manage your Flagship resources built in [Go](https://go.dev/) using th
 
 ## Overview
 
-The Flagship CLI is a set of tools to create and manage your Flagship resources such as project, campaigns, users etc... You can use these tools to perform many common flagship platform task from the command line or through scripts and other automation.
-For example, you can use the Flagship CLI to manage the following;
+The AB Tasty CLI is a set of commands to create and manage your AB Tasty resources for feature experimentation and web experimentation products such as projects, campaigns, teams, etc... You can use these commands to perform common AB Tasty platform actions from your terminal or through scripts and other automation.
 
-- Project and campaigns and other sub resources
-- Users and environments
-- Panic mode
+Our CLI is built on top of our Remote Control API, enabling you to use direct API calls or use the CLI.
 
-## The Flagship CLI cheat sheet
+For example, you can use the AB Tasty CLI to manage :
 
-For an introduction to the Flagship CLI, a list of commonly used commands, and a look at how these commands are structured, see the [Flagship cheat sheet](https://docs.developers.flagship.io/docs/cli-reference#commands).
+- Feature experimentation:
+  - Projects, campaigns, flags, targeting keys, goals, etc...
+  - Users and environments
+  - Panic mode
+- Web experimentation:
+  - campaigns, variations, accounts, elementJS, etc...
+  - Pull & Push global codes (account, campaign, variation, elementJS)
 
-## Download and install Flagship CLI
+## The AB Tasty CLI cheat sheet
 
-The Flagship CLI can be installed and deployed in your infrastructure either by downloading and running the binary, or pulling and running the docker image in your orchestration system.
+For an introduction to the AB Tasty CLI, a list of commonly used commands, and a look at how these commands are structured, see the [AB Tasty cheat sheet](https://docs.developers.flagship.io/docs/ab-tasty-cli-reference-v1xx).
+
+## Download and install AB Tasty CLI
+
+The AB Tasty CLI can be installed and deployed in your infrastructure either by downloading and running the binary, or pulling and running the docker image in your orchestration system.
 
 ### Using a binary
 
@@ -77,11 +84,11 @@ You can pull the project from github and build it using golang latest stable ver
 
 Please read our [contributing guide](./CONTRIBUTING.md).
 
-## Licence
+## License
 
 [Apache License.](https://github.com/flagship-io/abtasty-cli/blob/main/LICENSE)
 
-## About Flagship
+## About Feature Experimentation
 
 ​
 <img src="https://www.flagship.io/wp-content/uploads/Flagship-horizontal-black-wake-AB.png" alt="drawing" width="150"/>
