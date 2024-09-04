@@ -77,7 +77,7 @@ You can pull the project from github and build it using golang latest stable ver
 
 Please read our [contributing guide](./CONTRIBUTING.md).
 
-## License
+## Licence
 
 [Apache License.](https://github.com/flagship-io/abtasty-cli/blob/main/LICENSE)
 
