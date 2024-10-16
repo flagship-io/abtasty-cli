@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/d5/tengo/v2 v2.13.0
-	github.com/flagship-io/codebase-analyzer v0.8.0
+	github.com/flagship-io/codebase-analyzer v0.9.2
 	github.com/kyokomi/emoji/v2 v2.2.12
 	github.com/rodaine/table v1.1.0
 	github.com/sirupsen/logrus v1.9.0
