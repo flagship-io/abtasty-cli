@@ -1,5 +1,7 @@
 package models
 
+import models "github.com/flagship-io/abtasty-cli/models/web_experimentation"
+
 type MfaRequestWE struct {
 	MfaToken   string   `json:"mfa_token"`
 	MfaMethods []string `json:"mfa_methods"`
@@ -35,6 +37,16 @@ type TokenResponse struct {
 	AccessToken  string `json:"access_token"`
 	RefreshToken string `json:"refresh_token"`
 	Scope        string `json:"scope"`
+}
+
+type UserMe struct {
+	Id          int              `json:"id,omitempty"`
+	Email       string           `json:"email"`
+	FirstName   string           `json:"firstname"`
+	LastName    string           `json:"lastname"`
+	Societe     string           `json:"societe"`
+	IsABTasty   bool             `json:"is_abtasty"`
+	LastAccount models.AccountWE `json:"last_account"`
 }
 
 type ClientCredentialsRequest struct {
