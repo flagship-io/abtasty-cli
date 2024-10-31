@@ -7,8 +7,10 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/flagship-io/abtasty-cli/models/web_experimentation"
 	"github.com/flagship-io/abtasty-cli/utils"
 	"github.com/flagship-io/abtasty-cli/utils/config"
+	"github.com/flagship-io/abtasty-cli/utils/http_request/common"
 	"github.com/spf13/cobra"
 )
 
@@ -26,6 +28,28 @@ var useCmd = &cobra.Command{
 		err := config.SetAccountID(utils.WEB_EXPERIMENTATION, AccountID)
 		if err != nil {
 			log.Fatalf("error occurred: %s", err)
+		}
+
+		err = config.SetWorkingDir(utils.WEB_EXPERIMENTATION, utils.DefaultGlobalCodeWorkingDir())
+		if err != nil {
+			log.Fatalf("error occurred: %s", err)
+		}
+
+		currentUser, err := common.HTTPGetIdentifierWE()
+		if err != nil {
+			log.Fatalf("error occurred: %v", err)
+		}
+
+		if currentUser.LastAccount != (web_experimentation.AccountWE{}) {
+			err := config.SetIdentifier(utils.WEB_EXPERIMENTATION, currentUser.LastAccount.Identifier)
+			if err != nil {
+				log.Fatalf("error occurred: %s", err)
+			}
+
+			err = config.SetEmail(utils.WEB_EXPERIMENTATION, currentUser.Email)
+			if err != nil {
+				log.Fatalf("error occurred: %s", err)
+			}
 		}
 
 		fmt.Fprintln(cmd.OutOrStdout(), "Account ID set to : "+AccountID)

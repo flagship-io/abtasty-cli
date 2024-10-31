@@ -106,6 +106,22 @@ func HTTPRefreshTokenWE(cred RequestConfig) (models.TokenResponse, error) {
 	return authenticationResponse, err
 }
 
+func HTTPGetIdentifierWE() (models.UserMe, error) {
+	var currentUser models.UserMe
+
+	respBody, err := HTTPRequest[models.Token](http.MethodGet, utils.GetWebExperimentationHost()+"/v1"+"/users"+"/me", nil)
+	if err != nil {
+		return models.UserMe{}, err
+	}
+
+	err = json.Unmarshal(respBody, &currentUser)
+	if err != nil {
+		return models.UserMe{}, err
+	}
+
+	return currentUser, err
+}
+
 func InitiateBrowserAuth(username, clientID, clientSecret string) (models.TokenResponse, error) {
 	if clientID == "" || clientSecret == "" {
 		log.Fatal("Error while login, required fields (username, client ID, client secret)")
