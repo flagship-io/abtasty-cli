@@ -34,7 +34,7 @@ import (
 // FeatureExperimentationCmd represents the feature experimentation command
 var FeatureExperimentationCmd = &cobra.Command{
 	Use:     "feature-experimentation [auth|account|account-environment|project|campaign|flag|goal|targeting-key|variation-group|variation]",
-	Aliases: []string{"feature-experimentation", "feature-exp", "fe", "feat-exp"},
+	Aliases: []string{"feature-experimentation", "feature-exp", "fe", "feat-exp", "feature"},
 	Short:   "Manage resources related to the feature experimentation product",
 	Long:    `Manage resources related to the feature experimentation product`,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
