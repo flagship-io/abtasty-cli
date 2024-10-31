@@ -22,3 +22,18 @@ func TestHTTPListAccount(t *testing.T) {
 	assert.Equal(t, "account_role", respBody[0].Role)
 
 }
+
+func TestHTTPUserMe(t *testing.T) {
+
+	respBody, err := HTTPUserMe()
+
+	assert.NotNil(t, respBody)
+	assert.Nil(t, err)
+
+	assert.Equal(t, 100000, respBody.Id)
+	assert.Equal(t, "fake@example.com", respBody.Email)
+	assert.Equal(t, "john", respBody.FirstName)
+	assert.Equal(t, "doe", respBody.LastName)
+	assert.Equal(t, "Example", respBody.Societe)
+	assert.Equal(t, false, respBody.IsABTasty)
+}
