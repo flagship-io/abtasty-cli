@@ -9,6 +9,7 @@ import (
 	"os"
 	"slices"
 
+	"github.com/flagship-io/abtasty-cli/models/web_experimentation"
 	"github.com/flagship-io/abtasty-cli/utils"
 	"github.com/flagship-io/abtasty-cli/utils/config"
 	"github.com/flagship-io/abtasty-cli/utils/http_request/common"
@@ -80,6 +81,23 @@ var loginCmd = &cobra.Command{
 					log.Fatalf("error occurred: %v", err)
 				}
 
+				currentUser, err := common.HTTPGetIdentifierWE()
+				if err != nil {
+					log.Fatalf("error occurred: %v", err)
+				}
+
+				if currentUser.LastAccount != (web_experimentation.AccountWE{}) {
+					err := config.SetIdentifier(utils.WEB_EXPERIMENTATION, currentUser.LastAccount.Identifier)
+					if err != nil {
+						log.Fatalf("error occurred: %s", err)
+					}
+
+					err = config.SetEmail(utils.WEB_EXPERIMENTATION, currentUser.Email)
+					if err != nil {
+						log.Fatalf("error occurred: %s", err)
+					}
+				}
+
 				if AccountID != "" {
 					err = config.SetAccountID(utils.WEB_EXPERIMENTATION, AccountID)
 					if err != nil {
@@ -109,6 +127,23 @@ var loginCmd = &cobra.Command{
 			err = config.SelectAuth(utils.WEB_EXPERIMENTATION, Username)
 			if err != nil {
 				log.Fatalf("error occurred: %v", err)
+			}
+
+			currentUser, err := common.HTTPGetIdentifierWE()
+			if err != nil {
+				log.Fatalf("error occurred: %v", err)
+			}
+
+			if currentUser.LastAccount != (web_experimentation.AccountWE{}) {
+				err := config.SetIdentifier(utils.WEB_EXPERIMENTATION, currentUser.LastAccount.Identifier)
+				if err != nil {
+					log.Fatalf("error occurred: %s", err)
+				}
+
+				err = config.SetEmail(utils.WEB_EXPERIMENTATION, currentUser.Email)
+				if err != nil {
+					log.Fatalf("error occurred: %s", err)
+				}
 			}
 
 			if AccountID != "" {

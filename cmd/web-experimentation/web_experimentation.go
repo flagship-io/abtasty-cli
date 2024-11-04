@@ -30,7 +30,7 @@ import (
 // WebExperimentationCmd represents the web experimentation command
 var WebExperimentationCmd = &cobra.Command{
 	Use:     "web-experimentation [auth|account|campaign|global-code|variation]",
-	Aliases: []string{"web-experimentation", "web-exp", "we"},
+	Aliases: []string{"web-experimentation", "web-exp", "we", "web"},
 	Short:   "Manage resources related to the web experimentation product",
 	Long:    `Manage resources related to the web experimentation product`,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {

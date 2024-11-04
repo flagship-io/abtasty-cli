@@ -22,6 +22,7 @@ import (
 )
 
 var UserAgent string
+var OutputFormat string
 
 var c = http.Client{Timeout: time.Duration(10) * time.Second}
 var counter = false
@@ -35,6 +36,8 @@ type ResourceRequest struct {
 	AccountID            string `mapstructure:"account_id"`
 	AccountEnvironmentID string `mapstructure:"account_environment_id"`
 	WorkingDir           string `mapstructure:"working_dir"`
+	Identifier           string `mapstructure:"identifier"`
+	Email                string `mapstructure:"email"`
 }
 
 func (c *ResourceRequest) Init(cL *RequestConfig) {
@@ -68,6 +71,30 @@ type RequestConfig struct {
 	CurrentUsedCredential string `mapstructure:"current_used_credential"`
 	OutputFormat          string `mapstructure:"output_format"`
 	WorkingDirectory      string `mapstructure:"working_dir"`
+	Identifier            string `mapstructure:"identifier"`
+	Email                 string `mapstructure:"email"`
+}
+
+type HitRequest struct {
+	DS             string                `json:"ds"`
+	ClientID       string                `json:"cid"`
+	VisitorID      string                `json:"vid"`
+	Type           string                `json:"t"`
+	CustomVariable CustomVariableRequest `json:"cv"`
+}
+
+type CustomVariableRequest struct {
+	Version        string `json:"version"`
+	Timestamp      string `json:"timestamp"`
+	StackType      string `json:"stack.type"`
+	UserAgent      string `json:"user.agent"`
+	OutputFormat   string `json:"output.format"`
+	EnvironmentId  string `json:"envId"`
+	AccountId      string `json:"accountId"`
+	HttpMethod     string `json:"http.method"`
+	HttpURL        string `json:"http.url"`
+	ABTastyProduct string `json:"abtasty.product"`
+	Identifier     string `json:"identifier"`
 }
 
 var cred RequestConfig
@@ -106,6 +133,10 @@ func regenerateToken(product, configName string) {
 }
 
 func HTTPRequest[T any](method string, url string, body []byte) ([]byte, error) {
+	if !strings.Contains(cred.Email, "@abtasty.com") && (utils.WEB_EXPERIMENTATION == cred.Product || (utils.FEATURE_EXPERIMENTATION == cred.Product && cred.AccountEnvironmentID != "")) {
+		sendAnalyticHit(method, url)
+	}
+
 	var bodyIO io.Reader = nil
 	if body != nil {
 		bodyIO = bytes.NewBuffer(body)
@@ -260,4 +291,65 @@ func HTTPGetAllPagesWE[T any](resource string) ([]T, error) {
 		currentPage++
 	}
 	return results, nil
+}
+
+func sendAnalyticHit(method string, url string) (int, error) {
+	var bodyIO io.Reader = nil
+	var clientID = ""
+
+	if cred.Product == utils.FEATURE_EXPERIMENTATION {
+		clientID = cred.AccountEnvironmentID
+	}
+
+	if cred.Product == utils.WEB_EXPERIMENTATION {
+		clientID = cred.Identifier
+	}
+
+	var customVariable = CustomVariableRequest{
+		Version:        "1",
+		Timestamp:      time.Now().UTC().Format("2006-01-02T15:04:05.000Z"),
+		StackType:      "Tools",
+		UserAgent:      UserAgent,
+		ABTastyProduct: cred.Product,
+		EnvironmentId:  cred.AccountEnvironmentID,
+		Identifier:     cred.Identifier,
+		AccountId:      cred.AccountID,
+		HttpMethod:     method,
+		HttpURL:        url,
+		OutputFormat:   OutputFormat,
+	}
+
+	var hit = HitRequest{
+		DS:             "APP",
+		ClientID:       clientID,
+		VisitorID:      cred.AccountID,
+		Type:           "USAGE",
+		CustomVariable: customVariable,
+	}
+
+	body, err := json.Marshal(hit)
+	if err != nil {
+		log.Fatalf("error occurred: %v", err)
+	}
+
+	if body != nil {
+		bodyIO = bytes.NewBuffer(body)
+	}
+
+	req, err := http.NewRequest(http.MethodPost, utils.HIT_ANALYTICS_URL, bodyIO)
+	if err != nil {
+		log.Panicf("error occurred on request creation: %v", err)
+	}
+
+	req.Header.Add("Accept", `*/*`)
+	req.Header.Add("Accept-Encoding", `gzip, deflate, br`)
+	req.Header.Add("Content-Type", "application/json")
+
+	resp, err := c.Do(req)
+	if err != nil {
+		return 0, err
+	}
+	defer resp.Body.Close()
+
+	return resp.StatusCode, nil
 }

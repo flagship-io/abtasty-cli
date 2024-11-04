@@ -30,6 +30,15 @@ var TestAccountGlobalCode = models.AccountWE{
 	GlobalCode: TestGlobalCode,
 }
 
+var TestUserMe = models_.UserMe{
+	Id:        100000,
+	Email:     "fake@example.com",
+	FirstName: "john",
+	LastName:  "doe",
+	Societe:   "Example",
+	IsABTasty: false,
+}
+
 func APIAccount() {
 
 	resp := utils.HTTPListResponseWE[models.AccountWE]{
@@ -62,4 +71,12 @@ func APIAccount() {
 			return resp, nil
 		},
 	)
+
+	httpmock.RegisterResponder("GET", utils.GetWebExperimentationHost()+"/v1/users/me",
+		func(req *http.Request) (*http.Response, error) {
+			resp, _ := httpmock.NewJsonResponse(200, TestUserMe)
+			return resp, nil
+		},
+	)
+
 }
