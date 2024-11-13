@@ -1,6 +1,7 @@
 package common
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -127,6 +128,10 @@ func InitiateBrowserAuth(username, clientID, clientSecret string) (models.TokenR
 		log.Fatal("Error while login, required fields (username, client ID, client secret)")
 	}
 
+	server := &http.Server{
+		Addr: "127.0.0.1:8010",
+	}
+
 	codeChan := make(chan string)
 	var url = utils.GetWebExperimentationBrowserAuth(clientID, clientSecret)
 
@@ -139,8 +144,17 @@ func InitiateBrowserAuth(username, clientID, clientSecret string) (models.TokenR
 			handleCallback(w, r, codeChan)
 		})
 
-		if err := http.ListenAndServe("127.0.0.1:8010", nil); err != nil {
+		if err := server.ListenAndServe(); err != nil {
 			log.Fatalf("Error starting callback server: %s", err)
+		}
+	}()
+
+	go func() {
+		select {
+		case <-time.After(5 * time.Minute):
+			if err := server.Shutdown(context.Background()); err != nil {
+				log.Fatalf("Server forced to shutdown: %s", err)
+			}
 		}
 	}()
 
