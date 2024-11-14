@@ -22,6 +22,14 @@ func GetWebExperimentationHost() string {
 	return "https://api.abtasty.com/api"
 }
 
+func GetWebExperimentationBackEndHost() string {
+	if os.Getenv("ABT_STAGING") == "true" {
+		return "https://staging-api.abtasty.com/backend"
+	}
+
+	return "https://api.abtasty.com/backend"
+}
+
 func GetHostFeatureExperimentationAuth() string {
 	if os.Getenv("ABT_STAGING") == "true" {
 		return "https://staging-auth.flagship.io"
