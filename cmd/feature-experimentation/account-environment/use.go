@@ -28,7 +28,7 @@ var useCmd = &cobra.Command{
 			log.Fatalf("error occurred: %v", err)
 		}
 
-		fmt.Fprintln(cmd.OutOrStdout(), "Account Environment ID set to : "+AccountEnvironmentID)
+		fmt.Fprintln(cmd.OutOrStdout(), "Account Environment ID set to: "+AccountEnvironmentID)
 
 	},
 }

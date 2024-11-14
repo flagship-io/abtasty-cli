@@ -28,7 +28,7 @@ var useCmd = &cobra.Command{
 			log.Fatalf("error occurred: %s", err)
 		}
 
-		fmt.Fprintln(cmd.OutOrStdout(), "Account ID set to : "+AccountID)
+		fmt.Fprintln(cmd.OutOrStdout(), "Account ID set to: "+AccountID)
 
 	},
 }
