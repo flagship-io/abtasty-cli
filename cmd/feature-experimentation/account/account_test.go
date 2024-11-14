@@ -43,5 +43,5 @@ func TestAccountUseCommand(t *testing.T) {
 	assert.Contains(t, failOutput, "Error: required flag(s) \"id\" not set")
 
 	successOutput, _ := utils.ExecuteCommand(AccountCmd, "use", "-i=account_id")
-	assert.Equal(t, "Account ID set to : account_id\n", successOutput)
+	assert.Equal(t, "Account ID set to: account_id\n", successOutput)
 }
