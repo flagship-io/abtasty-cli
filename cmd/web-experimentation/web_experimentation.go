@@ -14,8 +14,10 @@ import (
 	campaign_global_code "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/campaign-global-code"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/modification"
 	modification_code "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/modification-code"
+	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/segment"
 	tag_rebuild "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/tag-rebuild"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/token"
+	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/trigger"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/variation"
 	variation_global_code "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/variation-global-code"
 	working_directory "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/working-directory"
@@ -55,6 +57,8 @@ func addSubCommandPalettes() {
 	WebExperimentationCmd.AddCommand(modification.ModificationCmd)
 	WebExperimentationCmd.AddCommand(working_directory.WorkingDirectoryCmd)
 	WebExperimentationCmd.AddCommand(tag_rebuild.RebuildTagCmd)
+	WebExperimentationCmd.AddCommand(segment.SegmentCmd)
+	WebExperimentationCmd.AddCommand(trigger.TriggerCmd)
 }
 
 func init() {
