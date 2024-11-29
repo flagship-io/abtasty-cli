@@ -16,6 +16,7 @@ var TestCampaign = models.CampaignWE{
 	Description:        "testCampaignDescription",
 	Type:               "ab",
 	GlobalCodeCampaign: "console.log(\"Hello World!\")",
+	Url:                "https://abtasty.com",
 }
 
 var TestCampaign1 = models.CampaignWE{
@@ -24,6 +25,7 @@ var TestCampaign1 = models.CampaignWE{
 	Description:        "testCampaignDescription1",
 	Type:               "ab",
 	GlobalCodeCampaign: "console.log(\"Hello Earth!\")",
+	Url:                "https://abtasty.com",
 }
 
 var TestCampaignList = []models.CampaignWE{
@@ -53,6 +55,13 @@ func APICampaign() {
 	httpmock.RegisterResponder("GET", utils.GetWebExperimentationHost()+"/v1/accounts/"+mockfunction.Auth.AccountID+"/tests",
 		func(req *http.Request) (*http.Response, error) {
 			resp, _ := httpmock.NewJsonResponse(200, respList)
+			return resp, nil
+		},
+	)
+
+	httpmock.RegisterResponder("POST", utils.GetWebExperimentationHost()+"/v1/accounts/"+mockfunction.Auth.AccountID+"/tests",
+		func(req *http.Request) (*http.Response, error) {
+			resp, _ := httpmock.NewJsonResponse(200, TestCampaign)
 			return resp, nil
 		},
 	)

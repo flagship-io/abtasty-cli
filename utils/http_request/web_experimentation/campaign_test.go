@@ -1,6 +1,7 @@
 package web_experimentation
 
 import (
+	"strconv"
 	"testing"
 
 	"github.com/flagship-io/abtasty-cli/utils/http_request/common"
@@ -8,6 +9,30 @@ import (
 )
 
 var campaignRequester = CampaignWERequester{&common.ResourceRequest{AccountID: "account_id"}}
+
+func TestHTTPCreateCampaign(t *testing.T) {
+
+	data := "{\"name\":\"testCampaignName\",\"type\":\"ab\",\"url\":\"https://abtasty.com\",\"description\":\"testCampaignDescription\",\"global_code\":\"console.log(\"Hello World!\")\"}"
+
+	respBody, err := campaignRequester.HTTPCreateCampaign(data)
+
+	assert.NotNil(t, respBody)
+	assert.Nil(t, err)
+
+	assert.Equal(t, []byte("{\"id\":100000,\"name\":\"testCampaignName\",\"url\":\"https://abtasty.com\",\"description\":\"testCampaignDescription\",\"type\":\"ab\",\"sub_type\":\"\",\"master\":null,\"state\":\"\",\"traffic\":null,\"variations\":null,\"sub_tests\":null,\"created_at\":{\"readable_date\":\"\",\"timestamp\":0,\"pattern\":\"\"},\"labels\":null,\"last_play\":{\"readable_date\":\"\",\"timestamp\":0,\"pattern\":\"\"},\"last_pause\":{\"readable_date\":\"\",\"timestamp\":0,\"pattern\":\"\"},\"global_code\":\"console.log(\\\"Hello World!\\\")\",\"source_code\":\"\"}"), respBody)
+}
+
+func TestHTTPEditCampaign(t *testing.T) {
+
+	data := "{\"name\":\"testCampaignName\",\"type\":\"ab\",\"url\":\"https://abtasty.com\",\"description\":\"testCampaignDescription\",\"global_code\":\"console.log(\"Hello World!\")\"}"
+
+	respBody, err := campaignRequester.HTTPEditCampaign(strconv.Itoa(100000), data)
+
+	assert.NotNil(t, respBody)
+	assert.Nil(t, err)
+
+	assert.Equal(t, []byte("{\"id\":100000,\"name\":\"testCampaignName\",\"url\":\"https://abtasty.com\",\"description\":\"testCampaignDescription\",\"type\":\"ab\",\"sub_type\":\"\",\"master\":null,\"state\":\"\",\"traffic\":null,\"variations\":null,\"sub_tests\":null,\"created_at\":{\"readable_date\":\"\",\"timestamp\":0,\"pattern\":\"\"},\"labels\":null,\"last_play\":{\"readable_date\":\"\",\"timestamp\":0,\"pattern\":\"\"},\"last_pause\":{\"readable_date\":\"\",\"timestamp\":0,\"pattern\":\"\"},\"global_code\":\"console.log(\\\"Hello World!\\\")\",\"source_code\":\"\"}"), respBody)
+}
 
 func TestHTTPGetCampaign(t *testing.T) {
 
