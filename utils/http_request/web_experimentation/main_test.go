@@ -23,6 +23,8 @@ func TestMain(m *testing.M) {
 	mockfunction.APIVariation()
 	mockfunction.APIAccount()
 	mockfunction.APIToken()
+	mockfunction.APISegment()
+	mockfunction.APITrigger()
 
 	m.Run()
 }
