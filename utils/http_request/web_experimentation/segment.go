@@ -10,10 +10,10 @@ type SegmentRequester struct {
 	*common.ResourceRequest
 }
 
-func (t *SegmentRequester) HTTPListSegment() ([]models.Audience, error) {
-	return common.HTTPGetAllPagesWE[models.Audience](utils.GetWebExperimentationHost() + "/v1/accounts/" + t.AccountID + "/audiences?type=segment&status=unarchive&")
+func (s *SegmentRequester) HTTPListSegment() ([]models.Audience, error) {
+	return common.HTTPGetAllPagesWE[models.Audience](utils.GetWebExperimentationHost() + "/v1/accounts/" + s.AccountID + "/audiences?type=segment&status=unarchive&")
 }
 
-func (t *SegmentRequester) HTTPGetSegment(id string) (models.Audience, error) {
-	return common.HTTPGetItem[models.Audience](utils.GetWebExperimentationHost() + "/v1/accounts/" + t.AccountID + "/audiences/" + id)
+func (s *SegmentRequester) HTTPGetSegment(id string) (models.Audience, error) {
+	return common.HTTPGetItem[models.Audience](utils.GetWebExperimentationHost() + "/v1/accounts/" + s.AccountID + "/audiences/" + id)
 }
