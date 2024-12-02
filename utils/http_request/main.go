@@ -35,3 +35,4 @@ var AccountGlobalCodeRequester web_experimentation.AccountGlobalCodeRequester = 
 var ModificationRequester web_experimentation.ModificationRequester = web_experimentation.ModificationRequester{ResourceRequest: &ResourceRequester}
 var SegmentRequester web_experimentation.SegmentRequester = web_experimentation.SegmentRequester{ResourceRequest: &ResourceRequester}
 var TriggerRequester web_experimentation.TriggerRequester = web_experimentation.TriggerRequester{ResourceRequest: &ResourceRequester}
+var FavoriteUrlRequester web_experimentation.FavoriteUrlRequester = web_experimentation.FavoriteUrlRequester{ResourceRequest: &ResourceRequester}
