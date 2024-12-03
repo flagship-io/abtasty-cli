@@ -23,6 +23,7 @@ func TestMain(m *testing.M) {
 	mockfunction.APIVariation()
 	mockfunction.APIAccount()
 	mockfunction.APIToken()
+	mockfunction.APIAudience()
 	mockfunction.APISegment()
 	mockfunction.APITrigger()
 	mockfunction.APIFavoriteUrl()
