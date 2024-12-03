@@ -69,6 +69,13 @@ func APIModification() {
 		},
 	)
 
+	httpmock.RegisterResponder("POST", utils.GetWebExperimentationHost()+"/v1/accounts/"+mockfunction.Auth.AccountID+"/tests/"+strconv.Itoa(TestCampaign.Id)+"/modifications",
+		func(req *http.Request) (*http.Response, error) {
+			resp, _ := httpmock.NewJsonResponse(200, TestElementModification)
+			return resp, nil
+		},
+	)
+
 	httpmock.RegisterResponder("PATCH", utils.GetWebExperimentationHost()+"/v1/accounts/"+mockfunction.Auth.AccountID+"/tests/"+strconv.Itoa(TestCampaign.Id)+"/modifications/"+strconv.Itoa(TestElementModification.Id),
 		func(req *http.Request) (*http.Response, error) {
 			resp, _ := httpmock.NewJsonResponse(200, TestElementModification)

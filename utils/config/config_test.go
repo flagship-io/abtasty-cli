@@ -22,6 +22,9 @@ var (
 	scope        = "scope"
 	accountID    = "account_id"
 	accountEnvID = "account_environment_id"
+	identifier   = "identifier"
+	email        = "email"
+	workingDir   = "workingDir"
 )
 var authResponse = models.TokenResponse{
 	AccessToken:  accessToken,
@@ -276,4 +279,91 @@ func TestRewriteToken(t *testing.T) {
 	assert.Equal(t, v.GetString("username"), username)
 	assert.Equal(t, v.GetString("token"), authResponse.AccessToken)
 	assert.Equal(t, v.GetString("refresh_token"), authResponse.RefreshToken)
+}
+
+func TestSetIdentifier(t *testing.T) {
+	err := CreateAuthFile(product, username, clientID, clientSecret, authResponse)
+	if err != nil {
+		t.Fatalf("Failed to get user home directory: %v", err)
+	}
+
+	err = SelectAuth(product, username)
+	if err != nil {
+		t.Fatalf("Failed to read file: %v", err)
+	}
+
+	err = SetIdentifier(product, identifier)
+	if err != nil {
+		t.Fatalf("Failed to read file: %v", err)
+	}
+
+	filepath, err := CredentialPath(product, utils.HOME_CLI)
+	if err != nil {
+		t.Fatalf("Failed to read file: %v", err)
+	}
+
+	yamlFile, err := os.ReadFile(filepath)
+	if err != nil {
+		t.Fatalf("Failed to read file: %v", err)
+	}
+
+	assert.Equal(t, string(yamlFile), "current_used_credential: test_user\nidentifier: identifier\n")
+}
+
+func TestSetEmail(t *testing.T) {
+	err := CreateAuthFile(product, username, clientID, clientSecret, authResponse)
+	if err != nil {
+		t.Fatalf("Failed to get user home directory: %v", err)
+	}
+
+	err = SelectAuth(product, username)
+	if err != nil {
+		t.Fatalf("Failed to read file: %v", err)
+	}
+
+	err = SetEmail(product, email)
+	if err != nil {
+		t.Fatalf("Failed to read file: %v", err)
+	}
+
+	filepath, err := CredentialPath(product, utils.HOME_CLI)
+	if err != nil {
+		t.Fatalf("Failed to read file: %v", err)
+	}
+
+	yamlFile, err := os.ReadFile(filepath)
+	if err != nil {
+		t.Fatalf("Failed to read file: %v", err)
+	}
+
+	assert.Equal(t, string(yamlFile), "current_used_credential: test_user\nemail: email\n")
+}
+
+func TestSetWorkingDir(t *testing.T) {
+	err := CreateAuthFile(product, username, clientID, clientSecret, authResponse)
+	if err != nil {
+		t.Fatalf("Failed to get user home directory: %v", err)
+	}
+
+	err = SelectAuth(product, username)
+	if err != nil {
+		t.Fatalf("Failed to read file: %v", err)
+	}
+
+	err = SetWorkingDir(product, workingDir)
+	if err != nil {
+		t.Fatalf("Failed to read file: %v", err)
+	}
+
+	filepath, err := CredentialPath(product, utils.HOME_CLI)
+	if err != nil {
+		t.Fatalf("Failed to read file: %v", err)
+	}
+
+	yamlFile, err := os.ReadFile(filepath)
+	if err != nil {
+		t.Fatalf("Failed to read file: %v", err)
+	}
+
+	assert.Equal(t, string(yamlFile), "current_used_credential: test_user\nworking_dir: workingDir\n")
 }
