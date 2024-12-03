@@ -9,6 +9,7 @@ import (
 
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/account"
 	account_global_code "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/account-global-code"
+	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/audience"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/auth"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/campaign"
 	campaign_global_code "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/campaign-global-code"
@@ -58,6 +59,7 @@ func addSubCommandPalettes() {
 	WebExperimentationCmd.AddCommand(modification.ModificationCmd)
 	WebExperimentationCmd.AddCommand(working_directory.WorkingDirectoryCmd)
 	WebExperimentationCmd.AddCommand(tag_rebuild.RebuildTagCmd)
+	WebExperimentationCmd.AddCommand(audience.AudienceCmd)
 	WebExperimentationCmd.AddCommand(segment.SegmentCmd)
 	WebExperimentationCmd.AddCommand(trigger.TriggerCmd)
 	WebExperimentationCmd.AddCommand(favorite_url.FavoriteUrlCmd)
