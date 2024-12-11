@@ -11,10 +11,9 @@ var CampaignID string
 
 // CampaignTargetingCmd represents the campaign targeting command
 var CampaignTargetingCmd = &cobra.Command{
-	Use:     "campaign-targeting [get|push]",
-	Short:   "Manage campaign targeting",
-	Aliases: []string{"cgc"},
-	Long:    `Manage campaign targeting`,
+	Use:   "campaign-targeting [get|push]",
+	Short: "Manage campaign targeting",
+	Long:  `Manage campaign targeting`,
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Help()
 	},
