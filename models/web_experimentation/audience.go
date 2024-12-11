@@ -20,11 +20,11 @@ type Audience struct {
 }
 
 type Group struct {
-	Id         string        `json:"id,omitempty"`
-	Targetings []TargetingWE `json:"targetings"`
+	Id         string             `json:"id,omitempty"`
+	Targetings []TargetingGroupWE `json:"targetings"`
 }
 
-type TargetingWE struct {
+type TargetingGroupWE struct {
 	Id               string `json:"id,omitempty"`
 	Operator         string `json:"operator"`
 	MutationObserver bool   `json:"mutation_observer"`

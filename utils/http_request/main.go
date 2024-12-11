@@ -37,3 +37,4 @@ var AudienceRequester web_experimentation.AudienceRequester = web_experimentatio
 var SegmentRequester web_experimentation.SegmentRequester = web_experimentation.SegmentRequester{ResourceRequest: &ResourceRequester}
 var TriggerRequester web_experimentation.TriggerRequester = web_experimentation.TriggerRequester{ResourceRequest: &ResourceRequester}
 var FavoriteUrlRequester web_experimentation.FavoriteUrlRequester = web_experimentation.FavoriteUrlRequester{ResourceRequest: &ResourceRequester}
+var CampaignTargetingRequester web_experimentation.CampaignTargetingRequester = web_experimentation.CampaignTargetingRequester{ResourceRequest: &ResourceRequester}

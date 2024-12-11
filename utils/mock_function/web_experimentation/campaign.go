@@ -17,6 +17,18 @@ var TestCampaign = models.CampaignWE{
 	Type:               "ab",
 	GlobalCodeCampaign: "console.log(\"Hello World!\")",
 	Url:                "https://abtasty.com",
+	UrlScopes: []models.UrlScopesCampaign{
+		{
+			Condition: 40,
+			Include:   true,
+			Value:     "https://abtasty.com",
+		},
+		{
+			Condition: 41,
+			Include:   false,
+			Value:     "https://abtasty.com",
+		},
+	},
 }
 
 var TestCampaign1 = models.CampaignWE{

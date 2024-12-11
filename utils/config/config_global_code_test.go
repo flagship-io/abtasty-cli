@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type TestStruct struct {
+type TestCampaignCodeStruct struct {
 	name           string
 	workingDir     string
 	want           string
@@ -34,7 +34,7 @@ func TestCheckWorkingDirectory(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get current working directory: %v", err)
 	}
-	tests := []TestStruct{
+	tests := []TestCampaignCodeStruct{
 		{
 			name:       "ExistingDirectory",
 			workingDir: currentDir,
@@ -68,7 +68,7 @@ func TestCheckGlobalCodeDirectory(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get current working directory: %v", err)
 	}
-	tests := []TestStruct{
+	tests := []TestCampaignCodeStruct{
 		{
 			name:       "ExistingDirectory",
 			workingDir: currentDir,
@@ -103,7 +103,7 @@ func TestAccountGlobalCodeDirectory(t *testing.T) {
 		t.Fatalf("Failed to get current working directory: %v", err)
 	}
 
-	tests := []TestStruct{
+	tests := []TestCampaignCodeStruct{
 		{
 			name:       "ExistingDirectory",
 			workingDir: currentDir,
@@ -141,7 +141,7 @@ func TestCampaignGlobalCodeDirectory(t *testing.T) {
 		t.Fatalf("Failed to get current working directory: %v", err)
 	}
 
-	tests := []TestStruct{
+	tests := []TestCampaignCodeStruct{
 		{
 			name:       "ExistingDirectory",
 			workingDir: currentDir,
@@ -184,7 +184,7 @@ func TestVariationGlobalCodeDirectoryJS(t *testing.T) {
 		t.Fatalf("Failed to get current working directory: %v", err)
 	}
 
-	tests := []TestStruct{
+	tests := []TestCampaignCodeStruct{
 		{
 			name:        "ExistingDirectory",
 			workingDir:  currentDir,
@@ -229,7 +229,7 @@ func TestVariationGlobalCodeDirectoryCSS(t *testing.T) {
 		t.Fatalf("Failed to get current working directory: %v", err)
 	}
 
-	tests := []TestStruct{
+	tests := []TestCampaignCodeStruct{
 		{
 			name:        "ExistingDirectory",
 			workingDir:  currentDir,
@@ -274,7 +274,7 @@ func TestModificationCodeDirectory(t *testing.T) {
 		t.Fatalf("Failed to get current working directory: %v", err)
 	}
 
-	tests := []TestStruct{
+	tests := []TestCampaignCodeStruct{
 		{
 			name:           "ExistingDirectory",
 			workingDir:     currentDir,
