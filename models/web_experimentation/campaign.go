@@ -25,6 +25,7 @@ type CampaignWE struct {
 	UrlScopes          []UrlScopesCampaign         `json:"url_scopes"`
 	MutationObserver   bool                        `json:"mutation_observer"`
 	DisplayFrequency   DisplayFrequencyCampaign    `json:"display_frequency"`
+	Report             CampaignReport              `json:"report"`
 }
 
 type Traffic struct {
@@ -95,4 +96,9 @@ type TargetingCampaign struct {
 	FavoriteUrlScope     []FavoriteUrlScopesCampaign `json:"favorite_url_scopes,omitempty"`
 	DisplayFrequencyType string                      `json:"display_frequency_type,omitempty"`
 	MutationObserver     bool                        `json:"mutation_observer,omitempty"`
+}
+
+type CampaignReport struct {
+	Token   string `json:"token"`
+	Comment string `json:"comment"`
 }

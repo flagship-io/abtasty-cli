@@ -23,6 +23,7 @@ import (
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/trigger"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/variation"
 	variation_global_code "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/variation-global-code"
+	web_preview "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/web-preview"
 	working_directory "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/working-directory"
 	"github.com/flagship-io/abtasty-cli/utils"
 	"github.com/flagship-io/abtasty-cli/utils/config"
@@ -65,6 +66,7 @@ func addSubCommandPalettes() {
 	WebExperimentationCmd.AddCommand(trigger.TriggerCmd)
 	WebExperimentationCmd.AddCommand(favorite_url.FavoriteUrlCmd)
 	WebExperimentationCmd.AddCommand(campaign_targeting.CampaignTargetingCmd)
+	WebExperimentationCmd.AddCommand(web_preview.WebPreviewCmd)
 }
 
 func init() {

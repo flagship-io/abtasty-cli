@@ -40,6 +40,28 @@ var TestCampaign1 = models.CampaignWE{
 	Url:                "https://abtasty.com",
 }
 
+var TestCampaignWithVariation = models.CampaignWE{
+	Id:                 100002,
+	Name:               "testCampaignName2",
+	Description:        "testCampaignDescription2",
+	Type:               "ab",
+	GlobalCodeCampaign: "console.log(\"Hello World2!\")",
+	Url:                "https://abtasty.com",
+	UrlScopes: []models.UrlScopesCampaign{
+		{
+			Condition: 40,
+			Include:   true,
+			Value:     "https://abtasty.com",
+		},
+		{
+			Condition: 41,
+			Include:   false,
+			Value:     "https://abtasty.com",
+		},
+	},
+	Variations: []models.VariationWE{TestVariation},
+}
+
 var TestCampaignList = []models.CampaignWE{
 	TestCampaign,
 	TestCampaign1,
@@ -60,6 +82,13 @@ func APICampaign() {
 	httpmock.RegisterResponder("GET", utils.GetWebExperimentationHost()+"/v1/accounts/"+mockfunction.Auth.AccountID+"/tests/"+strconv.Itoa(TestCampaign.Id),
 		func(req *http.Request) (*http.Response, error) {
 			resp, _ := httpmock.NewJsonResponse(200, TestCampaign)
+			return resp, nil
+		},
+	)
+
+	httpmock.RegisterResponder("GET", utils.GetWebExperimentationHost()+"/v1/accounts/"+mockfunction.Auth.AccountID+"/tests/"+strconv.Itoa(TestCampaignWithVariation.Id),
+		func(req *http.Request) (*http.Response, error) {
+			resp, _ := httpmock.NewJsonResponse(200, TestCampaignWithVariation)
 			return resp, nil
 		},
 	)
