@@ -270,3 +270,35 @@ func RewriteToken(product, AuthName string, authenticationResponse models.TokenR
 
 	return nil
 }
+
+func CampaignTargetingDirectory(workingDir, accountID, campaignID, code string, override bool) (string, error) {
+	gcWorkingDir, err := CheckGlobalCodeDirectory(workingDir)
+	if err != nil {
+		return "", err
+	}
+
+	accountCodeDir := gcWorkingDir + "/" + accountID
+	campaignCodeDir := accountCodeDir + "/" + campaignID
+	targetingCodeDir := campaignCodeDir + "/targeting"
+
+	err = os.MkdirAll(targetingCodeDir, os.ModePerm)
+	if err != nil {
+		return "", err
+	}
+
+	jsonFilePath := targetingCodeDir + "/targeting.json"
+	if _, err := os.Stat(jsonFilePath); err == nil {
+		if !override {
+			fmt.Fprintln(os.Stderr, "File already exists: "+jsonFilePath)
+			return jsonFilePath, nil
+		}
+	}
+
+	err = os.WriteFile(jsonFilePath, []byte(code), os.ModePerm)
+	if err != nil {
+		return "", err
+	}
+
+	fmt.Fprintln(os.Stdout, "File created: "+jsonFilePath)
+	return jsonFilePath, nil
+}

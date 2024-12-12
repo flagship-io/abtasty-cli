@@ -9,15 +9,21 @@ import (
 
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/account"
 	account_global_code "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/account-global-code"
+	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/audience"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/auth"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/campaign"
 	campaign_global_code "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/campaign-global-code"
+	campaign_targeting "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/campaign-targeting"
+	favorite_url "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/favorite-url"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/modification"
 	modification_code "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/modification-code"
+	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/segment"
 	tag_rebuild "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/tag-rebuild"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/token"
+	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/trigger"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/variation"
 	variation_global_code "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/variation-global-code"
+	web_preview "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/web-preview"
 	working_directory "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/working-directory"
 	"github.com/flagship-io/abtasty-cli/utils"
 	"github.com/flagship-io/abtasty-cli/utils/config"
@@ -55,6 +61,12 @@ func addSubCommandPalettes() {
 	WebExperimentationCmd.AddCommand(modification.ModificationCmd)
 	WebExperimentationCmd.AddCommand(working_directory.WorkingDirectoryCmd)
 	WebExperimentationCmd.AddCommand(tag_rebuild.RebuildTagCmd)
+	WebExperimentationCmd.AddCommand(audience.AudienceCmd)
+	WebExperimentationCmd.AddCommand(segment.SegmentCmd)
+	WebExperimentationCmd.AddCommand(trigger.TriggerCmd)
+	WebExperimentationCmd.AddCommand(favorite_url.FavoriteUrlCmd)
+	WebExperimentationCmd.AddCommand(campaign_targeting.CampaignTargetingCmd)
+	WebExperimentationCmd.AddCommand(web_preview.WebPreviewCmd)
 }
 
 func init() {
