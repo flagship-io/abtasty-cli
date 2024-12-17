@@ -4,12 +4,15 @@ Copyright © 2022 Flagship Team flagship@abtasty.com
 package campaign_targeting
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
 
+	"github.com/flagship-io/abtasty-cli/models/web_experimentation"
 	"github.com/flagship-io/abtasty-cli/utils"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
+	we "github.com/flagship-io/abtasty-cli/utils/http_request/web_experimentation"
 	"github.com/spf13/cobra"
 )
 
@@ -23,6 +26,7 @@ var pushCmd = &cobra.Command{
 	Long:  `Push campaign targeting`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var codeByte []byte
+		var jsonModel web_experimentation.TargetingCampaignModelJSON
 
 		if !utils.CheckSingleFlag(filePath != "", dataRaw != "") {
 			log.Fatalf("error occurred: %s", "1 flag is required. (file, code)")
@@ -41,7 +45,19 @@ var pushCmd = &cobra.Command{
 			codeByte = []byte(dataRaw)
 		}
 
-		body, err := httprequest.CampaignTargetingRequester.HTTPPushCampaignTargeting(CampaignID, codeByte)
+		err := json.Unmarshal(codeByte, &jsonModel)
+		if err != nil {
+			log.Fatalf("error occurred: %s", err)
+		}
+
+		model := we.JsonModelToModel(jsonModel)
+
+		parsedModel, err := json.Marshal(model)
+		if err != nil {
+			log.Fatalf("error occurred: %s", err)
+		}
+
+		body, err := httprequest.CampaignTargetingRequester.HTTPPushCampaignTargeting(CampaignID, parsedModel)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
