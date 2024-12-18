@@ -25,9 +25,11 @@ func (c *CampaignTargetingRequester) HTTPGetCampaignTargeting(id string) (models
 	var triggerIds []string = []string{}
 	var urlScopes []models.UrlScopesCampaignModelJSON = []models.UrlScopesCampaignModelJSON{}
 	var selectorScopes []models.SelectorScopesCampaignModelJSON = []models.SelectorScopesCampaignModelJSON{}
-	var codeScopes []models.CodeScopesCampaign = []models.CodeScopesCampaign{}
+	var codeScope models.CodeScopesCampaign = models.CodeScopesCampaign{}
 	var favoriteUrlScopes []models.FavoriteUrlScopesCampaign = []models.FavoriteUrlScopesCampaign{}
 	var displayFrequencyType = resp.DisplayFrequency.Type
+	var displayFrequencyUnit = resp.DisplayFrequency.Unit
+	var displayFrequencyValue = resp.DisplayFrequency.Value
 	var elementAppearsAfterPageLoad = resp.MutationObserver
 
 	for _, audience := range resp.Audiences {
@@ -36,7 +38,6 @@ func (c *CampaignTargetingRequester) HTTPGetCampaignTargeting(id string) (models
 		} else {
 			triggerIds = append(triggerIds, audience.Id)
 		}
-
 	}
 
 	for _, urlScope := range resp.UrlScopes {
@@ -63,14 +64,8 @@ func (c *CampaignTargetingRequester) HTTPGetCampaignTargeting(id string) (models
 		})
 	}
 
-	for _, codeScope := range resp.CodeScopes {
-		codeScopes = append(codeScopes, models.CodeScopesCampaign{
-			Value: codeScope.Value,
-		})
-	}
-
-	if len(codeScopes) > 1 {
-		log.Fatalln("error occurred: code scope length > 1")
+	if len(resp.CodeScopes) > 0 {
+		codeScope = resp.CodeScopes[0]
 	}
 
 	for _, favoriteUrlScope := range resp.FavoriteUrlScopes {
@@ -85,10 +80,10 @@ func (c *CampaignTargetingRequester) HTTPGetCampaignTargeting(id string) (models
 		UrlScopes:                   urlScopes,
 		FavoriteUrlScopes:           favoriteUrlScopes,
 		SelectorScopes:              selectorScopes,
-		CodeScopes:                  codeScopes,
+		CodeScope:                   codeScope,
 		ElementAppearsAfterPageLoad: elementAppearsAfterPageLoad,
 		TriggerIDs:                  triggerIds,
-		DisplayFrequencyType:        displayFrequencyType,
+		TargetingFrequency:          models.TargetingFrequency{Type: displayFrequencyType, Unit: displayFrequencyUnit, Value: displayFrequencyValue},
 	}
 
 	return targetingCampaign, err
@@ -100,8 +95,8 @@ func JsonModelToModel(campaignTargetingJSON models.TargetingCampaignModelJSON) m
 	var selectorScopes []models.SelectorScopesCampaign = []models.SelectorScopesCampaign{}
 	var codeScopes []models.CodeScopesCampaign = []models.CodeScopesCampaign{}
 	var favoriteUrlScopes []models.FavoriteUrlScopesCampaign = []models.FavoriteUrlScopesCampaign{}
-	var displayFrequencyType = campaignTargetingJSON.DisplayFrequencyType
-	var mutationObserver = campaignTargetingJSON.ElementAppearsAfterPageLoad
+	var displayFrequencyType = campaignTargetingJSON.TargetingFrequency
+	var elementAppearsAfterPageLoad = campaignTargetingJSON.ElementAppearsAfterPageLoad
 
 	for _, segmentID := range campaignTargetingJSON.SegmentIDs {
 		audienceIds = append(audienceIds, segmentID)
@@ -147,14 +142,10 @@ func JsonModelToModel(campaignTargetingJSON models.TargetingCampaignModelJSON) m
 		})
 	}
 
-	for _, codeScope := range campaignTargetingJSON.CodeScopes {
+	if campaignTargetingJSON.CodeScope != (models.CodeScopesCampaign{}) {
 		codeScopes = append(codeScopes, models.CodeScopesCampaign{
-			Value: codeScope.Value,
+			Value: campaignTargetingJSON.CodeScope.Value,
 		})
-	}
-
-	if len(codeScopes) > 1 {
-		log.Fatalln("error occurred: code scope length > 1")
 	}
 
 	for _, favoriteUrlScope := range campaignTargetingJSON.FavoriteUrlScopes {
@@ -165,13 +156,15 @@ func JsonModelToModel(campaignTargetingJSON models.TargetingCampaignModelJSON) m
 	}
 
 	targetingCampaign := models.TargetingCampaign{
-		AudienceIDs:          audienceIds,
-		SelectorScopes:       selectorScopes,
-		UrlScopes:            urlScopes,
-		CodeScopes:           codeScopes,
-		DisplayFrequencyType: displayFrequencyType,
-		FavoriteUrlScope:     favoriteUrlScopes,
-		MutationObserver:     mutationObserver,
+		AudienceIDs:           audienceIds,
+		SelectorScopes:        selectorScopes,
+		UrlScopes:             urlScopes,
+		CodeScopes:            codeScopes,
+		DisplayFrequencyType:  displayFrequencyType.Type,
+		DisplayFrequencyUnit:  displayFrequencyType.Unit,
+		DisplayFrequencyValue: displayFrequencyType.Value,
+		FavoriteUrlScope:      favoriteUrlScopes,
+		MutationObserver:      elementAppearsAfterPageLoad,
 	}
 
 	return targetingCampaign

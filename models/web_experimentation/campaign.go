@@ -97,34 +97,44 @@ type UrlScopesCampaignModelJSON struct {
 }
 
 type DisplayFrequencyCampaign struct {
-	Type string `json:"type"`
+	Type  string `json:"type"`
+	Unit  string `json:"unit"`
+	Value int    `json:"value"`
 }
 
 type TargetingCampaign struct {
-	AudienceIDs          []string                    `json:"audience_ids,omitempty"`
-	UrlScopes            []UrlScopesCampaign         `json:"url_scopes,omitempty"`
-	SelectorScopes       []SelectorScopesCampaign    `json:"selector_scopes,omitempty"`
-	CodeScopes           []CodeScopesCampaign        `json:"code_scopes,omitempty"`
-	FavoriteUrlScope     []FavoriteUrlScopesCampaign `json:"favorite_url_scopes,omitempty"`
-	DisplayFrequencyType string                      `json:"display_frequency_type,omitempty"`
-	MutationObserver     bool                        `json:"mutation_observer"`
+	AudienceIDs           []string                    `json:"audience_ids"`
+	UrlScopes             []UrlScopesCampaign         `json:"url_scopes"`
+	SelectorScopes        []SelectorScopesCampaign    `json:"selector_scopes"`
+	CodeScopes            []CodeScopesCampaign        `json:"code_scopes"`
+	FavoriteUrlScope      []FavoriteUrlScopesCampaign `json:"favorite_url_scopes"`
+	DisplayFrequencyType  string                      `json:"display_frequency_type"`
+	DisplayFrequencyUnit  string                      `json:"display_frequency_unit,omitempty"`
+	DisplayFrequencyValue int                         `json:"display_frequency_value,omitempty"`
+	MutationObserver      bool                        `json:"mutation_observer"`
 }
 
 type TargetingCampaignModelJSON struct {
-	SegmentIDs []string `json:"segment_ids,omitempty"`
+	SegmentIDs []string `json:"segment_ids"`
 
-	UrlScopes                   []UrlScopesCampaignModelJSON      `json:"url_scopes,omitempty"`
-	FavoriteUrlScopes           []FavoriteUrlScopesCampaign       `json:"favorite_url_scopes,omitempty"`
-	SelectorScopes              []SelectorScopesCampaignModelJSON `json:"selector_scopes,omitempty"`
-	CodeScopes                  []CodeScopesCampaign              `json:"code_scopes,omitempty"`
+	UrlScopes                   []UrlScopesCampaignModelJSON      `json:"url_scopes"`
+	FavoriteUrlScopes           []FavoriteUrlScopesCampaign       `json:"favorite_url_scopes"`
+	SelectorScopes              []SelectorScopesCampaignModelJSON `json:"selector_scopes"`
+	CodeScope                   CodeScopesCampaign                `json:"code_scope"`
 	ElementAppearsAfterPageLoad bool                              `json:"element_appears_after_page_load"`
 
-	TriggerIDs []string `json:"triggers_ids,omitempty"`
+	TriggerIDs []string `json:"triggers_ids"`
 
-	DisplayFrequencyType string `json:"display_frequency_type,omitempty"`
+	TargetingFrequency TargetingFrequency `json:"targeting_frequency"`
 }
 
 type CampaignReport struct {
 	Token   string `json:"token"`
 	Comment string `json:"comment"`
+}
+
+type TargetingFrequency struct {
+	Type  string `json:"type,omitempty"`
+	Unit  string `json:"unit,omitempty"`
+	Value int    `json:"value,omitempty"`
 }
