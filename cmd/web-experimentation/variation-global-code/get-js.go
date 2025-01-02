@@ -6,8 +6,10 @@ package variation_global_code
 import (
 	"fmt"
 	"log"
+	"os"
 	"strconv"
 
+	"github.com/flagship-io/abtasty-cli/utils"
 	"github.com/flagship-io/abtasty-cli/utils/config"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
@@ -43,7 +45,22 @@ var getJSCmd = &cobra.Command{
 		}
 
 		if CreateFile && len(jsCode) > 0 {
-			_, err := config.VariationGlobalCodeDirectoryJS(httprequest.ModificationRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, VariationID, jsCode, Override)
+			if !Override {
+				jsFilePath := config.VariationGlobalCodeJSFilePath(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, VariationID)
+				if _, err := os.Stat(jsFilePath); err == nil {
+					fileHash, err := config.HashFile(jsFilePath)
+					if err != nil {
+						log.Fatalf("Error hashing file: %v", err)
+					}
+
+					strHash := config.HashString(jsCode)
+					if fileHash != strHash {
+						log.Fatalf("error occurred: %s", utils.ERROR_REMOTE_CHANGED_FROM_LOCAL)
+					}
+				}
+			}
+
+			_, err := config.WriteVariationGlobalCodeJS(httprequest.ModificationRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, VariationID, jsCode)
 			if err != nil {
 				log.Fatalf("error occurred: %v", err)
 			}
@@ -72,7 +89,7 @@ func init() {
 	}
 
 	getJSCmd.Flags().BoolVarP(&CreateFile, "create-file", "", false, "create a file that contains variation global code")
-	getJSCmd.Flags().BoolVarP(&Override, "override", "", false, "override existing variation global code file")
+	getJSCmd.Flags().BoolVarP(&Override, "override", "", false, "override local variation global code js file")
 
 	VariationGlobalCodeCmd.AddCommand(getJSCmd)
 }

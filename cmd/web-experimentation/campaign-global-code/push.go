@@ -9,6 +9,7 @@ import (
 	"os"
 
 	"github.com/flagship-io/abtasty-cli/utils"
+	"github.com/flagship-io/abtasty-cli/utils/config"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
 )
@@ -41,6 +42,19 @@ var pushCmd = &cobra.Command{
 			codeByte = []byte(code)
 		}
 
+		apiCampaignGlobalCode, err := httprequest.CampaignGlobalCodeRequester.HTTPGetCampaignGlobalCode(CampaignID)
+		if err != nil {
+			log.Fatalf("error occurred: %v", err)
+		}
+
+		if !Override {
+			apiHash := config.HashString(apiCampaignGlobalCode)
+			strHash := config.HashString(string(codeByte))
+			if apiHash != strHash {
+				log.Fatalf("error occurred: %s", utils.ERROR_LOCAL_CHANGED_FROM_REMOTE)
+			}
+		}
+
 		body, err := httprequest.CampaignGlobalCodeRequester.HTTPPushCampaignGlobalCode(CampaignID, codeByte)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
@@ -58,6 +72,8 @@ func init() {
 
 	pushCmd.Flags().StringVarP(&code, "code", "c", "", "new code to push in the campaign")
 	pushCmd.Flags().StringVarP(&filePath, "file", "", "", "file that contains new code to push in the campaign")
+
+	pushCmd.Flags().BoolVarP(&Override, "override", "", false, "override remote campaign global code")
 
 	CampaignGlobalCodeCmd.AddCommand(pushCmd)
 }

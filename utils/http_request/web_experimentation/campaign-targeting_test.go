@@ -16,7 +16,7 @@ func TestHTTPCampaignTargeting(t *testing.T) {
 	assert.NotNil(t, respBody)
 	assert.Nil(t, err)
 
-	assert.Equal(t, 40, respBody.UrlScopes[0].Condition)
+	assert.Equal(t, "is", respBody.UrlScopes[0].Condition)
 	assert.Equal(t, "https://abtasty.com", respBody.UrlScopes[0].Value)
 
 }

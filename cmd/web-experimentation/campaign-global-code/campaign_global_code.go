@@ -8,6 +8,7 @@ import (
 )
 
 var CampaignID string
+var Override bool
 
 // CampaignGlobalCodeCmd represents the campaign global code command
 var CampaignGlobalCodeCmd = &cobra.Command{

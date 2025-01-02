@@ -6,14 +6,15 @@ package account_global_code
 import (
 	"fmt"
 	"log"
+	"os"
 
+	"github.com/flagship-io/abtasty-cli/utils"
 	"github.com/flagship-io/abtasty-cli/utils/config"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
 )
 
 var createFile bool
-var override bool
 
 // getCmd represents get command
 var getCmd = &cobra.Command{
@@ -27,7 +28,22 @@ var getCmd = &cobra.Command{
 		}
 
 		if createFile && len(body) > 0 {
-			_, err := config.AccountGlobalCodeDirectory(httprequest.AccountGlobalCodeRequester.WorkingDir, AccountID, body, override)
+			if !Override {
+				jsFilePath := config.AccountGlobalCodeFilePath(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID)
+				if _, err := os.Stat(jsFilePath); err == nil {
+					fileHash, err := config.HashFile(jsFilePath)
+					if err != nil {
+						log.Fatalf("Error hashing file: %v", err)
+					}
+
+					strHash := config.HashString(body)
+					if fileHash != strHash {
+						log.Fatalf("error occurred: %s", utils.ERROR_REMOTE_CHANGED_FROM_LOCAL)
+					}
+				}
+			}
+
+			_, err := config.WriteAccountGlobalCode(httprequest.AccountGlobalCodeRequester.WorkingDir, AccountID, body)
 			if err != nil {
 				log.Fatalf("error occurred: %s", err)
 			}
@@ -49,7 +65,7 @@ func init() {
 	}
 
 	getCmd.Flags().BoolVarP(&createFile, "create-file", "", false, "create a file that contains account global code")
-	getCmd.Flags().BoolVarP(&override, "override", "", false, "override existing account global code file")
+	getCmd.Flags().BoolVarP(&Override, "override", "", false, "override local account global code file")
 
 	AccountGlobalCodeCmd.AddCommand(getCmd)
 }

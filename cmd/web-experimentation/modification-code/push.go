@@ -12,6 +12,7 @@ import (
 
 	"github.com/flagship-io/abtasty-cli/models/web_experimentation"
 	"github.com/flagship-io/abtasty-cli/utils"
+	"github.com/flagship-io/abtasty-cli/utils/config"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
 )
@@ -130,6 +131,14 @@ var pushCmd = &cobra.Command{
 			Engine:    string(codeByte),
 		}
 
+		if !Override {
+			apiHash := config.HashString(modification.Value)
+			strHash := config.HashString(string(codeByte))
+			if apiHash != strHash {
+				log.Fatalf("error occurred: %s", utils.ERROR_LOCAL_CHANGED_FROM_REMOTE)
+			}
+		}
+
 		body, err := httprequest.ModificationRequester.HTTPEditModification(campaignID, modification.Id, modificationToPush)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
@@ -151,6 +160,8 @@ func init() {
 	pushCmd.Flags().StringVarP(&code, "code", "c", "", "new code to push in the modification")
 	pushCmd.Flags().StringVarP(&selector, "selector", "", "", "new selector to push in the modification")
 	pushCmd.Flags().StringVarP(&filePath, "file", "", "", "file that contains new code to push in the modification")
+
+	pushCmd.Flags().BoolVarP(&Override, "override", "", false, "override remote modification code")
 
 	ModificationCodeCmd.AddCommand(pushCmd)
 }

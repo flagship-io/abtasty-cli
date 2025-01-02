@@ -11,6 +11,7 @@ import (
 
 	"github.com/flagship-io/abtasty-cli/models/web_experimentation"
 	"github.com/flagship-io/abtasty-cli/utils"
+	"github.com/flagship-io/abtasty-cli/utils/config"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
 )
@@ -25,6 +26,7 @@ var pushJSCmd = &cobra.Command{
 	Long:  `Push variation global js code`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var modificationId int
+		var modificationValue string
 		var codeByte []byte
 
 		if !utils.CheckSingleFlag(jsFilePath != "", jsCode != "") {
@@ -49,6 +51,7 @@ var pushJSCmd = &cobra.Command{
 		for _, modification := range modifList {
 			if modification.VariationID == variationID && modification.Type == "customScriptNew" && modification.Selector == "" {
 				modificationId = modification.Id
+				modificationValue = modification.Value
 			}
 		}
 
@@ -91,6 +94,14 @@ var pushJSCmd = &cobra.Command{
 			Engine:    string(codeByte),
 		}
 
+		if !Override {
+			apiHash := config.HashString(modificationValue)
+			strHash := config.HashString(string(codeByte))
+			if apiHash != strHash {
+				log.Fatalf("error occurred: %s", utils.ERROR_LOCAL_CHANGED_FROM_REMOTE)
+			}
+		}
+
 		body, err := httprequest.ModificationRequester.HTTPEditModification(campaignID, modificationId, modificationToPush)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
@@ -113,6 +124,8 @@ func init() {
 
 	pushJSCmd.Flags().StringVarP(&jsCode, "code", "c", "", "new code to push in the variation")
 	pushJSCmd.Flags().StringVarP(&jsFilePath, "file", "", "", "file that contains new code to push in the variation")
+
+	pushJSCmd.Flags().BoolVarP(&Override, "override", "", false, "override remote variation global code js")
 
 	VariationGlobalCodeCmd.AddCommand(pushJSCmd)
 }

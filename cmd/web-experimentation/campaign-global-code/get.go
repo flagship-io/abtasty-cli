@@ -6,9 +6,11 @@ package campaign_global_code
 import (
 	"fmt"
 	"log"
+	"os"
 	"regexp"
 	"strconv"
 
+	"github.com/flagship-io/abtasty-cli/utils"
 	"github.com/flagship-io/abtasty-cli/utils/config"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
@@ -16,7 +18,6 @@ import (
 
 var createFile bool
 var createSubFiles bool
-var override bool
 
 // getCmd represents get command
 var getCmd = &cobra.Command{
@@ -30,21 +31,40 @@ var getCmd = &cobra.Command{
 		}
 
 		if createFile && len(body) > 0 {
-			_, err := config.CampaignGlobalCodeDirectory(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, body, override)
+			if !Override {
+				jsFilePath := config.CampaignGlobalCodeFilePath(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID)
+				if _, err := os.Stat(jsFilePath); err == nil {
+					fileHash, err := config.HashFile(jsFilePath)
+					if err != nil {
+						log.Fatalf("Error hashing file: %v", err)
+					}
+
+					strHash := config.HashString(body)
+					if fileHash != strHash {
+						log.Fatalf("error occurred: %s", utils.ERROR_REMOTE_CHANGED_FROM_LOCAL)
+					}
+				}
+			}
+			_, err := config.WriteCampaignGlobalCode(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, body)
 			if err != nil {
 				log.Fatalf("error occurred: %v", err)
 			}
+
 			return
 		}
 
 		if createSubFiles {
+			if !Override {
+				log.Fatalf("error occurred: %s", "You should run this command with the flag --override, this will automatically refresh your resources global code.")
+			}
+
 			campaignID, err := strconv.Atoi(CampaignID)
 			if err != nil {
 				log.Fatalf("error occurred: %v", err)
 			}
 
 			if len(body) > 0 {
-				_, err = config.CampaignGlobalCodeDirectory(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, body, override)
+				_, err = config.WriteCampaignGlobalCode(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, body)
 				if err != nil {
 					log.Fatalf("error occurred: %v", err)
 				}
@@ -57,7 +77,7 @@ var getCmd = &cobra.Command{
 
 			for _, modification := range body {
 				if modification.Type == "customScriptNew" && modification.Selector == "" {
-					_, err := config.VariationGlobalCodeDirectoryJS(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, strconv.Itoa(modification.VariationID), modification.Value, override)
+					_, err := config.WriteVariationGlobalCodeJS(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, strconv.Itoa(modification.VariationID), modification.Value)
 					if err != nil {
 						log.Fatalf("error occurred: %v", err)
 					}
@@ -65,17 +85,18 @@ var getCmd = &cobra.Command{
 				}
 
 				if modification.Type == "addCSS" && modification.Selector == "" {
-					_, err := config.VariationGlobalCodeDirectoryCSS(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, strconv.Itoa(modification.VariationID), modification.Value, override)
+					_, err := config.WriteVariationGlobalCodeCSS(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, strconv.Itoa(modification.VariationID), modification.Value)
 					if err != nil {
 						log.Fatalf("error occurred: %v", err)
 					}
 					continue
 				}
+
 				pattern := `/\*\s*Selector: (.+)*\s*\*/`
 				re := regexp.MustCompile(pattern)
 
 				fileCode := config.AddHeaderSelectorComment(modification.Selector, []byte(modification.Value), re)
-				config.ModificationCodeDirectory(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, strconv.Itoa(modification.VariationID), strconv.Itoa(modification.Id), modification.Selector, fileCode, override)
+				config.WriteModificationCode(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, strconv.Itoa(modification.VariationID), strconv.Itoa(modification.Id), fileCode)
 			}
 
 			fmt.Fprintln(cmd.OutOrStdout(), "Sub files code generated successfully: "+httprequest.CampaignGlobalCodeRequester.WorkingDir+"/.abtasty")
@@ -98,7 +119,7 @@ func init() {
 	getCmd.Flags().BoolVarP(&createFile, "create-file", "", false, "create a file that contains campaign global code")
 	getCmd.Flags().BoolVarP(&createSubFiles, "create-subfiles", "", false, "create a file that contains campaign and variations global code")
 
-	getCmd.Flags().BoolVarP(&override, "override", "", false, "override existing campaign global code file")
+	getCmd.Flags().BoolVarP(&Override, "override", "", false, "override local campaign global code file")
 
 	CampaignGlobalCodeCmd.AddCommand(getCmd)
 }

@@ -8,6 +8,7 @@ import (
 )
 
 var AccountID string
+var Override bool
 
 // AccountGlobalCodeCmd represents the account global code command
 var AccountGlobalCodeCmd = &cobra.Command{

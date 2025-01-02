@@ -39,5 +39,5 @@ func TestCampaignTargetingGetCommand(t *testing.T) {
 	assert.Contains(t, failOutput, "Error: required flag(s) \"id\" not set")
 
 	successOutput, _ := utils.ExecuteCommand(CampaignTargetingCmd, "get", "-i=100000")
-	assert.Equal(t, "{\"url_scopes\":[{\"condition\":40,\"include\":true,\"value\":\"https://abtasty.com\"},{\"condition\":41,\"include\":false,\"value\":\"https://abtasty.com\"}]}\n", successOutput)
+	assert.Equal(t, "{\"segment_ids\":[],\"url_scopes\":[{\"condition\":\"is\",\"value\":\"https://abtasty.com\"},{\"condition\":\"is not\",\"value\":\"https://abtasty.com\"}],\"favorite_url_scopes\":[],\"selector_scopes\":[],\"code_scope\":{\"value\":\"\"},\"element_appears_after_page_load\":false,\"triggers_ids\":[],\"targeting_frequency\":{}}\n", successOutput)
 }

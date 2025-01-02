@@ -24,7 +24,7 @@ var TestCampaign = models.CampaignWE{
 			Value:     "https://abtasty.com",
 		},
 		{
-			Condition: 41,
+			Condition: 40,
 			Include:   false,
 			Value:     "https://abtasty.com",
 		},
@@ -54,7 +54,7 @@ var TestCampaignWithVariation = models.CampaignWE{
 			Value:     "https://abtasty.com",
 		},
 		{
-			Condition: 41,
+			Condition: 40,
 			Include:   false,
 			Value:     "https://abtasty.com",
 		},

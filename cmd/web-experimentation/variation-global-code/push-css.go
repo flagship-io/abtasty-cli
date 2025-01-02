@@ -11,6 +11,7 @@ import (
 
 	"github.com/flagship-io/abtasty-cli/models/web_experimentation"
 	"github.com/flagship-io/abtasty-cli/utils"
+	"github.com/flagship-io/abtasty-cli/utils/config"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
 )
@@ -25,6 +26,7 @@ var pushCSSCmd = &cobra.Command{
 	Long:  `Push variation global css code`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var modificationId int
+		var modificationValue string
 		var codeByte []byte
 
 		if !utils.CheckSingleFlag(cssFilePath != "", cssCode != "") {
@@ -49,6 +51,7 @@ var pushCSSCmd = &cobra.Command{
 		for _, modification := range modifList {
 			if modification.VariationID == variationID && modification.Type == "addCSS" && modification.Selector == "" {
 				modificationId = modification.Id
+				modificationValue = modification.Value
 			}
 		}
 
@@ -91,6 +94,14 @@ var pushCSSCmd = &cobra.Command{
 			Engine:    string(codeByte),
 		}
 
+		if !Override {
+			apiHash := config.HashString(modificationValue)
+			strHash := config.HashString(string(codeByte))
+			if apiHash != strHash {
+				log.Fatalf("error occurred: %s", utils.ERROR_LOCAL_CHANGED_FROM_REMOTE)
+			}
+		}
+
 		body, err := httprequest.ModificationRequester.HTTPEditModification(campaignID, modificationId, modificationToPush)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
@@ -113,6 +124,8 @@ func init() {
 
 	pushCSSCmd.Flags().StringVarP(&cssCode, "code", "c", "", "new code to push in the variation")
 	pushCSSCmd.Flags().StringVarP(&cssFilePath, "file", "", "", "file that contains new code to push in the variation")
+
+	pushCSSCmd.Flags().BoolVarP(&Override, "override", "", false, "override remote variation global code css")
 
 	VariationGlobalCodeCmd.AddCommand(pushCSSCmd)
 }

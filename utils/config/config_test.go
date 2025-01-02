@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"reflect"
 	"testing"
 
 	"github.com/flagship-io/abtasty-cli/models"
@@ -389,7 +390,7 @@ func TestCampaignTargetingDirectory(t *testing.T) {
 		{
 			name:       "ExistingDirectory",
 			workingDir: currentDir,
-			code:       "{\"url_scopes\":[{\"condition\":40,\"include\":true,\"value\":\"https://abtasty.com\"},{\"condition\":41,\"include\":false,\"value\":\"https://abtasty.com\"}]}\n", // Content of JSON file
+			code:       "{\"url_scopes\":[{\"condition\":40,\"include\":true,\"value\":\"https://abtasty.com\"},{\"condition\":40,\"include\":false,\"value\":\"https://abtasty.com\"}]}\n", // Content of JSON file
 			accountID:  "123456",
 			campaignID: "100000",
 			want:       currentDir + "/.abtasty/" + mockAccountID + "/" + mockCampaignID + "/targeting/targeting.json",
@@ -398,7 +399,7 @@ func TestCampaignTargetingDirectory(t *testing.T) {
 		{
 			name:       "NonExistingDirectory",
 			workingDir: "/path/to/nonexistent/directory",
-			code:       "{\"url_scopes\":[{\"condition\":40,\"include\":true,\"value\":\"https://abtasty.com\"},{\"condition\":41,\"include\":false,\"value\":\"https://abtasty.com\"}]}\n", // Content of JSON file
+			code:       "{\"url_scopes\":[{\"condition\":40,\"include\":true,\"value\":\"https://abtasty.com\"},{\"condition\":40,\"include\":false,\"value\":\"https://abtasty.com\"}]}\n", // Content of JSON file
 			accountID:  "123456",
 			campaignID: "100000",
 			want:       "",
@@ -419,5 +420,70 @@ func TestCampaignTargetingDirectory(t *testing.T) {
 			})
 
 		}
+	}
+}
+
+func TestHashString(t *testing.T) {
+	s1 := "Hello, World!"
+	s2 := "Hello, World!"
+	s3 := "Different string"
+
+	hash1 := HashString(s1)
+	hash2 := HashString(s2)
+	hash3 := HashString(s3)
+
+	if !reflect.DeepEqual(hash1, hash2) {
+		t.Errorf("hashString should produce the same hash for identical strings.\nGot:   %x\nWant:  %x", hash1, hash2)
+	}
+
+	if reflect.DeepEqual(hash1, hash3) {
+		t.Errorf("hashString should produce different hashes for different strings.\nString1: %q\nString3: %q\nHash: %x", s1, s3, hash1)
+	}
+}
+
+func TestHashFile(t *testing.T) {
+	content := "File content to be hashed."
+	expectedHash := HashString(content)
+
+	tmpFile, err := os.CreateTemp("", "hash_test_*.txt")
+	if err != nil {
+		t.Fatalf("Failed to create temp file: %v", err)
+	}
+	defer os.Remove(tmpFile.Name())
+	defer tmpFile.Close()
+
+	if _, err := tmpFile.Write([]byte(content)); err != nil {
+		t.Fatalf("Failed to write to temp file: %v", err)
+	}
+
+	fileHash, err := HashFile(tmpFile.Name())
+	if err != nil {
+		t.Fatalf("Failed to hash file: %v", err)
+	}
+
+	if fileHash != expectedHash {
+		t.Errorf("File hash and string hash do not match.\nFile Hash: %x\nExpected: %x", fileHash, expectedHash)
+	}
+
+	differentContent := "Some other content"
+	differentHash := HashString(differentContent)
+
+	tmpFile.Seek(0, 0)
+	tmpFile.Truncate(0)
+	if _, err := tmpFile.Write([]byte(differentContent)); err != nil {
+		t.Fatalf("Failed to write different content to temp file: %v", err)
+	}
+
+	newFileHash, err := HashFile(tmpFile.Name())
+	if err != nil {
+		t.Fatalf("Failed to hash file with new content: %v", err)
+	}
+
+	if newFileHash == expectedHash {
+		t.Error("Expected different hash for changed file content, but got the same.")
+	}
+
+	if newFileHash != differentHash {
+		t.Errorf("Expected hash of file content to match hash of string with same content.\nGot: %x\nWant: %x", newFileHash, differentHash)
 	}
 }
