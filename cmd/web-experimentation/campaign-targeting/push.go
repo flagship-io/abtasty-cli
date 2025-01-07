@@ -72,8 +72,8 @@ func init() {
 		log.Fatalf("error occurred: %v", err)
 	}
 
-	pushCmd.Flags().StringVarP(&dataRaw, "data-raw", "c", "", "new targeting json to push in the campaign")
-	pushCmd.Flags().StringVarP(&filePath, "file", "", "", "file that contains new targeting code to push in the campaign")
+	pushCmd.Flags().StringVarP(&dataRaw, "data-raw", "d", "", "new targeting json to push in the campaign")
+	pushCmd.Flags().StringVarP(&filePath, "file", "", "", "file that contains new targeting json to push in the campaign")
 
 	CampaignTargetingCmd.AddCommand(pushCmd)
 }

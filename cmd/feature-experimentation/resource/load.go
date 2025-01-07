@@ -52,10 +52,15 @@ func (f *ProjectData) Delete(id string) error {
 	return http_request.ProjectRequester.HTTPDeleteProject(id)
 }
 
+func (f *ProjectData) Switch(id, state string) error {
+	return http_request.ProjectRequester.HTTPSwitchProject(id, state)
+}
+
 type CampaignData struct {
 	Id              string               `json:"id,omitempty"`
 	ProjectId       string               `json:"project_id"`
 	Name            string               `json:"name"`
+	State           string               `json:"state"`
 	Description     string               `json:"description"`
 	Type            string               `json:"type,omitempty"`
 	VariationGroups []VariationGroupData `json:"variation_groups"`
@@ -67,6 +72,10 @@ func (f *CampaignData) Save(data string) ([]byte, error) {
 
 func (f *CampaignData) Delete(id string) error {
 	return http_request.CampaignFERequester.HTTPDeleteCampaign(id)
+}
+
+func (f *CampaignData) Switch(id, state string) error {
+	return http_request.CampaignFERequester.HTTPSwitchStateCampaign(id, state)
 }
 
 type FlagData struct {
@@ -234,7 +243,7 @@ var loadCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		var params []byte
 
-		if !utils.CheckSingleFlag(inputParams != "", inputParamsFile != "") {
+		if resourceFile == "" && !utils.CheckSingleFlag(inputParams != "", inputParamsFile != "") {
 			log.Fatalf("error occurred: %s", "1 flag is required. (input-params, input-params-file)")
 		}
 
@@ -252,10 +261,12 @@ var loadCmd = &cobra.Command{
 			params = fileContent
 		}
 
-		err := json.Unmarshal(params, &inputParamsMap)
-		if err != nil {
-			fmt.Fprintf(cmd.OutOrStderr(), "Error: %s", err)
-			return
+		if params != nil {
+			err := json.Unmarshal(params, &inputParamsMap)
+			if err != nil {
+				fmt.Fprintf(cmd.OutOrStderr(), "Error: %s", err)
+				return
+			}
 		}
 
 		jsonBytes := ScriptResource(cmd, gResources, inputParamsMap)
@@ -264,6 +275,7 @@ var loadCmd = &cobra.Command{
 			fmt.Fprintf(cmd.OutOrStdout(), "File created at %s\n", outputFile)
 			return
 		}
+
 		if viper.GetString("output_format") == "json" {
 			fmt.Fprintf(cmd.OutOrStdout(), "%s", string(jsonBytes))
 		}
@@ -327,6 +339,10 @@ func ScriptResource(cmd *cobra.Command, resources []Resource, inputParamsMap map
 			httpMethod = "DELETE"
 		}
 
+		if resource.Method == "switch" {
+			httpMethod = "PATCH"
+		}
+
 		switch resource.Name {
 		case Project:
 			url = "/projects"
@@ -354,7 +370,7 @@ func ScriptResource(cmd *cobra.Command, resources []Resource, inputParamsMap map
 		err = json.Unmarshal(data, &resourceData)
 
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "error occurred unmarshall resourceData: %v\n", err)
+			fmt.Fprintf(os.Stderr, "error occurred unmarshal resourceData: %v\n", err)
 		}
 
 		if inputParamsMap != nil {
@@ -398,6 +414,21 @@ func ScriptResource(cmd *cobra.Command, resources []Resource, inputParamsMap map
 		dataResource, err := json.Marshal(resourceData)
 		if err != nil {
 			log.Fatalf("error occurred http call: %v\n", err)
+		}
+
+		if resource.Method == "switch" {
+			if resource.Name == Campaign {
+				fmt.Println("--id="+fmt.Sprintf("%v", resourceData["id"]), "--state="+fmt.Sprintf("%v", resourceData["state"]))
+				if !(fmt.Sprintf("%v", resourceData["state"]) == "active" || fmt.Sprintf("%v", resourceData["state"]) == "paused" || fmt.Sprintf("%v", resourceData["state"]) == "interrupted") {
+					fmt.Fprintln(cmd.OutOrStdout(), "Status can only have 3 values: active or paused or interrupted")
+				} else {
+					err := http_request.CampaignFERequester.HTTPSwitchStateCampaign(fmt.Sprintf("%v", resourceData["id"]), fmt.Sprintf("%v", resourceData["state"]))
+					if err != nil {
+						log.Fatalf("error occurred: %v", err)
+					}
+					fmt.Fprintf(cmd.OutOrStdout(), "campaign status set to %s\n", fmt.Sprintf("%v", resourceData["state"]))
+				}
+			}
 		}
 
 		if httpMethod == "POST" {
@@ -446,7 +477,7 @@ func ScriptResource(cmd *cobra.Command, resources []Resource, inputParamsMap map
 			fmt.Fprintf(cmd.OutOrStdout(), "%s - %s: %s %s\n", color, resourceName, colorNone, string(response))
 		}
 
-		if httpMethod != "DELETE" {
+		if httpMethod != "DELETE" && httpMethod != "PATCH" {
 			err = json.Unmarshal(response, &responseData)
 
 			if err != nil {
