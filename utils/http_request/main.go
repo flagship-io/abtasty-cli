@@ -1,9 +1,14 @@
 package http_request
 
 import (
+	"os"
+
 	"github.com/flagship-io/abtasty-cli/utils/http_request/common"
 	"github.com/flagship-io/abtasty-cli/utils/http_request/feature_experimentation"
 	"github.com/flagship-io/abtasty-cli/utils/http_request/web_experimentation"
+	mockfunction_fe "github.com/flagship-io/abtasty-cli/utils/mock_function/feature_experimentation"
+	mockfunction_we "github.com/flagship-io/abtasty-cli/utils/mock_function/web_experimentation"
+	"github.com/jarcoal/httpmock"
 )
 
 type HTTPResource interface {
@@ -38,3 +43,33 @@ var SegmentRequester web_experimentation.SegmentRequester = web_experimentation.
 var TriggerRequester web_experimentation.TriggerRequester = web_experimentation.TriggerRequester{ResourceRequest: &ResourceRequester}
 var FavoriteUrlRequester web_experimentation.FavoriteUrlRequester = web_experimentation.FavoriteUrlRequester{ResourceRequest: &ResourceRequester}
 var CampaignTargetingRequester web_experimentation.CampaignTargetingRequester = web_experimentation.CampaignTargetingRequester{ResourceRequest: &ResourceRequester}
+
+func init() {
+	if os.Getenv("ABT_ENV") == "MOCK" {
+		httpmock.Activate()
+
+		// FE&R Resources
+		mockfunction_fe.APIProject()
+		mockfunction_fe.APICampaign()
+		mockfunction_fe.APIAccountEnvironment()
+		mockfunction_fe.APIFlag()
+		mockfunction_fe.APIGoal()
+		mockfunction_fe.APITargetingKey()
+		mockfunction_fe.APIVariationGroup()
+		mockfunction_fe.APIVariation()
+		mockfunction_fe.APIUser()
+		mockfunction_fe.APIPanic()
+		mockfunction_fe.APIToken()
+
+		// WE&P Resources
+		mockfunction_we.APIAccount()
+		mockfunction_we.APIAudience()
+		mockfunction_we.APICampaign()
+		mockfunction_we.APIFavoriteUrl()
+		mockfunction_we.APIModification()
+		mockfunction_we.APISegment()
+		mockfunction_we.APIToken()
+		mockfunction_we.APITrigger()
+		mockfunction_we.APIVariation()
+	}
+}

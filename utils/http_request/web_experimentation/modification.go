@@ -3,23 +3,13 @@ package web_experimentation
 import (
 	"encoding/json"
 	"net/http"
-	"os"
 	"strconv"
 
 	"github.com/flagship-io/abtasty-cli/models/web_experimentation"
 	models "github.com/flagship-io/abtasty-cli/models/web_experimentation"
 	"github.com/flagship-io/abtasty-cli/utils"
 	"github.com/flagship-io/abtasty-cli/utils/http_request/common"
-	mockfunction_we "github.com/flagship-io/abtasty-cli/utils/mock_function/web_experimentation"
-	"github.com/jarcoal/httpmock"
 )
-
-func init() {
-	if os.Getenv("ABT_ENV") == "MOCK" {
-		httpmock.Activate()
-		mockfunction_we.APIModification()
-	}
-}
 
 type ModificationRequester struct {
 	*common.ResourceRequest
