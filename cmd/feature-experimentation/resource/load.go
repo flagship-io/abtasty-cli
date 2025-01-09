@@ -60,7 +60,7 @@ type CampaignData struct {
 	Id              string               `json:"id,omitempty"`
 	ProjectId       string               `json:"project_id"`
 	Name            string               `json:"name"`
-	State           string               `json:"state"`
+	State           string               `json:"state,omitempty"`
 	Description     string               `json:"description"`
 	Type            string               `json:"type,omitempty"`
 	VariationGroups []VariationGroupData `json:"variation_groups"`
