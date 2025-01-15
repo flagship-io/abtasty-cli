@@ -22,6 +22,7 @@ jobs:
           git checkout -b doc
           git add .
           git commit -m "Add changes" -a --allow-empty
+          git push origin doc
       - name: Create pull request changes
         uses: peter-evans/create-pull-request@v7
         with:
