@@ -21,7 +21,7 @@ jobs:
           git config --local user.name "GitHub Action"
       - name: Create a new branch
         run: |
-          git checkout -b doc
+          git checkout -b documentation
       - name: Make documentation
         run: |
           make doc
@@ -31,7 +31,7 @@ jobs:
           git commit -m "Add changes" -a --allow-empty
       - name: Push branch to github
         run: |
-          git push origin doc
+          git push origin documentation
       - name: Create pull request changes
         uses: peter-evans/create-pull-request@v7
         with:
