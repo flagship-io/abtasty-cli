@@ -15,20 +15,27 @@ jobs:
         run: |
           cp ./README.md ./docs/index.md
           cp ./CONTRIBUTING.md ./docs
-      - name: Commit files
+      - name: Configure Git
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+      - name: Create a new branch
+        run: |
           git checkout -b doc
+      - name: Make documentation
+        run: |
+          make doc
+      - name: Commit changes
+        run: |
           git add .
           git commit -m "Add changes" -a --allow-empty
+      - name: Push branch to github
+        run: |
           git push origin doc
       - name: Create pull request changes
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.PUBLISHER_TOKEN }}
-          branch: doc
-          base: main
           title: Update documentation
 
   deploy:
