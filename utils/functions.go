@@ -58,7 +58,7 @@ func CheckSingleFlag(bool1, bool2 bool) bool {
 }
 
 func GetFeatureExperimentationHost() string {
-	if os.Getenv("ABT_STAGING") == "true" {
+	if os.Getenv("ABT_ENV") == "STAGING" {
 		return "https://staging-api.flagship.io"
 	}
 
@@ -66,7 +66,7 @@ func GetFeatureExperimentationHost() string {
 }
 
 func GetWebExperimentationHost() string {
-	if os.Getenv("ABT_STAGING") == "true" {
+	if os.Getenv("ABT_ENV") == "STAGING" {
 		return "https://staging-api.abtasty.com/api"
 	}
 
@@ -74,7 +74,7 @@ func GetWebExperimentationHost() string {
 }
 
 func GetWebExperimentationBackEndHost() string {
-	if os.Getenv("ABT_STAGING") == "true" {
+	if os.Getenv("ABT_ENV") == "STAGING" {
 		return "https://staging-api.abtasty.com/backend"
 	}
 
@@ -82,7 +82,7 @@ func GetWebExperimentationBackEndHost() string {
 }
 
 func GetHostFeatureExperimentationAuth() string {
-	if os.Getenv("ABT_STAGING") == "true" {
+	if os.Getenv("ABT_ENV") == "STAGING" {
 		return "https://staging-auth.flagship.io"
 	}
 
@@ -90,7 +90,7 @@ func GetHostFeatureExperimentationAuth() string {
 }
 
 func GetHostWebExperimentationAuth() string {
-	if os.Getenv("ABT_STAGING") == "true" {
+	if os.Getenv("ABT_ENV") == "STAGING" {
 		return "https://staging-api-auth.abtasty.com"
 	}
 
@@ -98,7 +98,7 @@ func GetHostWebExperimentationAuth() string {
 }
 
 func GetWebExperimentationBrowserAuth(clientId, clientSecret string) string {
-	if os.Getenv("ABT_STAGING") == "true" {
+	if os.Getenv("ABT_ENV") == "STAGING" {
 		return fmt.Sprintf(`https://staging-auth.abtasty.com/authorize?client_id=%s&client_secret=%s&redirect_uri=http://localhost:8010/auth/callback`, clientId, clientSecret)
 	}
 
@@ -106,7 +106,7 @@ func GetWebExperimentationBrowserAuth(clientId, clientSecret string) string {
 }
 
 func GetWebExperimentationBrowserAuthSuccess() string {
-	if os.Getenv("ABT_STAGING") == "true" {
+	if os.Getenv("ABT_ENV") == "STAGING" {
 		return "https://staging-auth.abtasty.com/authorization-granted"
 	}
 

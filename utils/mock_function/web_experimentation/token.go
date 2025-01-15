@@ -17,7 +17,7 @@ var TestToken = models.Token{
 
 func APIToken() {
 
-	token := "token"
+	token := "access_token"
 
 	testAuthenticationResponse := models.TokenResponse{
 		AccessToken: "testAccessToken",

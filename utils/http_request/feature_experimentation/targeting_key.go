@@ -2,11 +2,21 @@ package feature_experimentation
 
 import (
 	"net/http"
+	"os"
 
 	models "github.com/flagship-io/abtasty-cli/models/feature_experimentation"
 	"github.com/flagship-io/abtasty-cli/utils"
 	"github.com/flagship-io/abtasty-cli/utils/http_request/common"
+	mockfunction_fe "github.com/flagship-io/abtasty-cli/utils/mock_function/feature_experimentation"
+	"github.com/jarcoal/httpmock"
 )
+
+func init() {
+	if os.Getenv("ABT_ENV") == "MOCK" {
+		httpmock.Activate()
+		mockfunction_fe.APITargetingKey()
+	}
+}
 
 type TargetingKeyRequester struct {
 	*common.ResourceRequest

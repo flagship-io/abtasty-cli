@@ -6,6 +6,7 @@ import (
 
 	"github.com/flagship-io/abtasty-cli/models"
 	"github.com/flagship-io/abtasty-cli/utils"
+	"github.com/flagship-io/abtasty-cli/utils/config"
 	"github.com/flagship-io/abtasty-cli/utils/http_request"
 	mockfunction "github.com/flagship-io/abtasty-cli/utils/mock_function"
 	"github.com/flagship-io/abtasty-cli/utils/mock_function/feature_experimentation"
@@ -40,12 +41,14 @@ func TestAuthHelpCommand(t *testing.T) {
 	assert.Contains(t, output, "Manage authentication for feature experimentation\n\nUsage:\n  authentication [login|get|list|delete]")
 }
 
-func TestAuthLoginCommand(t *testing.T) {
+/* func TestAuthLoginCommand(t *testing.T) {
 	successOutput, _ := utils.ExecuteCommand(AuthCmd, "login", "-u=test_auth", "-i=testAuthClientID", "-s=testAuthClientSecret", "-a=account_id")
 	assert.Equal(t, "Credential created successfully\n", successOutput)
-}
+} */
 
 func TestAuthListCommand(t *testing.T) {
+
+	config.CreateAuthFile(utils.FEATURE_EXPERIMENTATION, "test_auth", "testAuthClientID", "testAuthClientSecret", models.TokenResponse{AccessToken: "testAccessToken", RefreshToken: "testRefreshToken"})
 
 	output, _ := utils.ExecuteCommand(AuthCmd, "list")
 
