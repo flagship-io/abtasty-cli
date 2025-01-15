@@ -1,5 +1,8 @@
 GOBIN ?= $$(go env GOPATH)/bin
 
+linux-build:
+	env GOOS=linux GOARCH=amd64 go build
+
 doc: 
 	go run docs/gen.go
 
