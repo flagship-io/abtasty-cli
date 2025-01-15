@@ -2,6 +2,9 @@ name: Test pipeline
 # This workflow is triggered on pushes to the repository.
 on:
   push:
+    branches:
+      - preprod
+      - main
   workflow_call:
 
 jobs:
