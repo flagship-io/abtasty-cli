@@ -21,10 +21,10 @@ jobs:
           git config --local user.name "GitHub Action"
           git add .
           git commit -m "Add changes" -a --allow-empty
-      - name: Push changes
-        uses: ad-m/github-push-action@master
+      - name: Create pull request changes
+        uses: peter-evans/create-pull-request@v7
         with:
-          github_token: ${{ secrets.PUBLISHER_TOKEN }}
+          token: ${{ secrets.PUBLISHER_TOKEN }}
 
   deploy:
     needs: docit
