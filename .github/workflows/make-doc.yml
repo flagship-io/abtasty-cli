@@ -2,7 +2,7 @@ name: documentation
 on:
   push:
     branches:
-      - main
+      - preprod
 
 permissions:
   contents: write
@@ -26,18 +26,8 @@ jobs:
         run: |
           git add .
           git commit -m "Add changes" -a --allow-empty
-      - name: Create pull request changes
-        uses: peter-evans/create-pull-request@v7
+      - name: Push changes
+        uses: ad-m/github-push-action@master
         with:
-          token: ${{ secrets.PUBLISHER_TOKEN }}
-
-  deploy:
-    needs: docit
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: 3.x
-      - run: pip install mkdocs-material
-      - run: mkdocs gh-deploy --force
+          github_token: ${{ secrets.PUBLISHER_TOKEN }}
+          branch: ${{ github.ref }}
