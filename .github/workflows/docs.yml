@@ -19,12 +19,14 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+          git checkout -b doc
           git add .
           git commit -m "Add changes" -a --allow-empty
       - name: Create pull request changes
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.PUBLISHER_TOKEN }}
+          branch: doc
 
   deploy:
     needs: docit
