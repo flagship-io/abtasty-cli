@@ -11,7 +11,7 @@ echo "Distribution: $distro"
 echo "Architecture: $arch"
 
 # Flagship CLI version
-version="1.0.9"
+version="1.2.0"
 
 echo "Version: v$version"
 echo "------------------------"
