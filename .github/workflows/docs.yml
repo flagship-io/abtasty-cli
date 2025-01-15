@@ -19,9 +19,6 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-      - name: Create a new branch
-        run: |
-          git checkout -b documentation
       - name: Make documentation
         run: |
           make doc
@@ -29,14 +26,10 @@ jobs:
         run: |
           git add .
           git commit -m "Add changes" -a --allow-empty
-      - name: Push branch to github
-        run: |
-          git push origin documentation
       - name: Create pull request changes
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.PUBLISHER_TOKEN }}
-          title: Update documentation
 
   deploy:
     needs: docit
