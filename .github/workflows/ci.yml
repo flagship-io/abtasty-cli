@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - preprod
+      - main
   workflow_call:
 
 jobs:
