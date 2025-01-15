@@ -26,7 +26,6 @@ jobs:
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.PUBLISHER_TOKEN }}
-          branch: chore/documentation
 
   deploy:
     needs: docit
