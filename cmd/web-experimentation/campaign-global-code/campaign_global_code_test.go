@@ -50,7 +50,7 @@ func TestCampaignGlobalCodePushCommand(t *testing.T) {
 	failOutput, _ := utils.ExecuteCommand(CampaignGlobalCodeCmd, "push")
 	assert.Contains(t, failOutput, "Error: required flag(s) \"id\" not set")
 
-	successOutput, _ := utils.ExecuteCommand(CampaignGlobalCodeCmd, "push", "-i=100000", "--code=console.log(\"Hello Earth!\")")
+	successOutput, _ := utils.ExecuteCommand(CampaignGlobalCodeCmd, "push", "-i=100000", "--override", "--code=console.log(\"Hello Earth!\")")
 	err := json.Unmarshal([]byte(successOutput), &testCampaign)
 
 	assert.Nil(t, err)

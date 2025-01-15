@@ -19,6 +19,7 @@
                 "type": "ab",
                 "variation_groups": [
                     {
+                        "name": "variation group name",
                         "variations": [
                             {
                                 "name": "Original",
@@ -71,6 +72,7 @@
                 "type": "ab",
                 "variation_groups": [
                     {
+                        "name": "variation group name 1",
                         "variations": [
                             {
                                 "name": "Original",
@@ -119,7 +121,7 @@
             "data": {
                 "name": "flag_created_with_resource_loader",
                 "type": "string",
-                "description": "Loaded from resource loaderr",
+                "description": "Loaded from resource loader",
                 "source": "manual"
             }
         },

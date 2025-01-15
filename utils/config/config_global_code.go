@@ -1,8 +1,11 @@
 package config
 
 import (
+	"crypto/sha256"
 	"errors"
 	"fmt"
+	"io"
+	"log"
 	"os"
 	"regexp"
 )
@@ -34,29 +37,26 @@ func CheckGlobalCodeDirectory(workingDir string) (string, error) {
 	return gcWorkingDir, nil
 }
 
-func AccountGlobalCodeDirectory(workingDir, accountID, code string, override bool) (string, error) {
-
+func AccountGlobalCodeFilePath(workingDir, accountID string) string {
 	gcWorkingDir, err := CheckGlobalCodeDirectory(workingDir)
 	if err != nil {
-		return "", err
+		log.Fatalf("error occurred: %v", err)
 	}
 
 	accountCodeDir := gcWorkingDir + "/" + accountID
 
 	err = os.MkdirAll(accountCodeDir, os.ModePerm)
 	if err != nil {
-		return "", err
+		log.Fatalf("error occurred: %v", err)
 	}
 
 	jsFilePath := accountCodeDir + "/accountGlobalCode.js"
-	if _, err := os.Stat(jsFilePath); err == nil {
-		if !override {
-			fmt.Fprintln(os.Stderr, "File already exists: "+jsFilePath)
-			return jsFilePath, nil
-		}
-	}
+	return jsFilePath
+}
 
-	err = os.WriteFile(jsFilePath, []byte(code), os.ModePerm)
+func WriteAccountGlobalCode(workingDir, accountID, code string) (string, error) {
+	jsFilePath := AccountGlobalCodeFilePath(workingDir, accountID)
+	err := os.WriteFile(jsFilePath, []byte(code), os.ModePerm)
 	if err != nil {
 		return "", err
 	}
@@ -65,10 +65,10 @@ func AccountGlobalCodeDirectory(workingDir, accountID, code string, override boo
 	return jsFilePath, nil
 }
 
-func CampaignGlobalCodeDirectory(workingDir, accountID, campaignID, code string, override bool) (string, error) {
+func CampaignGlobalCodeFilePath(workingDir, accountID, campaignID string) string {
 	gcWorkingDir, err := CheckGlobalCodeDirectory(workingDir)
 	if err != nil {
-		return "", err
+		log.Fatalf("error occurred: %v", err)
 	}
 
 	accountCodeDir := gcWorkingDir + "/" + accountID
@@ -76,18 +76,16 @@ func CampaignGlobalCodeDirectory(workingDir, accountID, campaignID, code string,
 
 	err = os.MkdirAll(campaignCodeDir, os.ModePerm)
 	if err != nil {
-		return "", err
+		log.Fatalf("error occurred: %v", err)
 	}
 
 	jsFilePath := campaignCodeDir + "/campaignGlobalCode.js"
-	if _, err := os.Stat(jsFilePath); err == nil {
-		if !override {
-			fmt.Fprintln(os.Stderr, "File already exists: "+jsFilePath)
-			return jsFilePath, nil
-		}
-	}
+	return jsFilePath
+}
 
-	err = os.WriteFile(jsFilePath, []byte(code), os.ModePerm)
+func WriteCampaignGlobalCode(workingDir, accountID, campaignID, code string) (string, error) {
+	jsFilePath := CampaignGlobalCodeFilePath(workingDir, accountID, campaignID)
+	err := os.WriteFile(jsFilePath, []byte(code), os.ModePerm)
 	if err != nil {
 		return "", err
 	}
@@ -116,10 +114,10 @@ func DeleteCampaignGlobalCodeDirectory(workingDir, accountID, campaignID string)
 	return "campaign directory for " + campaignID + " deleted", nil
 }
 
-func VariationGlobalCodeDirectoryJS(workingDir, accountID, campaignID, variationID, code string, override bool) (string, error) {
+func VariationGlobalCodeJSFilePath(workingDir, accountID, campaignID, variationID string) string {
 	gcWorkingDir, err := CheckGlobalCodeDirectory(workingDir)
 	if err != nil {
-		return "", err
+		log.Fatalf("error occurred: %v", err)
 	}
 
 	accountCodeDir := gcWorkingDir + "/" + accountID
@@ -128,18 +126,16 @@ func VariationGlobalCodeDirectoryJS(workingDir, accountID, campaignID, variation
 
 	err = os.MkdirAll(variationCodeDir, os.ModePerm)
 	if err != nil {
-		return "", err
+		log.Fatalf("error occurred: %v", err)
 	}
 
 	jsFilePath := variationCodeDir + "/variationGlobalCode.js"
-	if _, err := os.Stat(jsFilePath); err == nil {
-		if !override {
-			fmt.Fprintln(os.Stderr, "File already exists: "+jsFilePath)
-			return jsFilePath, nil
-		}
-	}
+	return jsFilePath
+}
 
-	err = os.WriteFile(jsFilePath, []byte(code), os.ModePerm)
+func WriteVariationGlobalCodeJS(workingDir, accountID, campaignID, variationID, code string) (string, error) {
+	jsFilePath := VariationGlobalCodeJSFilePath(workingDir, accountID, campaignID, variationID)
+	err := os.WriteFile(jsFilePath, []byte(code), os.ModePerm)
 	if err != nil {
 		return "", err
 	}
@@ -148,10 +144,10 @@ func VariationGlobalCodeDirectoryJS(workingDir, accountID, campaignID, variation
 	return jsFilePath, nil
 }
 
-func VariationGlobalCodeDirectoryCSS(workingDir, accountID, campaignID, variationID, code string, override bool) (string, error) {
+func VariationGlobalCodeCSSFilePath(workingDir, accountID, campaignID, variationID string) string {
 	gcWorkingDir, err := CheckGlobalCodeDirectory(workingDir)
 	if err != nil {
-		return "", err
+		log.Fatalf("error occurred: %v", err)
 	}
 
 	accountCodeDir := gcWorkingDir + "/" + accountID
@@ -160,30 +156,28 @@ func VariationGlobalCodeDirectoryCSS(workingDir, accountID, campaignID, variatio
 
 	err = os.MkdirAll(variationCodeDir, os.ModePerm)
 	if err != nil {
-		return "", err
+		log.Fatalf("error occurred: %v", err)
 	}
 
 	filePath := variationCodeDir + "/variationGlobalCode.css"
-	if _, err := os.Stat(filePath); err == nil {
-		if !override {
-			fmt.Fprintln(os.Stderr, "File already exists: "+filePath)
-			return filePath, nil
-		}
-	}
-
-	err = os.WriteFile(filePath, []byte(code), os.ModePerm)
-	if err != nil {
-		return "", err
-	}
-
-	fmt.Fprintln(os.Stdout, "File created: "+filePath)
-	return filePath, nil
+	return filePath
 }
 
-func ModificationCodeDirectory(workingDir, accountID, campaignID, variationID, modificationID, selector string, code []byte, override bool) (string, error) {
-	gcWorkingDir, err := CheckGlobalCodeDirectory(workingDir)
+func WriteVariationGlobalCodeCSS(workingDir, accountID, campaignID, variationID, code string) (string, error) {
+	cssFilePath := VariationGlobalCodeCSSFilePath(workingDir, accountID, campaignID, variationID)
+	err := os.WriteFile(cssFilePath, []byte(code), os.ModePerm)
 	if err != nil {
 		return "", err
+	}
+
+	fmt.Fprintln(os.Stdout, "File created: "+cssFilePath)
+	return cssFilePath, nil
+}
+
+func ModificationCodeFilePath(workingDir, accountID, campaignID, variationID, modificationID string) string {
+	gcWorkingDir, err := CheckGlobalCodeDirectory(workingDir)
+	if err != nil {
+		log.Fatalf("error occurred: %v", err)
 	}
 
 	accountCodeDir := gcWorkingDir + "/" + accountID
@@ -193,24 +187,22 @@ func ModificationCodeDirectory(workingDir, accountID, campaignID, variationID, m
 
 	err = os.MkdirAll(elementCodeDir, os.ModePerm)
 	if err != nil {
-		return "", err
+		log.Fatalf("error occurred: %v", err)
 	}
 
 	jsFilePath := elementCodeDir + "/element.js"
-	if _, err := os.Stat(jsFilePath); err == nil {
-		if !override {
-			fmt.Fprintln(os.Stderr, "File already exists: "+jsFilePath)
-			return jsFilePath, nil
-		}
-	}
+	return jsFilePath
+}
 
-	err = os.WriteFile(jsFilePath, code, os.ModePerm)
+func WriteModificationCode(workingDir, accountID, campaignID, variationID, modificationID string, code []byte) (string, error) {
+	cssFilePath := ModificationCodeFilePath(workingDir, accountID, campaignID, variationID, modificationID)
+	err := os.WriteFile(cssFilePath, []byte(code), os.ModePerm)
 	if err != nil {
 		return "", err
 	}
 
-	fmt.Fprintln(os.Stdout, "File created: "+jsFilePath)
-	return jsFilePath, nil
+	fmt.Fprintln(os.Stdout, "File created: "+cssFilePath)
+	return cssFilePath, nil
 }
 
 func DeleteModificationCodeDirectory(workingDir, accountID, campaignID, variationID, modificationID string) (string, error) {
@@ -247,5 +239,31 @@ func AddHeaderSelectorComment(selector string, code []byte, re *regexp.Regexp) [
 	}
 
 	return code
+}
 
+func HashFile(filepath string) ([32]byte, error) {
+	var zero [32]byte
+
+	f, err := os.Open(filepath)
+	if err != nil {
+		return zero, fmt.Errorf("failed to open file: %w", err)
+	}
+	defer f.Close()
+
+	h := sha256.New()
+	if _, err := io.Copy(h, f); err != nil {
+		return zero, fmt.Errorf("failed to compute hash: %w", err)
+	}
+
+	var result [32]byte
+	copy(result[:], h.Sum(nil))
+	return result, nil
+}
+
+func HashString(s string) [32]byte {
+	h := sha256.New()
+	h.Write([]byte(s))
+	var result [32]byte
+	copy(result[:], h.Sum(nil))
+	return result
 }

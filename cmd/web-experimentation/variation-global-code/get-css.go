@@ -6,8 +6,10 @@ package variation_global_code
 import (
 	"fmt"
 	"log"
+	"os"
 	"strconv"
 
+	"github.com/flagship-io/abtasty-cli/utils"
 	"github.com/flagship-io/abtasty-cli/utils/config"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
@@ -42,7 +44,22 @@ var getCSSCmd = &cobra.Command{
 		}
 
 		if CreateFile && len(cssCode) > 0 {
-			_, err := config.VariationGlobalCodeDirectoryCSS(httprequest.ModificationRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, VariationID, cssCode, Override)
+			if !Override {
+				cssFilePath := config.VariationGlobalCodeCSSFilePath(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, VariationID)
+				if _, err := os.Stat(cssFilePath); err == nil {
+					fileHash, err := config.HashFile(cssFilePath)
+					if err != nil {
+						log.Fatalf("Error hashing file: %v", err)
+					}
+
+					strHash := config.HashString(cssCode)
+					if fileHash != strHash {
+						log.Fatalf("error occurred: %s", utils.ERROR_REMOTE_CHANGED_FROM_LOCAL)
+					}
+				}
+			}
+
+			_, err := config.WriteVariationGlobalCodeCSS(httprequest.ModificationRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, VariationID, cssCode)
 			if err != nil {
 				log.Fatalf("error occurred: %v", err)
 			}
@@ -71,7 +88,8 @@ func init() {
 	}
 
 	getCSSCmd.Flags().BoolVarP(&CreateFile, "create-file", "", false, "create a file that contains variation global code")
-	getCSSCmd.Flags().BoolVarP(&Override, "override", "", false, "override existing variation global code file")
+
+	getCSSCmd.Flags().BoolVarP(&Override, "override", "", false, "override local variation global code css file")
 
 	VariationGlobalCodeCmd.AddCommand(getCSSCmd)
 }

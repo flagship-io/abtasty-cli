@@ -26,14 +26,14 @@ var variations = []models.VariationFE{
 		Name:       "My variation 1",
 		Reference:  true,
 		Allocation: 50,
-		Modifications: models.Modification{
+		Modifications: &models.Modification{
 			Type:  "string",
 			Value: "isVIP",
 		},
 	},
 }
 
-var targeting = models.Targeting{
+var targeting = &models.Targeting{
 	TargetingGroups: targetingGroups,
 }
 

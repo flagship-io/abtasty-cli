@@ -14,7 +14,7 @@ var TestVariation = models.VariationFE{
 	Name:       "testVariationName",
 	Reference:  true,
 	Allocation: 50,
-	Modifications: models.Modification{
+	Modifications: &models.Modification{
 		Type:  "string",
 		Value: "isVIP",
 	},
@@ -25,7 +25,7 @@ var TestVariation1 = models.VariationFE{
 	Name:       "testVariationName1",
 	Reference:  false,
 	Allocation: 80,
-	Modifications: models.Modification{
+	Modifications: &models.Modification{
 		Type:  "string",
 		Value: "isVIP1",
 	},
@@ -36,7 +36,7 @@ var TestVariationEdit = models.VariationFE{
 	Name:       "testVariationName1",
 	Reference:  false,
 	Allocation: 80,
-	Modifications: models.Modification{
+	Modifications: &models.Modification{
 		Type:  "string",
 		Value: "isVIP1",
 	},

@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type TestStruct struct {
+type TestCampaignCodeStruct struct {
 	name           string
 	workingDir     string
 	want           string
@@ -34,7 +34,7 @@ func TestCheckWorkingDirectory(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get current working directory: %v", err)
 	}
-	tests := []TestStruct{
+	tests := []TestCampaignCodeStruct{
 		{
 			name:       "ExistingDirectory",
 			workingDir: currentDir,
@@ -68,7 +68,7 @@ func TestCheckGlobalCodeDirectory(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get current working directory: %v", err)
 	}
-	tests := []TestStruct{
+	tests := []TestCampaignCodeStruct{
 		{
 			name:       "ExistingDirectory",
 			workingDir: currentDir,
@@ -103,7 +103,7 @@ func TestAccountGlobalCodeDirectory(t *testing.T) {
 		t.Fatalf("Failed to get current working directory: %v", err)
 	}
 
-	tests := []TestStruct{
+	tests := []TestCampaignCodeStruct{
 		{
 			name:       "ExistingDirectory",
 			workingDir: currentDir,
@@ -112,19 +112,11 @@ func TestAccountGlobalCodeDirectory(t *testing.T) {
 			want:       currentDir + "/.abtasty/" + mockAccountID + "/accountGlobalCode.js",
 			wantErr:    false,
 		},
-		{
-			name:       "NonExistingDirectory",
-			workingDir: "/path/to/nonexistent/directory",
-			code:       "console.log('Hello, World!')", // Content of JavaScript file
-			accountID:  mockAccountID,
-			want:       "",
-			wantErr:    true,
-		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := AccountGlobalCodeDirectory(tt.workingDir, tt.accountID, tt.code, true)
+			got, err := WriteAccountGlobalCode(tt.workingDir, tt.accountID, tt.code)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("AccountGlobalCodeDirectory() error = %v, wantErr %v", err, tt.wantErr)
 			}
@@ -141,7 +133,7 @@ func TestCampaignGlobalCodeDirectory(t *testing.T) {
 		t.Fatalf("Failed to get current working directory: %v", err)
 	}
 
-	tests := []TestStruct{
+	tests := []TestCampaignCodeStruct{
 		{
 			name:       "ExistingDirectory",
 			workingDir: currentDir,
@@ -165,7 +157,7 @@ func TestCampaignGlobalCodeDirectory(t *testing.T) {
 	for i, tt := range tests {
 		if i == 0 {
 			t.Run(tt.name, func(t *testing.T) {
-				got, err := CampaignGlobalCodeDirectory(tt.workingDir, tt.accountID, tt.campaignID, tt.code, true)
+				got, err := WriteCampaignGlobalCode(tt.workingDir, tt.accountID, tt.campaignID, tt.code)
 				if (err != nil) != tt.wantErr {
 					t.Errorf("CampaignGlobalCodeDirectory() error = %v, wantErr %v", err, tt.wantErr)
 				}
@@ -184,7 +176,7 @@ func TestVariationGlobalCodeDirectoryJS(t *testing.T) {
 		t.Fatalf("Failed to get current working directory: %v", err)
 	}
 
-	tests := []TestStruct{
+	tests := []TestCampaignCodeStruct{
 		{
 			name:        "ExistingDirectory",
 			workingDir:  currentDir,
@@ -210,7 +202,7 @@ func TestVariationGlobalCodeDirectoryJS(t *testing.T) {
 	for i, tt := range tests {
 		if i == 0 {
 			t.Run(tt.name, func(t *testing.T) {
-				got, err := VariationGlobalCodeDirectoryJS(tt.workingDir, tt.accountID, tt.campaignID, tt.variationID, tt.code, true)
+				got, err := WriteVariationGlobalCodeJS(tt.workingDir, tt.accountID, tt.campaignID, tt.variationID, tt.code)
 				if (err != nil) != tt.wantErr {
 					t.Errorf("VariationGlobalCodeDirectoryJS() error = %v, wantErr %v", err, tt.wantErr)
 				}
@@ -229,7 +221,7 @@ func TestVariationGlobalCodeDirectoryCSS(t *testing.T) {
 		t.Fatalf("Failed to get current working directory: %v", err)
 	}
 
-	tests := []TestStruct{
+	tests := []TestCampaignCodeStruct{
 		{
 			name:        "ExistingDirectory",
 			workingDir:  currentDir,
@@ -255,7 +247,7 @@ func TestVariationGlobalCodeDirectoryCSS(t *testing.T) {
 	for i, tt := range tests {
 		if i == 0 {
 			t.Run(tt.name, func(t *testing.T) {
-				got, err := VariationGlobalCodeDirectoryCSS(tt.workingDir, tt.accountID, tt.campaignID, tt.variationID, tt.code, true)
+				got, err := WriteVariationGlobalCodeCSS(tt.workingDir, tt.accountID, tt.campaignID, tt.variationID, tt.code)
 				if (err != nil) != tt.wantErr {
 					t.Errorf("VariationGlobalCodeDirectoryCSS() error = %v, wantErr %v", err, tt.wantErr)
 				}
@@ -274,7 +266,7 @@ func TestModificationCodeDirectory(t *testing.T) {
 		t.Fatalf("Failed to get current working directory: %v", err)
 	}
 
-	tests := []TestStruct{
+	tests := []TestCampaignCodeStruct{
 		{
 			name:           "ExistingDirectory",
 			workingDir:     currentDir,
@@ -304,7 +296,7 @@ func TestModificationCodeDirectory(t *testing.T) {
 	for i, tt := range tests {
 		if i == 0 {
 			t.Run(tt.name, func(t *testing.T) {
-				got, err := ModificationCodeDirectory(tt.workingDir, tt.accountID, tt.campaignID, tt.variationID, tt.modificationID, tt.selector, []byte(tt.code), true)
+				got, err := WriteModificationCode(tt.workingDir, tt.accountID, tt.campaignID, tt.variationID, tt.modificationID, []byte(tt.code))
 				if (err != nil) != tt.wantErr {
 					t.Errorf("ModificationCodeDirectory() error = %v, wantErr %v", err, tt.wantErr)
 				}

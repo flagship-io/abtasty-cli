@@ -16,6 +16,19 @@ var TestCampaign = models.CampaignWE{
 	Description:        "testCampaignDescription",
 	Type:               "ab",
 	GlobalCodeCampaign: "console.log(\"Hello World!\")",
+	Url:                "https://abtasty.com",
+	UrlScopes: []models.UrlScopesCampaign{
+		{
+			Condition: 40,
+			Include:   true,
+			Value:     "https://abtasty.com",
+		},
+		{
+			Condition: 40,
+			Include:   false,
+			Value:     "https://abtasty.com",
+		},
+	},
 }
 
 var TestCampaign1 = models.CampaignWE{
@@ -24,6 +37,29 @@ var TestCampaign1 = models.CampaignWE{
 	Description:        "testCampaignDescription1",
 	Type:               "ab",
 	GlobalCodeCampaign: "console.log(\"Hello Earth!\")",
+	Url:                "https://abtasty.com",
+}
+
+var TestCampaignWithVariation = models.CampaignWE{
+	Id:                 100002,
+	Name:               "testCampaignName2",
+	Description:        "testCampaignDescription2",
+	Type:               "ab",
+	GlobalCodeCampaign: "console.log(\"Hello World2!\")",
+	Url:                "https://abtasty.com",
+	UrlScopes: []models.UrlScopesCampaign{
+		{
+			Condition: 40,
+			Include:   true,
+			Value:     "https://abtasty.com",
+		},
+		{
+			Condition: 40,
+			Include:   false,
+			Value:     "https://abtasty.com",
+		},
+	},
+	Variations: []models.VariationWE{TestVariation},
 }
 
 var TestCampaignList = []models.CampaignWE{
@@ -50,9 +86,23 @@ func APICampaign() {
 		},
 	)
 
+	httpmock.RegisterResponder("GET", utils.GetWebExperimentationHost()+"/v1/accounts/"+mockfunction.Auth.AccountID+"/tests/"+strconv.Itoa(TestCampaignWithVariation.Id),
+		func(req *http.Request) (*http.Response, error) {
+			resp, _ := httpmock.NewJsonResponse(200, TestCampaignWithVariation)
+			return resp, nil
+		},
+	)
+
 	httpmock.RegisterResponder("GET", utils.GetWebExperimentationHost()+"/v1/accounts/"+mockfunction.Auth.AccountID+"/tests",
 		func(req *http.Request) (*http.Response, error) {
 			resp, _ := httpmock.NewJsonResponse(200, respList)
+			return resp, nil
+		},
+	)
+
+	httpmock.RegisterResponder("POST", utils.GetWebExperimentationHost()+"/v1/accounts/"+mockfunction.Auth.AccountID+"/tests",
+		func(req *http.Request) (*http.Response, error) {
+			resp, _ := httpmock.NewJsonResponse(200, TestCampaign)
 			return resp, nil
 		},
 	)

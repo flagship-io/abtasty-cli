@@ -6,16 +6,16 @@ package modification_code
 import (
 	"fmt"
 	"log"
+	"os"
 	"regexp"
 	"strconv"
 
 	"github.com/flagship-io/abtasty-cli/models/web_experimentation"
+	"github.com/flagship-io/abtasty-cli/utils"
 	"github.com/flagship-io/abtasty-cli/utils/config"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
 )
-
-var override bool
 
 // getCmd represents get command
 var getCmd = &cobra.Command{
@@ -50,11 +50,26 @@ var getCmd = &cobra.Command{
 		}
 
 		if CreateFile {
+			if !Override {
+				jsFilePath := config.ModificationCodeFilePath(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, strconv.Itoa(modif.VariationID), ModificationID)
+				if _, err := os.Stat(jsFilePath); err == nil {
+					fileHash, err := config.HashFile(jsFilePath)
+					if err != nil {
+						log.Fatalf("Error hashing file: %v", err)
+					}
+
+					strHash := config.HashString(modif.Value)
+					if fileHash != strHash {
+						log.Fatalf("error occurred: %s", utils.ERROR_REMOTE_CHANGED_FROM_LOCAL)
+					}
+				}
+			}
+
 			pattern := `/\*\s*Selector: (.+)*\s*\*/`
 			re := regexp.MustCompile(pattern)
 
 			fileCode := config.AddHeaderSelectorComment(modif.Selector, []byte(modif.Value), re)
-			_, err := config.ModificationCodeDirectory(httprequest.ModificationRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, strconv.Itoa(modif.VariationID), ModificationID, modif.Selector, fileCode, override)
+			_, err := config.WriteModificationCode(httprequest.ModificationRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, strconv.Itoa(modif.VariationID), ModificationID, fileCode)
 			if err != nil {
 				log.Fatalf("error occurred: %v", err)
 			}
@@ -80,7 +95,7 @@ func init() {
 	}
 
 	getCmd.Flags().BoolVarP(&CreateFile, "create-file", "", false, "create a file that contains modification global code")
-	getCmd.Flags().BoolVarP(&override, "override", "", false, "override existing modification code file")
+	getCmd.Flags().BoolVarP(&Override, "override", "", false, "override local modification code file")
 
 	ModificationCodeCmd.AddCommand(getCmd)
 }

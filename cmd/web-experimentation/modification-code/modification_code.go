@@ -10,6 +10,7 @@ import (
 var CampaignID string
 var ModificationID string
 var CreateFile bool
+var Override bool
 
 // ModificationCodeCmd represents the variation global code command
 var ModificationCodeCmd = &cobra.Command{

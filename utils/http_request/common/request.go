@@ -133,7 +133,7 @@ func regenerateToken(product, configName string) {
 }
 
 func HTTPRequest[T any](method string, url string, body []byte) ([]byte, error) {
-	if !strings.Contains(cred.Email, "@abtasty.com") && (utils.WEB_EXPERIMENTATION == cred.Product || (utils.FEATURE_EXPERIMENTATION == cred.Product && cred.AccountEnvironmentID != "")) {
+	if (cred.Product == utils.WEB_EXPERIMENTATION && !strings.Contains(cred.Email, "@abtasty.com")) || (cred.Product == utils.FEATURE_EXPERIMENTATION && cred.AccountEnvironmentID != "") {
 		sendAnalyticHit(method, url)
 	}
 
@@ -172,7 +172,7 @@ func HTTPRequest[T any](method string, url string, body []byte) ([]byte, error) 
 	}
 
 	if cred.Product == utils.WEB_EXPERIMENTATION {
-		if resourceType != reflect.TypeOf(web_experimentation.AccountWE{}) && resourceType != reflect.TypeOf(web_experimentation.CurrentAccountWE{}) && !strings.Contains(url, "token") && cred.AccountID == "" {
+		if resourceType != reflect.TypeOf(web_experimentation.AccountWE{}) && resourceType != reflect.TypeOf(web_experimentation.CurrentAccountWE{}) && !strings.Contains(url, "token") && !strings.Contains(url, "/users/me") && cred.AccountID == "" {
 			log.Fatalf("username, account_id required, Please use the account command to select your account")
 		}
 	}
