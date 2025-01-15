@@ -36,7 +36,7 @@ var variationTest = []models.VariationFE{
 		Name:       "My variation 1",
 		Reference:  true,
 		Allocation: 50,
-		Modifications: models.Modification{
+		Modifications: &models.Modification{
 			Type:  "string",
 			Value: map[string]interface{}{"color": "blue"},
 		},
@@ -45,7 +45,7 @@ var variationTest = []models.VariationFE{
 		Name:       "My variation 2",
 		Reference:  false,
 		Allocation: 50,
-		Modifications: models.Modification{
+		Modifications: &models.Modification{
 			Type:  "string",
 			Value: map[string]interface{}{"color": "red"},
 		},
@@ -56,7 +56,7 @@ var variationGroupsTest = []models.VariationGroup{
 	{
 		Name:       "variationGroupName",
 		Variations: variationTest,
-		Targeting:  targetingTest,
+		Targeting:  &targetingTest,
 	},
 }
 
@@ -67,7 +67,7 @@ var TestCampaign = models.CampaignFE{
 	Description:     "testCampaignDescription",
 	Type:            "toggle",
 	VariationGroups: variationGroupsTest,
-	Scheduler:       scheduler,
+	Scheduler:       &scheduler,
 }
 
 var TestCampaign1 = models.CampaignFE{
@@ -77,7 +77,7 @@ var TestCampaign1 = models.CampaignFE{
 	Description:     "testCampaignDescription1",
 	Type:            "toggle",
 	VariationGroups: variationGroupsTest,
-	Scheduler:       scheduler,
+	Scheduler:       &scheduler,
 }
 
 var TestCampaignEdit = models.CampaignFE{
@@ -87,7 +87,7 @@ var TestCampaignEdit = models.CampaignFE{
 	Description:     "testCampaignDescription1",
 	Type:            "toggle",
 	VariationGroups: variationGroupsTest,
-	Scheduler:       scheduler,
+	Scheduler:       &scheduler,
 }
 
 var TestCampaignlist = []models.CampaignFE{

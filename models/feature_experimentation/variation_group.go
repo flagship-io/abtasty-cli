@@ -3,17 +3,17 @@ package feature_experimentation
 type VariationGroup struct {
 	Id               string            `json:"id,omitempty"`
 	Name             string            `json:"name"`
-	Variations       []*VariationFE    `json:"variations"`
+	Variations       []VariationFE     `json:"variations"`
 	Targeting        *Targeting        `json:"targeting"`
 	AllocationConfig *AllocationConfig `json:"allocation_config,omitempty"`
 }
 
 type Targeting struct {
-	TargetingGroups []*TargetingGroup `json:"targeting_groups"`
+	TargetingGroups []TargetingGroup `json:"targeting_groups"`
 }
 
 type TargetingGroup struct {
-	Targetings []*InnerTargeting `json:"targetings"`
+	Targetings []InnerTargeting `json:"targetings"`
 }
 
 type InnerTargeting struct {

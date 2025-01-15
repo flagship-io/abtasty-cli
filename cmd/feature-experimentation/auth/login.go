@@ -102,6 +102,13 @@ var loginCmd = &cobra.Command{
 						log.Fatalf("error occurred: %s", err)
 					}
 
+					if AccountEnvID != "" {
+						err = config.SetAccountEnvID(utils.FEATURE_EXPERIMENTATION, AccountEnvID)
+						if err != nil {
+							log.Fatalf("error occurred: %s", err)
+						}
+					}
+
 					fmt.Fprintln(cmd.OutOrStdout(), "Credential changed successfully to "+Username)
 					return
 				}
