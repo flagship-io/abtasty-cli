@@ -36,13 +36,13 @@ func (t *CampaignWERequester) HTTPDeleteCampaign(id string) error {
 }
 
 func (t *CampaignWERequester) HTTPSwitchStateCampaign(id, state string) error {
-	var active bool
-	if state == "active" {
-		active = true
+	status := "play"
+	if state == "paused" {
+		status = "pause"
 	}
 
 	campaignSwitchRequest := models.CampaignState{
-		Active: active,
+		Status: status,
 	}
 
 	campaignSwitchRequestJSON, err := json.Marshal(campaignSwitchRequest)
