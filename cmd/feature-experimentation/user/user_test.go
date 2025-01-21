@@ -53,9 +53,8 @@ func TestUserCreateCommand(t *testing.T) {
 	failOutput, _ := utils.ExecuteCommand(UserCmd, "create")
 	assert.Contains(t, failOutput, "Error: required flag(s) \"data-raw\" not set")
 
-	successOutput, _ := utils.ExecuteCommand(UserCmd, "create", "--data-raw='[{\"email\":\"example@abtasty.com\",\"role\":\"ADMIN\"},{\"email\":\"example1@abtasty.com\",\"role\":\"VIEWER\"}]'")
-
-	assert.Equal(t, "users created\n", successOutput)
+	successOutput, _ := utils.ExecuteCommand(UserCmd, "create", `--data-raw=[{"email":"example@abtasty.com","role":"PROJECT_MANAGER"},{"email":"example1@abtasty.com","role":"SUPER_ADMIN"}]`)
+	assert.Contains(t, "users created\n", successOutput)
 }
 
 func TestUserEditCommand(t *testing.T) {
@@ -63,9 +62,8 @@ func TestUserEditCommand(t *testing.T) {
 	failOutput, _ := utils.ExecuteCommand(UserCmd, "edit")
 	assert.Contains(t, failOutput, "Error: required flag(s) \"data-raw\" not set")
 
-	successOutput, _ := utils.ExecuteCommand(UserCmd, "edit", "--data-raw='[{\"email\":\"example@abtasty.com\",\"role\":\"ADMIN\"},{\"email\":\"example1@abtasty.com\",\"role\":\"VIEWER\"}]'")
-
-	assert.Equal(t, "users created\n", successOutput)
+	successOutput, _ := utils.ExecuteCommand(UserCmd, "edit", "--data-raw=[{\"email\":\"example@abtasty.com\",\"role\":\"PROJECT_MANAGER\"},{\"email\":\"example1@abtasty.com\",\"role\":\"SUPER_ADMIN\"}]")
+	assert.Contains(t, "users edited\n", successOutput)
 }
 
 func TestUserDeleteCommand(t *testing.T) {

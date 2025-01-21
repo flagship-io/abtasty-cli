@@ -4,9 +4,11 @@ Copyright © 2022 Flagship Team flagship@abtasty.com
 package user
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 
+	models "github.com/flagship-io/abtasty-cli/models/feature_experimentation"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
 )
@@ -17,11 +19,27 @@ var editCmd = &cobra.Command{
 	Short: "Edit a user with right",
 	Long:  `Edit a user with right`,
 	Run: func(cmd *cobra.Command, args []string) {
-		_, err := httprequest.UserRequester.HTTPBatchUpdateUsers(DataRaw)
+		var userToEdit []models.User
+
+		err := json.Unmarshal([]byte(DataRaw), &userToEdit)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
-		fmt.Fprintf(cmd.OutOrStdout(), "users created\n")
+
+		for _, user := range userToEdit {
+			if user.Role == "SUPER_ADMIN" || user.Role == "PROJECT_MANAGER" || user.Role == "MEMBER" || user.Role == "GUEST" {
+				continue
+			}
+
+			log.Fatalf("error occurred: Role %s for the user %s is not supported, we only support: SUPER_ADMIN, PROJECT_MANAGER, MEMBER, GUEST", user.Role, user.Email)
+		}
+
+		_, err = httprequest.UserRequester.HTTPBatchUpdateUsers(DataRaw)
+		if err != nil {
+			log.Fatalf("error occurred: %v", err)
+		}
+
+		fmt.Fprintln(cmd.OutOrStdout(), "users edited")
 	},
 }
 
