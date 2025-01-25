@@ -211,21 +211,21 @@ func selectorScopeConditionTransformer(condition int, include bool) (string, err
 	switch condition {
 	case 43:
 		if include {
-			return "is selector id", nil
+			return IS_SELECTOR_ID, nil
 		}
-		return "is not selector id", nil
+		return IS_NOT_SELECTOR_ID, nil
 
 	case 44:
 		if include {
-			return "is selector class", nil
+			return IS_SELECTOR_CLASS, nil
 		}
-		return "is not selector class", nil
+		return IS_NOT_SELECTOR_CLASS, nil
 
 	case 45:
 		if include {
-			return "is selector custom", nil
+			return IS_SELECTOR_CUSTOM, nil
 		}
-		return "is not selector custom", nil
+		return IS_NOT_SELECTOR_CUSTOM, nil
 
 	default:
 		return "", fmt.Errorf(`Condition "%d" not found !`, condition)
