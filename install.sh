@@ -73,7 +73,7 @@ fi
 
 # Extracting the archive (if it exists)
 echo "Extracting AB Tasty CLI..."
-if [ -f ~/flagship.tar.gz ]; then
+if [ -f ~/abtasty-cli.tar.gz ]; then
   tar -xzf ~/abtasty-cli.tar.gz -C ~/
 else
   echo "AB Tasty CLI archive not found"
