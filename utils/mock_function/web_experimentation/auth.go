@@ -11,8 +11,8 @@ import (
 
 var TestAuth = models.Auth{
 	Username:     "test_auth",
-	ClientID:     "CI",
-	ClientSecret: "CS",
+	ClientID:     "testAuthClientID",
+	ClientSecret: "testAuthClientSecret",
 	Token:        "testAccessToken",
 }
 

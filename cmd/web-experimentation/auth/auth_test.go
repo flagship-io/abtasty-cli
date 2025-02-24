@@ -60,7 +60,7 @@ func TestAuthHelpCommand(t *testing.T) {
 
 func TestAuthListCommand(t *testing.T) {
 
-	config.CreateAuthFile(utils.WEB_EXPERIMENTATION, "test_auth", "CI", "CS", models.TokenResponse{AccessToken: "testAccessToken"})
+	config.CreateAuthFile(utils.WEB_EXPERIMENTATION, "test_auth", "testAuthClientID", "testAuthClientSecret", models.TokenResponse{AccessToken: "testAccessToken"})
 
 	output, _ := utils.ExecuteCommand(AuthCmd, "list")
 
