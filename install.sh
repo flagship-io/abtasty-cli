@@ -11,7 +11,7 @@ echo "Distribution: $distro"
 echo "Architecture: $arch"
 
 # Flagship CLI version
-version="1.0.9"
+version="1.2.2"
 
 echo "Version: v$version"
 echo "------------------------"
@@ -73,7 +73,7 @@ fi
 
 # Extracting the archive (if it exists)
 echo "Extracting AB Tasty CLI..."
-if [ -f ~/flagship.tar.gz ]; then
+if [ -f ~/abtasty-cli.tar.gz ]; then
   tar -xzf ~/abtasty-cli.tar.gz -C ~/
 else
   echo "AB Tasty CLI archive not found"

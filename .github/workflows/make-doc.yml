@@ -2,7 +2,7 @@ name: documentation
 on:
   push:
     branches:
-      - main
+      - preprod
 
 permissions:
   contents: write
@@ -10,29 +10,24 @@ jobs:
   docit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v4
       - name: Copy the Readmes
         run: |
           cp ./README.md ./docs/index.md
           cp ./CONTRIBUTING.md ./docs
-      - name: Commit files
+      - name: Configure Git
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+      - name: Make documentation
+        run: |
+          make doc
+      - name: Commit changes
+        run: |
           git add .
           git commit -m "Add changes" -a --allow-empty
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.PUBLISHER_TOKEN }}
-
-  deploy:
-    needs: docit
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: 3.x
-      - run: pip install mkdocs-material
-      - run: mkdocs gh-deploy --force
+          branch: ${{ github.ref }}

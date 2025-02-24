@@ -57,13 +57,7 @@ func (f *ProjectData) Switch(id, state string) error {
 }
 
 type CampaignData struct {
-	Id              string               `json:"id,omitempty"`
-	ProjectId       string               `json:"project_id"`
-	Name            string               `json:"name"`
-	State           string               `json:"state"`
-	Description     string               `json:"description"`
-	Type            string               `json:"type,omitempty"`
-	VariationGroups []VariationGroupData `json:"variation_groups"`
+	*models.CampaignFE
 }
 
 func (f *CampaignData) Save(data string) ([]byte, error) {
