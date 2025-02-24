@@ -1,0 +1,92 @@
+{
+    "name": "test-campaign-ab-1-2",
+    "url": "https://abtastylab.com/cee9bdbe4dda74858d71ce37a0366b65/",
+    "description": "",
+    "type": "ab",
+    "sub_type": "ab",
+    "master": null,
+    "traffic": {
+        "value": 66,
+        "last_increased_traffic": "",
+        "visitors": 0,
+        "original_visitors": 0,
+        "visitors_limit": 0
+    },
+    "variations": [
+        {
+            "name": "Variation 123",
+            "description": "",
+            "type": "onthefly",
+            "traffic": 33,
+            "visual_editor": false,
+            "code_editor": false,
+            "components": null
+        },
+        {
+            "name": "Variation 2",
+            "description": "",
+            "type": "onthefly",
+            "traffic": 0,
+            "visual_editor": false,
+            "code_editor": false,
+            "components": null
+        },
+        {
+            "name": "Variation 3",
+            "description": "",
+            "type": "onthefly",
+            "traffic": 33,
+            "visual_editor": false,
+            "code_editor": false,
+            "components": null
+        }
+    ],
+    "labels": [
+        "chadi.laoulaou"
+    ],
+    "global_code": "console.log(\"campaign global code test-campaign-1-2-3\")",
+    "source_code": "",
+    "audiences": [
+        {
+            "name": "device mode",
+            "audience_origin_id": 0,
+            "hidden": false,
+            "archive": false,
+            "is_segment": false
+        },
+        {
+            "name": "Test segment",
+            "audience_origin_id": 0,
+            "hidden": false,
+            "archive": false,
+            "is_segment": true
+        }
+    ],
+    "selector_scopes": [
+        {
+            "condition": "IS",
+            "value": "#div"
+        }
+    ],
+    "code_scopes": {
+        "value": "console.log(\"hello world !\")"
+    },
+    "favorite_url_scopes": [
+        {
+            "name": "favorite_url_name",
+            "include": true
+        }
+    ],
+    "url_scopes": [
+        {
+            "condition": "IS",
+            "value": "https://example.com"
+        }
+    ],
+    "mutation_observer": false,
+    "display_frequency": {
+        "type": "regular",
+        "unit": "day",
+        "value": 12
+    }
+}

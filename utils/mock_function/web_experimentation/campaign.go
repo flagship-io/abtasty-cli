@@ -11,12 +11,14 @@ import (
 )
 
 var TestCampaign = models.CampaignWE{
-	Id:                 100000,
-	Name:               "testCampaignName",
-	Description:        "testCampaignDescription",
-	Type:               "ab",
-	GlobalCodeCampaign: "console.log(\"Hello World!\")",
-	Url:                "https://abtasty.com",
+	CampaignWECommon: &models.CampaignWECommon{
+		Id:                 100000,
+		Name:               "testCampaignName",
+		Description:        "testCampaignDescription",
+		Type:               "ab",
+		GlobalCodeCampaign: "console.log(\"Hello World!\")",
+		Url:                "https://abtasty.com",
+	},
 	UrlScopes: []models.UrlScopesCampaign{
 		{
 			Condition: 40,
@@ -32,21 +34,26 @@ var TestCampaign = models.CampaignWE{
 }
 
 var TestCampaign1 = models.CampaignWE{
-	Id:                 100001,
-	Name:               "testCampaignName1",
-	Description:        "testCampaignDescription1",
-	Type:               "ab",
-	GlobalCodeCampaign: "console.log(\"Hello Earth!\")",
-	Url:                "https://abtasty.com",
+	CampaignWECommon: &models.CampaignWECommon{
+		Id:                 100001,
+		Name:               "testCampaignName1",
+		Description:        "testCampaignDescription1",
+		Type:               "ab",
+		GlobalCodeCampaign: "console.log(\"Hello Earth!\")",
+		Url:                "https://abtasty.com",
+	},
 }
 
 var TestCampaignWithVariation = models.CampaignWE{
-	Id:                 100002,
-	Name:               "testCampaignName2",
-	Description:        "testCampaignDescription2",
-	Type:               "ab",
-	GlobalCodeCampaign: "console.log(\"Hello World2!\")",
-	Url:                "https://abtasty.com",
+	CampaignWECommon: &models.CampaignWECommon{
+		Id:                 100002,
+		Name:               "testCampaignName2",
+		Description:        "testCampaignDescription2",
+		Type:               "ab",
+		GlobalCodeCampaign: "console.log(\"Hello World2!\")",
+		Url:                "https://abtasty.com",
+		Variations:         []models.VariationWE{TestVariation},
+	},
 	UrlScopes: []models.UrlScopesCampaign{
 		{
 			Condition: 40,
@@ -59,7 +66,6 @@ var TestCampaignWithVariation = models.CampaignWE{
 			Value:     "https://abtasty.com",
 		},
 	},
-	Variations: []models.VariationWE{TestVariation},
 }
 
 var TestCampaignList = []models.CampaignWE{

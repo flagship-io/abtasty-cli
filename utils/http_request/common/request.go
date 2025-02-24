@@ -222,6 +222,10 @@ func HTTPRequest[T any](method string, url string, body []byte) ([]byte, error) 
 		return nil, err
 	}
 
+	if cred.Product == utils.WEB_EXPERIMENTATION && method == "POST" && (resourceType == reflect.TypeOf(web_experimentation.CampaignWECommon{}) || resourceType == reflect.TypeOf(web_experimentation.VariationWE{})) {
+		return []byte(resp.Header.Get("location")), err
+	}
+
 	return respBody, err
 }
 

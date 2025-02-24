@@ -1,6 +1,7 @@
 package web_experimentation
 
 import (
+	"encoding/json"
 	"net/http"
 	"strconv"
 
@@ -11,6 +12,23 @@ import (
 
 type VariationWERequester struct {
 	*common.ResourceRequest
+}
+
+func (v *VariationWERequester) HTTPCreateVariation(campaignID int, variationData models.VariationWE) ([]byte, error) {
+	data, err := json.Marshal(variationData)
+	if err != nil {
+		return nil, err
+	}
+
+	return common.HTTPRequest[models.VariationWE](http.MethodPost, utils.GetWebExperimentationHost()+"/v1/accounts/"+v.AccountID+"/tests/"+strconv.Itoa(campaignID)+"/variations", data)
+}
+
+func (v *VariationWERequester) HTTPCreateVariationDataRaw(campaignID string, data []byte) ([]byte, error) {
+	return common.HTTPRequest[models.VariationWE](http.MethodPost, utils.GetWebExperimentationHost()+"/v1/accounts/"+v.AccountID+"/tests/"+campaignID+"/variations", data)
+}
+
+func (v *VariationWERequester) HTTPEditVariation(campaignID, variationID string, data []byte) ([]byte, error) {
+	return common.HTTPRequest[models.VariationWE](http.MethodPatch, utils.GetWebExperimentationHost()+"/v1/accounts/"+v.AccountID+"/tests/"+campaignID+"/variations/"+variationID, data)
 }
 
 func (v *VariationWERequester) HTTPGetVariation(testID, id int) (models.VariationWE, error) {

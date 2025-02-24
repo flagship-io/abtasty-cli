@@ -17,12 +17,12 @@ func (t *CampaignWERequester) HTTPListCampaign() ([]models.CampaignWE, error) {
 	return common.HTTPGetAllPagesWE[models.CampaignWE](utils.GetWebExperimentationHost() + "/v1/accounts/" + t.AccountID + "/tests?state=play,pause,~unarchive&")
 }
 
-func (t *CampaignWERequester) HTTPCreateCampaign(data string) ([]byte, error) {
-	return common.HTTPRequest[models.CampaignWE](http.MethodPost, utils.GetWebExperimentationHost()+"/v1/accounts/"+t.AccountID+"/tests", []byte(data))
+func (t *CampaignWERequester) HTTPCreateCampaign(data []byte) ([]byte, error) {
+	return common.HTTPRequest[models.CampaignWECommon](http.MethodPost, utils.GetWebExperimentationHost()+"/v1/accounts/"+t.AccountID+"/tests", data)
 }
 
-func (t *CampaignWERequester) HTTPEditCampaign(id, data string) ([]byte, error) {
-	return common.HTTPRequest[models.CampaignWE](http.MethodPatch, utils.GetWebExperimentationHost()+"/v1/accounts/"+t.AccountID+"/tests/"+id, []byte(data))
+func (t *CampaignWERequester) HTTPEditCampaign(id string, data []byte) ([]byte, error) {
+	return common.HTTPRequest[models.CampaignWE](http.MethodPatch, utils.GetWebExperimentationHost()+"/v1/accounts/"+t.AccountID+"/tests/"+id, data)
 }
 
 func (t *CampaignWERequester) HTTPGetCampaign(id string) (models.CampaignWE, error) {

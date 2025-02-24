@@ -17,7 +17,7 @@ var editCmd = &cobra.Command{
 	Short: "Edit a campaign",
 	Long:  `Edit a campaign`,
 	Run: func(cmd *cobra.Command, args []string) {
-		body, err := httprequest.CampaignWERequester.HTTPEditCampaign(CampaignID, DataRaw)
+		body, err := httprequest.CampaignWERequester.HTTPEditCampaign(CampaignID, []byte(DataRaw))
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}

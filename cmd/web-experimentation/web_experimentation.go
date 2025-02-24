@@ -17,6 +17,7 @@ import (
 	favorite_url "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/favorite-url"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/modification"
 	modification_code "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/modification-code"
+	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/resource"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/segment"
 	tag_rebuild "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/tag-rebuild"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/token"
@@ -67,6 +68,7 @@ func addSubCommandPalettes() {
 	WebExperimentationCmd.AddCommand(favorite_url.FavoriteUrlCmd)
 	WebExperimentationCmd.AddCommand(campaign_targeting.CampaignTargetingCmd)
 	WebExperimentationCmd.AddCommand(web_preview.WebPreviewCmd)
+	WebExperimentationCmd.AddCommand(resource.ResourceCmd)
 }
 
 func init() {

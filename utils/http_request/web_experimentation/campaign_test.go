@@ -14,7 +14,7 @@ func TestHTTPCreateCampaign(t *testing.T) {
 
 	data := "{\"name\":\"testCampaignName\",\"type\":\"ab\",\"url\":\"https://abtasty.com\",\"description\":\"testCampaignDescription\",\"global_code\":\"console.log(\"Hello World!\")\"}"
 
-	respBody, err := campaignRequester.HTTPCreateCampaign(data)
+	respBody, err := campaignRequester.HTTPCreateCampaign([]byte(data))
 
 	assert.NotNil(t, respBody)
 	assert.Nil(t, err)
@@ -26,7 +26,7 @@ func TestHTTPEditCampaign(t *testing.T) {
 
 	data := "{\"name\":\"testCampaignName\",\"type\":\"ab\",\"url\":\"https://abtasty.com\",\"description\":\"testCampaignDescription\",\"global_code\":\"console.log(\"Hello World!\")\"}"
 
-	respBody, err := campaignRequester.HTTPEditCampaign(strconv.Itoa(100000), data)
+	respBody, err := campaignRequester.HTTPEditCampaign(strconv.Itoa(100000), []byte(data))
 
 	assert.NotNil(t, respBody)
 	assert.Nil(t, err)
