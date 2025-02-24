@@ -26,6 +26,7 @@ import (
 	"github.com/flagship-io/abtasty-cli/utils/config"
 	"github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/flagship-io/abtasty-cli/utils/http_request/common"
+	mockfunction_ "github.com/flagship-io/abtasty-cli/utils/mock_function"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -88,6 +89,11 @@ func initConfig() {
 	viper.MergeConfigMap(v.AllSettings())
 
 	r := &http_request.ResourceRequester
+
+	if os.Getenv("ABT_ENV") == "MOCK" {
+		r.Init(&mockfunction_.Auth)
+		return
+	}
 
 	r.Init(&requestConfig)
 	return
