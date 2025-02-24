@@ -193,6 +193,10 @@ func HTTPRequest[T any](method string, url string, body []byte) ([]byte, error) 
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode == http.StatusNoContent {
+		return []byte{}, nil
+	}
+
 	var reader io.ReadCloser
 	switch resp.Header.Get("Content-Encoding") {
 	case "gzip":
