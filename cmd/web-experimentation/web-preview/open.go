@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/flagship-io/abtasty-cli/utils"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
+	"github.com/flagship-io/abtasty-cli/utils/http_request/common"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -39,13 +39,11 @@ var openCmd = &cobra.Command{
 		}
 
 		if isVariation {
-			webPreviewStruct := WebPreview{
-				CampaignID:  CampaignID,
-				VariationID: VariationID,
-				Url:         fmt.Sprintf(`%s/%s/?ab_project=preview&testId=%d&variationId=%d&t=%s`, body.Url, viper.GetString("identifier"), body.Id, VariationID, body.Report.Token),
+			url := fmt.Sprintf(`%s/%s/?ab_project=preview&testId=%d&variationId=%d&t=%s`, body.Url, viper.GetString("identifier"), body.Id, VariationID, body.Report.Token)
+			if err := common.OpenLink(url); err != nil {
+				log.Fatalf("Error opening link: %s", err)
 			}
 
-			utils.FormatItem([]string{"CampaignID", "VariationID", "Url"}, webPreviewStruct, viper.GetString("output_format"), cmd.OutOrStdout())
 			return
 		}
 
