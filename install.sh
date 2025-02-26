@@ -10,8 +10,8 @@ arch=$(uname -m)
 echo "Distribution: $distro"
 echo "Architecture: $arch"
 
-# Flagship CLI version
-version="1.2.2"
+# AB Tasty CLI version
+version="1.2.3"
 
 echo "Version: v$version"
 echo "------------------------"
@@ -88,11 +88,11 @@ echo "Removing archive..."
 rm ~/abtasty-cli.tar.gz
 
 # Moving the binary to /usr/local/bin
-echo "Moving Flagship CLI to /usr/local/bin..."
+echo "Moving AB Tasty CLI to /usr/local/bin..."
 sudo mv ~/abtasty-cli /usr/local/bin/
 
 # Making the binary executable
-echo "Making Flagship CLI executable..."
+echo "Making AB Tasty CLI executable..."
 sudo chmod +x /usr/local/bin/abtasty-cli
 
 # Sending a message to the user
