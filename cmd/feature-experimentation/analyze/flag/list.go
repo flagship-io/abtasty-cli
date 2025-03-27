@@ -186,7 +186,7 @@ var listCmd = &cobra.Command{
 		}
 
 		if OriginPlatform != "" {
-			fmt.Fprintf(cmd.OutOrStdout(), "\n%sContribution: If these regexes is outdated or contains errors, we invite you to create an issue or contribute in our github repo: https://github.com/flagship-io/abtasty-cli \n", emoji.Sprint(":glowing_star:"))
+			fmt.Fprintf(cmd.OutOrStdout(), "\n%sContribution: If these regexes are outdated or contains errors, we invite you to create an issue or contribute in our github repo: https://github.com/flagship-io/abtasty-cli \n", emoji.Sprint(":glowing_star:"))
 		}
 
 	},
