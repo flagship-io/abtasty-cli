@@ -1,0 +1,57 @@
+[
+    {
+        "file_extension": ".[jt]s$",
+        "regexes": [
+            "get(?:Double|Boolean|Integer|String|JSON)(?:Value|Details)\\s*[(]\\s*[\\\\'\\\"]([^\\\\'\\\"]+)[\\\\'\\\"]\\s*,\\s*([^,)]+)",
+            "use(?:Integer|Double|Boolean|String|Object)Flag(?:Value|Details)\\s*[(]\\s*[\\\\'\\\"]([^\\\\'\\\"]+)[\\\\'\\\"]\\s*,\\s*([^,)]+)"
+        ]
+    },
+    {
+        "file_extension": ".[jt]sx$",
+        "regexes": [
+            "use(?:Integer|Double|Boolean|String|Object)Flag(?:Value|Details)\\s*[(]\\s*[\\\\'\\\"]([^\\\\'\\\"]+)[\\\\'\\\"]\\s*,\\s*([^,)]+)"
+        ]
+    },
+    {
+        "file_extension": ".java$",
+        "regexes": [
+            "get(?:Double|Boolean|Integer|String|Object)(?:Value|Details)\\s*[(]\\s*[\\\\'\\\"]([^\\\\'\\\"]+)[\\\\'\\\"]\\s*,\\s*([^,)]+)"
+        ]
+    },
+    {
+        "file_extension": ".kt$",
+        "regexes": [
+            "get(?:Double|Boolean|Integer|String|Object)(?:Value|Details)\\s*[(]\\s*[\\\\'\\\"]([^\\\\'\\\"]+)[\\\\'\\\"]\\s*,\\s*([^,)]+)"
+        ]
+    },
+    {
+        "file_extension": ".go$",
+        "regexes": [
+            "(?:Float|Boolean|Int|String|Object)(?:Value|ValueDetails)?\\s*\\(\\s*[^,]+,\\s*[\\\"\\\\']([^\\\"\\\\']+)[\\\"\\\\']\\s*,\\s*([^,\\)]+)"
+        ]
+    },
+    {
+        "file_extension": ".py$",
+        "regexes": [
+            "get\\_(?:float|boolean|integer|string|object)\\_(?:value|details)\\s*[(]\\s*[\\\\'\\\"]([^\\\\'\\\"]+)[\\\\'\\\"]\\s*,\\s*([^,)]+)"
+        ]
+    },
+    {
+        "file_extension": ".php?",
+        "regexes": [
+            "get(?:Float|Boolean|Integer|String|Object)(?:Value|Details)\\s*[(]\\s*[\\\\'\\\"]([^\\\\'\\\"]+)[\\\\'\\\"]\\s*,\\s*([^,)]+)"
+        ]
+    },
+    {
+        "file_extension": ".[fc]s?",
+        "regexes": [
+            "Get(?:Double|Boolean|Integer|String|Structure)(?:Value|Details)Async\\s*[(]\\s*[\\\\'\\\"]([^\\\\'\\\"]+)[\\\\'\\\"]\\s*,\\s*([^,)]+)"
+        ]
+    },
+    {
+        "file_extension": ".swift?",
+        "regexes": [
+            "get(?:Integer|Double|Boolean|String|Object)(?:Value|Details)\\s*[(]\\s*key\\s*:\\s*[\\\\'\\\"]([^\\\\'\\\"]+)[\\\\'\\\"]\\s*,\\s*defaultValue\\s*:\\s*([^,)]+)"
+        ]
+    }
+]

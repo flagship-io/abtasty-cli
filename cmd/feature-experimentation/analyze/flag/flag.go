@@ -36,6 +36,7 @@ func RemoveDuplicateStr(strSlice []string) []string {
 }
 
 //go:embed predefined-regexes/launchdarkly-regexes.json
+//go:embed predefined-regexes/openfeature-regexes.json
 //go:embed predefined-regexes/optimizely-regexes.json
 //go:embed predefined-regexes/vwo-regexes.json
 //go:embed predefined-regexes/split-regexes.json
@@ -103,7 +104,7 @@ func init() {
 	FlagCmd.PersistentFlags().StringVarP(&FilesToExclude, "files-exclude", "", "[\".git\", \".github\", \".vscode\", \".idea\", \".yarn\", \"node_modules\"]", "list of files to exclude in analysis")
 	FlagCmd.PersistentFlags().StringVarP(&SearchCustomRegex, "custom-regex", "", "", "regex for the pattern you want to analyze")
 	FlagCmd.PersistentFlags().StringVarP(&CustomRegexJsonFile, "custom-regex-json", "", "", "json file that contains the regex for the pattern you want to analyze")
-	FlagCmd.PersistentFlags().StringVarP(&OriginPlatform, "origin-platform", "", "", "analyze flags made with feature flag platform, we support launchdarkly, optimizely, split and vwo (latest version only)")
+	FlagCmd.PersistentFlags().StringVarP(&OriginPlatform, "origin-platform", "", "", "analyze flags made with feature flag platform, we support Launchdarkly, OpenFeature, Optimizely, Split and VWO (latest version only)")
 }
 
 func initConfig() {
