@@ -17,6 +17,7 @@ import (
 	"github.com/flagship-io/codebase-analyzer/pkg/handler"
 	"github.com/rodaine/table"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"golang.org/x/exp/slices"
 )
 
@@ -190,11 +191,11 @@ var createCmd = &cobra.Command{
 			log.Fatalf("error occurred in created flag table: %s", err)
 		}
 
-		if CustomRegexJson != "" {
+		if CustomRegexJson != "" && viper.GetString("output_format") != "json" {
 			fmt.Fprintf(cmd.OutOrStdout(), "\n%sContribution: If this custom regexes comes from a competitor or it's an improvement of an existing regexes, we invite you to create a PR in our github repo: https://github.com/flagship-io/abtasty-cli \n", emoji.Sprint(":glowing_star:"))
 		}
 
-		if OriginPlatform != "" {
+		if OriginPlatform != "" && viper.GetString("output_format") != "json" {
 			fmt.Fprintf(cmd.OutOrStdout(), "\n%sContribution: If these regexes are outdated or contains errors, we invite you to create an issue or contribute in our github repo: https://github.com/flagship-io/abtasty-cli \n", emoji.Sprint(":glowing_star:"))
 		}
 	},
