@@ -52,7 +52,7 @@ type DateTemplate struct {
 }
 
 type CampaignState struct {
-	Active bool `json:"active"`
+	Status string `json:"status"`
 }
 
 type AudienceCampaign struct {

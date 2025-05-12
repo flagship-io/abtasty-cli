@@ -34,7 +34,7 @@ func TestGetFeatureExperimentationHost(t *testing.T) {
 	}{
 		{
 			name:     "Staging environment",
-			envValue: "true",
+			envValue: "STAGING",
 			want:     "https://staging-api.flagship.io",
 		},
 		{
@@ -46,8 +46,8 @@ func TestGetFeatureExperimentationHost(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			os.Setenv("ABT_STAGING", tt.envValue)
-			defer os.Unsetenv("ABT_STAGING")
+			os.Setenv("ABT_ENV", tt.envValue)
+			defer os.Unsetenv("ABT_ENV")
 
 			got := GetFeatureExperimentationHost()
 
@@ -66,7 +66,7 @@ func TestGetWebExperimentationHost(t *testing.T) {
 	}{
 		{
 			name:     "Staging environment",
-			envValue: "true",
+			envValue: "STAGING",
 			want:     "https://staging-api.abtasty.com/api",
 		},
 		{
@@ -78,8 +78,8 @@ func TestGetWebExperimentationHost(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			os.Setenv("ABT_STAGING", tt.envValue)
-			defer os.Unsetenv("ABT_STAGING")
+			os.Setenv("ABT_ENV", tt.envValue)
+			defer os.Unsetenv("ABT_ENV")
 
 			got := GetWebExperimentationHost()
 
@@ -98,7 +98,7 @@ func TestGetWebExperimentationBackEndHost(t *testing.T) {
 	}{
 		{
 			name:     "Staging environment",
-			envValue: "true",
+			envValue: "STAGING",
 			want:     "https://staging-api.abtasty.com/backend",
 		},
 		{
@@ -110,8 +110,8 @@ func TestGetWebExperimentationBackEndHost(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			os.Setenv("ABT_STAGING", tt.envValue)
-			defer os.Unsetenv("ABT_STAGING")
+			os.Setenv("ABT_ENV", tt.envValue)
+			defer os.Unsetenv("ABT_ENV")
 
 			got := GetWebExperimentationBackEndHost()
 
@@ -130,7 +130,7 @@ func TestGetHostFeatureExperimentationAuth(t *testing.T) {
 	}{
 		{
 			name:     "Staging environment",
-			envValue: "true",
+			envValue: "STAGING",
 			want:     "https://staging-auth.flagship.io",
 		},
 		{
@@ -142,8 +142,8 @@ func TestGetHostFeatureExperimentationAuth(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			os.Setenv("ABT_STAGING", tt.envValue)
-			defer os.Unsetenv("ABT_STAGING")
+			os.Setenv("ABT_ENV", tt.envValue)
+			defer os.Unsetenv("ABT_ENV")
 
 			got := GetHostFeatureExperimentationAuth()
 
@@ -174,7 +174,7 @@ func TestGetHostWebExperimentationAuth(t *testing.T) {
 	}{
 		{
 			name:     "Staging environment",
-			envValue: "true",
+			envValue: "STAGING",
 			want:     "https://staging-api-auth.abtasty.com",
 		},
 		{
@@ -186,8 +186,8 @@ func TestGetHostWebExperimentationAuth(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			os.Setenv("ABT_STAGING", tt.envValue)
-			defer os.Unsetenv("ABT_STAGING")
+			os.Setenv("ABT_ENV", tt.envValue)
+			defer os.Unsetenv("ABT_ENV")
 
 			got := GetHostWebExperimentationAuth()
 
@@ -220,7 +220,7 @@ func TestGetWebExperimentationBrowserAuth(t *testing.T) {
 	}{
 		{
 			name:     "Staging environment",
-			envValue: "true",
+			envValue: "STAGING",
 			want:     fmt.Sprintf(`https://staging-auth.abtasty.com/authorize?client_id=%s&client_secret=%s&redirect_uri=http://localhost:8010/auth/callback`, clientID, clientSecret),
 		},
 		{
@@ -232,8 +232,8 @@ func TestGetWebExperimentationBrowserAuth(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			os.Setenv("ABT_STAGING", tt.envValue)
-			defer os.Unsetenv("ABT_STAGING")
+			os.Setenv("ABT_ENV", tt.envValue)
+			defer os.Unsetenv("ABT_ENV")
 
 			got := GetWebExperimentationBrowserAuth(clientID, clientSecret)
 
@@ -252,7 +252,7 @@ func TestGetWebExperimentationBrowserAuthSuccess(t *testing.T) {
 	}{
 		{
 			name:     "Staging environment",
-			envValue: "true",
+			envValue: "STAGING",
 			want:     "https://staging-auth.abtasty.com/authorization-granted",
 		},
 		{
@@ -264,8 +264,8 @@ func TestGetWebExperimentationBrowserAuthSuccess(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			os.Setenv("ABT_STAGING", tt.envValue)
-			defer os.Unsetenv("ABT_STAGING")
+			os.Setenv("ABT_ENV", tt.envValue)
+			defer os.Unsetenv("ABT_ENV")
 
 			got := GetWebExperimentationBrowserAuthSuccess()
 

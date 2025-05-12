@@ -16,7 +16,7 @@ import (
 	"github.com/flagship-io/abtasty-cli/utils"
 )
 
-func openLink(url string) error {
+func OpenLink(url string) error {
 	var cmd *exec.Cmd
 	switch runtime.GOOS {
 	case "linux":
@@ -135,7 +135,7 @@ func InitiateBrowserAuth(username, clientID, clientSecret string) (models.TokenR
 	codeChan := make(chan string)
 	var url = utils.GetWebExperimentationBrowserAuth(clientID, clientSecret)
 
-	if err := openLink(url); err != nil {
+	if err := OpenLink(url); err != nil {
 		log.Fatalf("Error opening link: %s", err)
 	}
 
