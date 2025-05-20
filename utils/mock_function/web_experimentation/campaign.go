@@ -52,8 +52,8 @@ var TestCampaignWithVariation = models.CampaignWE{
 		Type:               "ab",
 		GlobalCodeCampaign: "console.log(\"Hello World2!\")",
 		Url:                "https://abtasty.com",
-		Variations:         []models.VariationWE{TestVariation},
 	},
+	Variations: []models.VariationWE{TestVariation},
 	UrlScopes: []models.UrlScopesCampaign{
 		{
 			Condition: 40,

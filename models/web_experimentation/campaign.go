@@ -9,7 +9,6 @@ type CampaignWECommon struct {
 	SubType            string          `json:"sub_type,omitempty"`
 	Master             *CampaignWE     `json:"master,omitempty"`
 	State              string          `json:"state,omitempty"`
-	Variations         []VariationWE   `json:"variations,omitempty"`
 	SubTests           []CampaignWE    `json:"sub_tests,omitempty"`
 	CreatingDate       *DateTemplate   `json:"created_at,omitempty"`
 	Labels             []string        `json:"labels,omitempty"`
@@ -21,6 +20,7 @@ type CampaignWECommon struct {
 }
 type CampaignWE struct {
 	*CampaignWECommon
+	Variations        []VariationWE               `json:"variations,omitempty"`
 	Traffic           *Traffic                    `json:"traffic,omitempty"`
 	Audiences         []AudienceCampaign          `json:"audiences,omitempty"`
 	SelectorScopes    []SelectorScopesCampaign    `json:"selector_scopes,omitempty"`
@@ -33,6 +33,7 @@ type CampaignWE struct {
 
 type CampaignWEResourceLoader struct {
 	*CampaignWECommon
+	Variations        []VariationResourceLoader   `json:"variations,omitempty"`
 	Traffic           int                         `json:"traffic,omitempty"`
 	CampaignTargeting *TargetingCampaignModelJSON `json:"campaign_targeting,omitempty"`
 }

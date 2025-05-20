@@ -36,3 +36,23 @@ type TargetingGroupWE struct {
 	VisitedPages int           `json:"visited_pages,omitempty"`
 	Conditions   []interface{} `json:"conditions"`
 }
+
+type AudienceResourceLoader struct {
+	Name                  string                  `json:"name"`
+	Description           string                  `json:"description"`
+	Hidden                bool                    `json:"hidden"`
+	Groups                [][]GroupResourceLoader `json:"groups"`
+	AllowDuplicatedConfig bool                    `json:"allow_duplicated_config"`
+}
+
+type GroupResourceLoader struct {
+	Operator   string                    `json:"operator"`
+	Conditions []ConditionResourceLoader `json:"conditions"`
+	Type       int                       `json:"type"`
+}
+
+type ConditionResourceLoader struct {
+	Include   bool        `json:"include"`
+	Value     interface{} `json:"value"`
+	Condition int         `json:"condition,omitempty"`
+}

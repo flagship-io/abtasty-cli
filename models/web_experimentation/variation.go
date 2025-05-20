@@ -11,6 +11,16 @@ type VariationWE struct {
 	Components   []Component `json:"components"`
 }
 
+type VariationGlobalCode struct {
+	Js  string `json:"js,omitempty"`
+	Css string `json:"css,omitempty"`
+}
+
+type VariationResourceLoader struct {
+	*VariationWE
+	GlobalCodeVariation VariationGlobalCode `json:"variation_global_code,omitempty"`
+}
+
 type Component struct {
 	Id          int      `json:"id,omitempty"`
 	Name        string   `json:"name"`
