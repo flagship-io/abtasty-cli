@@ -14,6 +14,9 @@ import (
 	"strings"
 
 	"github.com/d5/tengo/v2"
+	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/audience"
+	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/campaign"
+	favorite_url "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/favorite-url"
 	models "github.com/flagship-io/abtasty-cli/models/web_experimentation"
 	"github.com/flagship-io/abtasty-cli/utils"
 	"github.com/flagship-io/abtasty-cli/utils/http_request"
@@ -32,7 +35,8 @@ var (
 var inputParamsMap map[string]interface{}
 
 type Data interface {
-	Save(data string) ([]byte, error)
+	getName() string
+	Save(data []byte) ([]byte, error)
 	Delete(id string) error
 }
 
@@ -41,80 +45,171 @@ type ResourceData struct {
 }
 
 type CampaignData struct {
-	*models.CampaignWE
+	*models.CampaignWEResourceLoader
 }
 
-func (f *CampaignData) Save(data string) ([]byte, error) {
-	return http_request.CampaignFERequester.HTTPCreateCampaign(data)
+// getName implements Data.
+func (f *CampaignData) getName() string {
+	return "Campaign"
+}
+
+// DeleteWithParent implements Data.
+func (f *CampaignData) DeleteWithParent(parentId string, id string) error {
+	panic("unimplemented")
+}
+
+// SaveWithParent implements Data.
+func (f *CampaignData) SaveWithParent(parentId string, data []byte) ([]byte, error) {
+	panic("unimplemented")
+}
+
+func (f *CampaignData) Save(data []byte) ([]byte, error) {
+	return campaign.CreateCampaign(data), nil
 }
 
 func (f *CampaignData) Delete(id string) error {
-	return http_request.CampaignFERequester.HTTPDeleteCampaign(id)
+	return http_request.CampaignWERequester.HTTPDeleteCampaign(id)
 }
 
 func (f *CampaignData) Switch(id, state string) error {
-	return http_request.CampaignFERequester.HTTPSwitchStateCampaign(id, state)
+	return http_request.CampaignWERequester.HTTPSwitchStateCampaign(id, state)
 }
 
 type AudienceData struct {
-	*models.Audience
+	*models.AudienceResourceLoader
 }
 
-func (f *AudienceData) Save(data string) ([]byte, error) {
-	return http_request.FlagRequester.HTTPCreateFlag(data)
+// getName implements Data.
+func (f *AudienceData) getName() string {
+	return "Audience"
 }
 
+func (f *AudienceData) Save(data []byte) ([]byte, error) {
+	return audience.CreateAudience(data), nil
+}
+
+// Can't delete audience for this moment
 func (f *AudienceData) Delete(id string) error {
-	return http_request.FlagRequester.HTTPDeleteFlag(id)
-}
-
-type ModificationData struct {
-	*models.Modification
-}
-
-func (f *ModificationData) Save(data string) ([]byte, error) {
-	return http_request.GoalRequester.HTTPCreateGoal(data)
-}
-
-func (f *ModificationData) Delete(id string) error {
-	return http_request.GoalRequester.HTTPDeleteGoal(id)
+	return nil
 }
 
 type FavoriteUrlData struct {
 	*models.FavoriteURL
 }
 
-func (f *FavoriteUrlData) Save(data string) ([]byte, error) {
-	return http_request.TargetingKeyRequester.HTTPCreateTargetingKey(data)
+// Can't create favorite URL for this moment
+func (f *FavoriteUrlData) Save(data []byte) ([]byte, error) {
+	return favorite_url.CreateFavoriteURL(data), nil
 }
 
+// Can't delete favorite URL for this moment
 func (f *FavoriteUrlData) Delete(id string) error {
-	return http_request.TargetingKeyRequester.HTTPDeleteTargetingKey(id)
+	return nil
 }
+
+/* type ModificationData struct {
+	*models.Modification
+}
+
+// Delete implements Data.
+func (f *ModificationData) Delete(id string) error {
+	panic("unimplemented")
+}
+
+// Save implements Data.
+func (f *ModificationData) Save(data string) ([]byte, error) {
+	panic("unimplemented")
+}
+
+func (f *ModificationData) SaveWithParent(campaignId, data string) ([]byte, error) {
+	var modelData models.ModificationCodeCreateStruct
+	campaignIdInt, err := strconv.Atoi(campaignId)
+	if err != nil {
+		log.Fatalf("error occurred: %v", err)
+	}
+
+	err = json.Unmarshal([]byte(data), &modelData)
+
+	if err != nil {
+		log.Fatalf("error occurred: %v", err)
+	}
+
+	return http_request.ModificationRequester.HTTPCreateModification(campaignIdInt, modelData)
+}
+
+func (f *ModificationData) DeleteWithParent(campaignId, id string) error {
+	campaignIdInt, err := strconv.Atoi(campaignId)
+	if err != nil {
+		log.Fatalf("error occurred: %v", err)
+	}
+
+	idInt, err := strconv.Atoi(id)
+	if err != nil {
+		log.Fatalf("error occurred: %v", err)
+	}
+	return http_request.ModificationRequester.HTTPDeleteModification(campaignIdInt, idInt)
+} */
 
 type VariationData struct {
 	*models.VariationWE
 }
 
+func (f *VariationData) Save(campaignId int, data models.VariationWE) ([]byte, error) {
+	return http_request.VariationWERequester.HTTPCreateVariation(campaignId, data)
+}
+
+func (f *VariationData) Delete(campaignId, id int) error {
+	return http_request.VariationWERequester.HTTPDeleteVariation(campaignId, id)
+}
+
+func resolveVariables(data interface{}, resourceVariables map[string]interface{}) interface{} {
+	switch val := data.(type) {
+	case map[string]interface{}:
+		for k, v := range val {
+			val[k] = resolveVariables(v, resourceVariables)
+		}
+
+	case []interface{}:
+		for i, v := range val {
+			val[i] = resolveVariables(v, resourceVariables)
+		}
+
+	case string:
+		if strings.Contains(val, "$") {
+			vTrim := strings.Trim(val, "$")
+			for k_, variable := range resourceVariables {
+				script, _ := tengo.Eval(context.Background(), vTrim, map[string]interface{}{
+					k_: variable,
+				})
+				if script == nil {
+					continue
+				}
+				// Update the string value with the result
+				if resultStr, ok := script.(string); ok {
+					return resultStr
+				}
+			}
+		}
+	}
+	return data
+}
+
 type ResourceType int
 
 const (
-	Project ResourceType = iota
-	Flag
-	TargetingKey
-	Goal
-	Campaign
-	VariationGroup
+	Campaign ResourceType = iota
+	Audience
+	FavoriteURL
+	Modification
 	Variation
 )
 
 var resourceTypeMap = map[string]ResourceType{
-	"audience":     Flag,
-	"favorite_url": TargetingKey,
-	"modification": Goal,
+	"audience":     Audience,
+	"favorite_url": FavoriteURL,
+	"modification": Modification,
 	"campaign":     Campaign,
-
-	"variation": Variation,
+	"variation":    Variation,
 }
 
 type Resource struct {
@@ -170,15 +265,15 @@ func UnmarshalConfig(filePath string) ([]Resource, error) {
 
 		switch name {
 
-		case Flag:
-			flagData := AudienceData{}
-			err = json.Unmarshal(r.Data, &flagData)
-			data = &flagData
+		case Audience:
+			audienceData := AudienceData{}
+			err = json.Unmarshal(r.Data, &audienceData)
+			data = &audienceData
 
-		case TargetingKey:
-			targetingKeyData := ModificationData{}
-			err = json.Unmarshal(r.Data, &targetingKeyData)
-			data = &targetingKeyData
+		/* case Modification:
+		modificationData := ModificationData{}
+		err = json.Unmarshal(r.Data, &modificationData)
+		data = &modificationData */
 
 		case Campaign:
 			campaignData := CampaignData{}
@@ -287,8 +382,8 @@ func ScriptResource(cmd *cobra.Command, resources []Resource, inputParamsMap map
 		var resultOutputFile ResourceCmdStruct
 		var resourceData map[string]interface{}
 		var responseData interface{}
-		var url = ""
-		var resourceName = ""
+
+		var resourceName = resource.Data.getName()
 		const color = "\033[0;33m"
 		const colorNone = "\033[0m"
 
@@ -305,30 +400,6 @@ func ScriptResource(cmd *cobra.Command, resources []Resource, inputParamsMap map
 
 		if resource.Method == "switch" {
 			httpMethod = "PATCH"
-		}
-
-		switch resource.Name {
-		case Project:
-			url = "/projects"
-			resourceName = "Project"
-		case Flag:
-			url = "/flags"
-			resourceName = "Flag"
-		case TargetingKey:
-			url = "/targeting_keys"
-			resourceName = "Targeting Key"
-		case Goal:
-			url = "/goals"
-			resourceName = "Goal"
-		case VariationGroup:
-			url = "/variation_groups"
-			resourceName = "Variation Group"
-		case Variation:
-			url = "/variations"
-			resourceName = "Variation"
-		case Campaign:
-			url = "/campaigns"
-			resourceName = "Campaign"
 		}
 
 		err = json.Unmarshal(data, &resourceData)
@@ -357,23 +428,7 @@ func ScriptResource(cmd *cobra.Command, resources []Resource, inputParamsMap map
 			}
 		}
 
-		for k, vInterface := range resourceData {
-			v, ok := vInterface.(string)
-			if ok {
-				if strings.Contains(v, "$") {
-					vTrim := strings.Trim(v, "$")
-					for k_, variable := range resourceVariables {
-						script, _ := tengo.Eval(context.Background(), vTrim, map[string]interface{}{
-							k_: variable,
-						})
-						if script == nil {
-							continue
-						}
-						resourceData[k] = script.(string)
-					}
-				}
-			}
-		}
+		resourceData = resolveVariables(resourceData, resourceVariables).(map[string]interface{})
 
 		dataResource, err := json.Marshal(resourceData)
 		if err != nil {
@@ -396,13 +451,7 @@ func ScriptResource(cmd *cobra.Command, resources []Resource, inputParamsMap map
 		}
 
 		if httpMethod == "POST" {
-			if resource.Name == Project || resource.Name == TargetingKey || resource.Name == Flag {
-				response, err = common.HTTPRequest[ResourceData](httpMethod, utils.GetFeatureExperimentationHost()+"/v1/accounts/"+cred.AccountID+url, dataResource)
-			}
-
-			if resource.Name == Goal || resource.Name == Campaign {
-				response, err = common.HTTPRequest[ResourceData](httpMethod, utils.GetFeatureExperimentationHost()+"/v1/accounts/"+cred.AccountID+"/account_environments/"+cred.AccountEnvironmentID+url, dataResource)
-			}
+			response, err = resource.Data.Save(dataResource)
 
 			resultOutputFile = ResourceCmdStruct{
 				Name:             resourceName,
@@ -419,13 +468,8 @@ func ScriptResource(cmd *cobra.Command, resources []Resource, inputParamsMap map
 		}
 
 		if httpMethod == "DELETE" {
-			if resource.Name == Project || resource.Name == TargetingKey || resource.Name == Flag {
-				_, err = common.HTTPRequest[ResourceData](httpMethod, utils.GetFeatureExperimentationHost()+"/v1/accounts/"+cred.AccountID+url+"/"+fmt.Sprintf("%s", resourceData["id"]), nil)
-			}
-
-			if resource.Name == Goal || resource.Name == Campaign {
-				_, err = common.HTTPRequest[ResourceData](httpMethod, utils.GetFeatureExperimentationHost()+"/v1/accounts/"+cred.AccountID+"/account_environments/"+cred.AccountEnvironmentID+url+"/"+fmt.Sprintf("%s", resourceData["id"]), nil)
-			}
+			//_, err = common.HTTPRequest[ResourceData](httpMethod, utils.GetWebExperimentationHost()+"/v1/accounts/"+cred.AccountID+url+"/"+fmt.Sprintf("%s", resourceData["id"]), nil)
+			err = resource.Data.Delete(fmt.Sprintf("%s", resourceData["id"]))
 
 			if err == nil && viper.GetString("output_format") != "json" {
 				response = []byte("The id: " + fmt.Sprintf("%v", resourceData["id"]) + " deleted successfully")
