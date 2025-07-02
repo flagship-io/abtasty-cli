@@ -39,7 +39,7 @@ var openCmd = &cobra.Command{
 		}
 
 		if isVariation {
-			url := fmt.Sprintf(`%s/%s/?ab_project=preview&testId=%d&variationId=%d&t=%s`, body.Url, viper.GetString("identifier"), body.Id, VariationID, body.Report.Token)
+			url := fmt.Sprintf(`%s/%s?ab_project=preview&testId=%d&variationId=%d&t=%s`, body.Url, viper.GetString("identifier"), body.Id, VariationID, body.Report.Token)
 			if err := common.OpenLink(url); err != nil {
 				log.Fatalf("Error opening link: %s", err)
 			}
