@@ -1,0 +1,74 @@
+{
+    "version": 1,
+    "resources": [
+        {
+            "type": "campaign",
+            "$_ref": "c1",
+            "action": "create",
+            "payload": {
+                "name": "Holiday Promo",
+                "description": "Winter discounts"
+            },
+            "resources": [
+                {
+                    "type": "variation",
+                    "$_ref": "v1",
+                    "action": "create",
+                    "payload": {
+                        "name": "Variation A"
+                    },
+                    "resources": [
+                        {
+                            "type": "modification",
+                            "$_ref": "m1",
+                            "action": "create",
+                            "payload": {
+                                "name": "modification 1",
+                                "selector": "#main",
+                                "type": "js",
+                                "code": "console.log('hello world!')"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "variation",
+                    "$_ref": "v2",
+                    "action": "create",
+                    "payload": {
+                        "name": "Variation B"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "variation",
+            "$_ref": "v3",
+            "$_parent_id": "$c1.id",
+            "action": "create",
+            "payload": {
+                "name": "Variation C",
+                "type": "js",
+                "code": "console.log('hello world !')"
+            }
+        },
+        {
+            "type": "campaign",
+            "$_ref": "c2",
+            "action": "list"
+        },
+        {
+            "type": "modification",
+            "$_ref": "m2",
+            "action": "create",
+            "$_parent_id": "$v1.id",
+            "payload": {
+                "name": "modification 2",
+                "campaign_id": "$c1.id",
+                "selector": "#main",
+                "type": "js",
+                "code": "console.log('hello people!')"
+            }
+        }
+    ]
+}

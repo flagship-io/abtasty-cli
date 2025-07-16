@@ -1,17 +1,12 @@
 {
-    "name": "test-campaign-ab-1-2",
+    "name": "test-campaign-ab-1-2-3-may-2025",
     "url": "https://abtastylab.com/cee9bdbe4dda74858d71ce37a0366b65/",
     "description": "",
     "type": "ab",
     "sub_type": "ab",
     "master": null,
-    "traffic": {
-        "value": 66,
-        "last_increased_traffic": "",
-        "visitors": 0,
-        "original_visitors": 0,
-        "visitors_limit": 0
-    },
+    "traffic": 79,
+    "global_code": "console.log(\"campaign global code test-campaign-1-2-3\")",
     "variations": [
         {
             "name": "Variation 123",
@@ -20,7 +15,11 @@
             "traffic": 33,
             "visual_editor": false,
             "code_editor": false,
-            "components": null
+            "components": null,
+            "variation_global_code": {
+                "js": "console.log(hello)",
+                "css": ".id{color: blue}"
+            }
         },
         {
             "name": "Variation 2",
@@ -41,52 +40,52 @@
             "components": null
         }
     ],
+    "campaign_targeting": {
+        "segment_ids": [
+            "7dcfdb7f-c73a-4d16-a959-21bf17abfe41"
+        ],
+        "url_scopes": [
+            {
+                "condition": "IS",
+                "value": "https://abtasty.com"
+            }
+        ],
+        "favorite_url_scopes": [
+            {
+                "include": true,
+                "favorite_url_id": "dc9125d1-4adf-49ff-9997-c6c47fbac711"
+            }
+        ],
+        "selector_scopes": [
+            {
+                "condition": "IS_SELECTOR_CLASS",
+                "value": ".h1"
+            },
+            {
+                "condition": "IS_NOT_SELECTOR_ID",
+                "value": "#1234"
+            },
+            {
+                "condition": "IS_NOT_SELECTOR_CLASS",
+                "value": ".#blue"
+            }
+        ],
+        "code_scope": {
+            "value": "console.log(\"hello world\");"
+        },
+        "element_appears_after_page_load": false,
+        "triggers_ids": [
+            "30ca5fe9-5fce-4e34-8bc1-db217ae064e1",
+            "b1b8995b-2ec3-4d4b-a6d6-d7e941600760"
+        ],
+        "targeting_frequency": {
+            "type": "regular",
+            "unit": "day",
+            "value": 20
+        }
+    },
     "labels": [
         "chadi.laoulaou"
     ],
-    "global_code": "console.log(\"campaign global code test-campaign-1-2-3\")",
-    "source_code": "",
-    "audiences": [
-        {
-            "name": "device mode",
-            "audience_origin_id": 0,
-            "hidden": false,
-            "archive": false,
-            "is_segment": false
-        },
-        {
-            "name": "Test segment",
-            "audience_origin_id": 0,
-            "hidden": false,
-            "archive": false,
-            "is_segment": true
-        }
-    ],
-    "selector_scopes": [
-        {
-            "condition": "IS",
-            "value": "#div"
-        }
-    ],
-    "code_scopes": {
-        "value": "console.log(\"hello world !\")"
-    },
-    "favorite_url_scopes": [
-        {
-            "name": "favorite_url_name",
-            "include": true
-        }
-    ],
-    "url_scopes": [
-        {
-            "condition": "IS",
-            "value": "https://example.com"
-        }
-    ],
-    "mutation_observer": false,
-    "display_frequency": {
-        "type": "regular",
-        "unit": "day",
-        "value": 12
-    }
+    "source_code": ""
 }

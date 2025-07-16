@@ -38,14 +38,6 @@ func CreateCampaign(rawData []byte) []byte {
 		Type:        campaignModel.Type,
 	})
 
-	campaignPatch, _ := json.Marshal(struct {
-		Traffic            int    `json:"traffic,omitempty"`
-		GlobalCodeCampaign string `json:"global_code,omitempty"`
-	}{
-		Traffic:            campaignModel.Traffic,
-		GlobalCodeCampaign: campaignModel.GlobalCodeCampaign,
-	})
-
 	campaignHeader, err := httprequest.CampaignWERequester.HTTPCreateCampaign(campaignCommon)
 	parts := strings.Split(string(campaignHeader), "/")
 	campaignID := parts[len(parts)-1]
@@ -53,6 +45,23 @@ func CreateCampaign(rawData []byte) []byte {
 	campaignIDInt, err := strconv.Atoi(campaignID)
 	if err != nil {
 		log.Fatalf("error occurred: %v", err)
+	}
+
+	if campaignModel.Traffic != 0 || campaignModel.GlobalCodeCampaign != "" {
+
+		campaignPatch, _ := json.Marshal(struct {
+			Traffic            int    `json:"traffic,omitempty"`
+			GlobalCodeCampaign string `json:"global_code,omitempty"`
+		}{
+			Traffic:            campaignModel.Traffic,
+			GlobalCodeCampaign: campaignModel.GlobalCodeCampaign,
+		})
+
+		_, err = httprequest.CampaignWERequester.HTTPEditCampaign(campaignID, campaignPatch)
+		if err != nil {
+			log.Fatalf("error occurred: %v", err)
+		}
+
 	}
 
 	if campaignModel.CampaignTargeting != nil {
@@ -67,11 +76,6 @@ func CreateCampaign(rawData []byte) []byte {
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
-	}
-
-	_, err = httprequest.CampaignWERequester.HTTPEditCampaign(campaignID, campaignPatch)
-	if err != nil {
-		log.Fatalf("error occurred: %v", err)
 	}
 
 	if len(campaignModel.Variations) != 0 {
@@ -185,7 +189,6 @@ var createCmd = &cobra.Command{
 	Long:  `Create a campaign`,
 	Run: func(cmd *cobra.Command, args []string) {
 		resp := CreateCampaign([]byte(DataRaw))
-
 		fmt.Fprintln(cmd.OutOrStdout(), string(resp))
 	},
 }

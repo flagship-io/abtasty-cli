@@ -32,7 +32,7 @@ var (
 	inputParamsFile string
 )
 
-var inputParamsMap map[string]interface{}
+var inputParamsMap map[string]any
 
 type Data interface {
 	getName() string
@@ -44,6 +44,58 @@ type ResourceData struct {
 	Id string `json:"id"`
 }
 
+type ResourceType int
+
+const (
+	Campaign ResourceType = iota
+	Audience
+	FavoriteURL
+	Modification
+	Variation
+)
+
+var resourceTypeMap = map[string]ResourceType{
+	"audience":     Audience,
+	"favorite_url": FavoriteURL,
+	"modification": Modification,
+	"campaign":     Campaign,
+	"variation":    Variation,
+}
+
+type Resource struct {
+	Name            ResourceType
+	ParentID        string
+	Data            Data
+	Reference       string
+	Action          string
+	NestedResources []Resource
+}
+
+type ResourceCmdStruct struct {
+	Name      string `json:"name,omitempty"`
+	ParentID  string `json:"parentId,omitempty"`
+	Reference string `json:"ref,omitempty"`
+	Response  string `json:"response,omitempty"`
+	Action    string `json:"action,omitempty"`
+	Error     string `json:"error,omitempty"`
+}
+
+type ResourceResp struct {
+	Id string `json:"id,omitempty"`
+}
+
+// Resources is a slice of Resource.
+type JsonResources []JsonResource
+
+type JsonResource struct {
+	Name           string          `json:"name"`
+	ParentID       string          `json:"parentId"`
+	Data           json.RawMessage `json:"data"`
+	Reference      string          `json:"reference"`
+	Action         string          `json:"action"`
+	NestedResource JsonResources   `json:"nestedResource"`
+}
+
 type CampaignData struct {
 	*models.CampaignWEResourceLoader
 }
@@ -51,16 +103,6 @@ type CampaignData struct {
 // getName implements Data.
 func (f *CampaignData) getName() string {
 	return "Campaign"
-}
-
-// DeleteWithParent implements Data.
-func (f *CampaignData) DeleteWithParent(parentId string, id string) error {
-	panic("unimplemented")
-}
-
-// SaveWithParent implements Data.
-func (f *CampaignData) SaveWithParent(parentId string, data []byte) ([]byte, error) {
-	panic("unimplemented")
 }
 
 func (f *CampaignData) Save(data []byte) ([]byte, error) {
@@ -162,99 +204,9 @@ func (f *VariationData) Delete(campaignId, id int) error {
 	return http_request.VariationWERequester.HTTPDeleteVariation(campaignId, id)
 }
 
-func resolveVariables(data interface{}, resourceVariables map[string]interface{}) interface{} {
-	switch val := data.(type) {
-	case map[string]interface{}:
-		for k, v := range val {
-			val[k] = resolveVariables(v, resourceVariables)
-		}
-
-	case []interface{}:
-		for i, v := range val {
-			val[i] = resolveVariables(v, resourceVariables)
-		}
-
-	case string:
-		if strings.Contains(val, "$") {
-			vTrim := strings.Trim(val, "$")
-			for k_, variable := range resourceVariables {
-				script, _ := tengo.Eval(context.Background(), vTrim, map[string]interface{}{
-					k_: variable,
-				})
-				if script == nil {
-					continue
-				}
-				// Update the string value with the result
-				if resultStr, ok := script.(string); ok {
-					return resultStr
-				}
-			}
-		}
-	}
-	return data
-}
-
-type ResourceType int
-
-const (
-	Campaign ResourceType = iota
-	Audience
-	FavoriteURL
-	Modification
-	Variation
-)
-
-var resourceTypeMap = map[string]ResourceType{
-	"audience":     Audience,
-	"favorite_url": FavoriteURL,
-	"modification": Modification,
-	"campaign":     Campaign,
-	"variation":    Variation,
-}
-
-type Resource struct {
-	Name             ResourceType
-	Data             Data
-	ResourceVariable string
-	Method           string
-}
-
-var cred common.RequestConfig
-
-func Init(credL common.RequestConfig) {
-	cred = credL
-}
-
-type ResourceCmdStruct struct {
-	Name             string `json:"name,omitempty"`
-	ResourceVariable string `json:"resource_variable,omitempty"`
-	Response         string `json:"response,omitempty"`
-	Method           string `json:"method,omitempty"`
-	Error            string `json:"error,omitempty"`
-}
-
-func UnmarshalConfig(filePath string) ([]Resource, error) {
-	var config struct {
-		Resources []struct {
-			Name             string
-			Data             json.RawMessage
-			ResourceVariable string
-			Method           string
-		}
-	}
-
-	bytes, err := os.ReadFile(resourceFile)
-
-	if err != nil {
-		log.Fatalf("error occurred: %v", err)
-	}
-
-	if err := json.Unmarshal(bytes, &config); err != nil {
-		return nil, err
-	}
-
+func makeResourcesFromJSON(jsonResources JsonResources) ([]Resource, error) {
 	var resources []Resource
-	for _, r := range config.Resources {
+	for _, r := range jsonResources {
 		name, ok := resourceTypeMap[r.Name]
 		if !ok {
 			return nil, fmt.Errorf("invalid resource name: %s", r.Name)
@@ -262,6 +214,7 @@ func UnmarshalConfig(filePath string) ([]Resource, error) {
 
 		var data Data = nil
 		var err error = nil
+		var nestedResource []Resource = nil
 
 		switch name {
 
@@ -279,17 +232,73 @@ func UnmarshalConfig(filePath string) ([]Resource, error) {
 			campaignData := CampaignData{}
 			err = json.Unmarshal(r.Data, &campaignData)
 			data = &campaignData
-
+			nestedResource, err = makeResourcesFromJSON(r.NestedResource)
 		}
 
 		if err != nil {
 			return nil, err
 		}
 
-		resources = append(resources, Resource{Name: name, Data: data, ResourceVariable: r.ResourceVariable, Method: r.Method})
+		resources = append(resources, Resource{Name: name, Data: data, Reference: r.Reference, Action: r.Action, NestedResources: nestedResource})
 	}
 
 	return resources, nil
+}
+
+func resolveVariables(data any, resourceReferences map[string]any) any {
+	switch val := data.(type) {
+	case map[string]any:
+		for k, v := range val {
+			val[k] = resolveVariables(v, resourceReferences)
+		}
+
+	case []any:
+		for i, v := range val {
+			val[i] = resolveVariables(v, resourceReferences)
+		}
+
+	case string:
+		if strings.Contains(val, "$") {
+			vTrim := strings.Trim(val, "$")
+			for k_, variable := range resourceReferences {
+				script, _ := tengo.Eval(context.Background(), vTrim, map[string]any{
+					k_: variable,
+				})
+				if script == nil {
+					continue
+				}
+				// Update the string value with the result
+				if resultStr, ok := script.(string); ok {
+					return resultStr
+				}
+			}
+		}
+	}
+	return data
+}
+
+var cred common.RequestConfig
+
+func Init(credL common.RequestConfig) {
+	cred = credL
+}
+
+func ExtractResourcesFromFile(filePath string) ([]Resource, error) {
+	var config struct {
+		Resources JsonResources
+	}
+
+	bytes, err := os.ReadFile(resourceFile)
+
+	if err != nil {
+		log.Fatalf("error occurred: %v", err)
+	}
+
+	if err := json.Unmarshal(bytes, &config); err != nil {
+		return nil, err
+	}
+
+	return makeResourcesFromJSON(config.Resources)
 }
 
 var gResources []Resource
@@ -364,24 +373,25 @@ func initResource() {
 	// Use config file from the flag.
 	var err error
 	if resourceFile != "" {
-		gResources, err = UnmarshalConfig(resourceFile)
+		gResources, err = ExtractResourcesFromFile(resourceFile)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
 	}
 }
 
-func ScriptResource(cmd *cobra.Command, resources []Resource, inputParamsMap map[string]interface{}) []byte {
+/*
+func ScriptResource(cmd *cobra.Command, resources []Resource, inputParamsMap map[string]any) []byte {
 
-	resourceVariables := make(map[string]interface{})
+	resourceReferences := make(map[string]any)
 	var loadResultJSON []string
 	var loadResultOutputFile []ResourceCmdStruct
 
 	for _, resource := range resources {
 		var response []byte
 		var resultOutputFile ResourceCmdStruct
-		var resourceData map[string]interface{}
-		var responseData interface{}
+		var resourceData map[string]any
+		var responseData any
 
 		var resourceName = resource.Data.getName()
 		const color = "\033[0;33m"
@@ -394,11 +404,11 @@ func ScriptResource(cmd *cobra.Command, resources []Resource, inputParamsMap map
 
 		var httpMethod string = "POST"
 
-		if resource.Method == "delete" {
+		if resource.Action == "delete" {
 			httpMethod = "DELETE"
 		}
 
-		if resource.Method == "switch" {
+		if resource.Action == "switch" {
 			httpMethod = "PATCH"
 		}
 
@@ -428,14 +438,14 @@ func ScriptResource(cmd *cobra.Command, resources []Resource, inputParamsMap map
 			}
 		}
 
-		resourceData = resolveVariables(resourceData, resourceVariables).(map[string]interface{})
+		resourceData = resolveVariables(resourceData, resourceReferences).(map[string]any)
 
 		dataResource, err := json.Marshal(resourceData)
 		if err != nil {
 			log.Fatalf("error occurred http call: %v\n", err)
 		}
 
-		if resource.Method == "switch" {
+		if resource.Action == "switch" {
 			if resource.Name == Campaign {
 				fmt.Println("--id="+fmt.Sprintf("%v", resourceData["id"]), "--state="+fmt.Sprintf("%v", resourceData["state"]))
 				if !(fmt.Sprintf("%v", resourceData["state"]) == "active" || fmt.Sprintf("%v", resourceData["state"]) == "paused" || fmt.Sprintf("%v", resourceData["state"]) == "interrupted") {
@@ -454,10 +464,10 @@ func ScriptResource(cmd *cobra.Command, resources []Resource, inputParamsMap map
 			response, err = resource.Data.Save(dataResource)
 
 			resultOutputFile = ResourceCmdStruct{
-				Name:             resourceName,
-				Response:         string(response),
-				ResourceVariable: resource.ResourceVariable,
-				Method:           httpMethod,
+				Name:      resourceName,
+				Response:  string(response),
+				Reference: resource.Reference,
+				Action:    httpMethod,
 			}
 
 			if err != nil {
@@ -468,7 +478,6 @@ func ScriptResource(cmd *cobra.Command, resources []Resource, inputParamsMap map
 		}
 
 		if httpMethod == "DELETE" {
-			//_, err = common.HTTPRequest[ResourceData](httpMethod, utils.GetWebExperimentationHost()+"/v1/accounts/"+cred.AccountID+url+"/"+fmt.Sprintf("%s", resourceData["id"]), nil)
 			err = resource.Data.Delete(fmt.Sprintf("%s", resourceData["id"]))
 
 			if err == nil && viper.GetString("output_format") != "json" {
@@ -497,7 +506,7 @@ func ScriptResource(cmd *cobra.Command, resources []Resource, inputParamsMap map
 				continue
 			}
 
-			resourceVariables[resource.ResourceVariable] = responseData
+			resourceReferences[resource.Reference] = responseData
 		}
 
 		loadResultJSON = append(loadResultJSON, string(response))
@@ -519,9 +528,190 @@ func ScriptResource(cmd *cobra.Command, resources []Resource, inputParamsMap map
 	}
 
 	return jsonBytes
+} */
+
+func httpMethodFor(action string) string {
+	switch action {
+	case "delete":
+		return "DELETE"
+	case "switch":
+		return "PATCH"
+	default:
+		return "POST"
+	}
 }
 
-func getNestedValue(data map[string]interface{}, path []string) (interface{}, error) {
+func substituteVars(data map[string]any, inputParams map[string]any) {
+	if inputParams == nil {
+		return
+	}
+	for k, v := range data {
+		s, ok := v.(string)
+		if !ok || !strings.Contains(s, "$") {
+			continue
+		}
+		path := strings.Split(strings.Trim(s, "$"), ".")
+		if val, err := getNestedValue(inputParams, path); err == nil && val != nil {
+			data[k] = val
+		} else if err != nil {
+			fmt.Fprintf(os.Stderr, "param substitution error: %v\n", err)
+		}
+	}
+}
+
+func dispatch(
+	cmd *cobra.Command,
+	res Resource,
+	name, method string,
+	payload map[string]any,
+	body []byte,
+) ([]byte, *ResourceCmdStruct) {
+	const (
+		cyan  = "\033[0;36m"
+		reset = "\033[0m"
+	)
+	switch method {
+	case "PATCH":
+		if res.Name == Campaign {
+			return nil, handleSwitch(cmd, payload)
+		}
+		return nil, nil
+
+	case "DELETE":
+		id := fmt.Sprintf("%v", payload["id"])
+		if err := res.Data.Delete(id); err != nil {
+			fmt.Fprintf(cmd.OutOrStdout(), "%s - %s: %v\n", cyan, name, err)
+			return nil, nil
+		}
+		resp := []byte(fmt.Sprintf("Deleted id %s", id))
+		if viper.GetString("output_format") != "json" {
+			fmt.Fprintf(cmd.OutOrStdout(), "%s - %s: %s\n", cyan, name, reset, resp)
+		}
+		return resp, nil
+
+	default: // POST
+		resp, err := res.Data.Save(body)
+		var resourceResp ResourceResp
+
+		unmarshalErr := json.Unmarshal(resp, &resourceResp)
+		if unmarshalErr != nil {
+			fmt.Fprintf(os.Stderr, "unmarshal error: %v\n", err)
+		}
+
+		rec := ResourceCmdStruct{
+			Name:      name,
+			Response:  string(resp),
+			Reference: res.Reference,
+			Action:    method,
+			ParentID:  resourceResp.Id,
+		}
+
+		if err != nil {
+			rec.Error = err.Error()
+		}
+
+		if viper.GetString("output_format") != "json" {
+			fmt.Fprintf(cmd.OutOrStdout(), "%s - %s: %s%s\n", cyan, name, reset, recResponse(rec))
+		}
+
+		return resp, &rec
+	}
+}
+
+func handleSwitch(cmd *cobra.Command, payload map[string]any) *ResourceCmdStruct {
+	id := fmt.Sprintf("%v", payload["id"])
+	state := fmt.Sprintf("%v", payload["state"])
+	fmt.Fprintf(cmd.OutOrStdout(), "--id=%s --state=%s\n", id, state)
+
+	valid := map[string]bool{"active": true, "paused": true, "interrupted": true}
+	if !valid[state] {
+		fmt.Fprintln(cmd.OutOrStdout(), "Status must be one of: active, paused, interrupted")
+		return nil
+	}
+	if err := http_request.CampaignFERequester.HTTPSwitchStateCampaign(id, state); err != nil {
+		fmt.Fprintf(cmd.OutOrStdout(), "Switch error: %v\n", err)
+	} else {
+		fmt.Fprintf(cmd.OutOrStdout(), "Campaign status set to %s\n", state)
+	}
+	return nil
+}
+
+func recResponse(r ResourceCmdStruct) string {
+	if r.Error != "" {
+		return r.Error
+	}
+	return r.Response
+}
+
+func ScriptResource(cmd *cobra.Command, resources []Resource, inputParams map[string]any) []byte {
+	refs := make(map[string]any, len(resources))
+	var results []string
+	var outputRecords []ResourceCmdStruct
+
+	for _, res := range resources {
+		name := res.Data.getName()
+		action := strings.ToLower(res.Action)
+		method := httpMethodFor(action)
+
+		// 1) Prepare the payload
+		raw, err := json.Marshal(res.Data)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "[%s] marshal error: %v\n", name, err)
+			continue
+		}
+
+		var payload map[string]any
+		if err := json.Unmarshal(raw, &payload); err != nil {
+			fmt.Fprintf(os.Stderr, "[%s] unmarshal error: %v\n", name, err)
+			continue
+		}
+
+		// 2) Substitute input params like "$foo.bar"
+		substituteVars(payload, inputParams)
+
+		// 3) Resolve references from previous resources
+		payload = resolveVariables(payload, refs).(map[string]any)
+
+		// 4) Marshal the final payload
+		finalBody, err := json.Marshal(payload)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "[%s] final marshal error: %v\n", name, err)
+			continue
+		}
+
+		// 5) Dispatch by method
+		respBytes, record := dispatch(cmd, res, name, method, payload, finalBody)
+		if record != nil {
+			outputRecords = append(outputRecords, *record)
+		}
+		if respBytes != nil {
+			if method != "DELETE" && method != "PATCH" {
+				var respData any
+				if err := json.Unmarshal(respBytes, &respData); err == nil && respData != nil {
+					refs[res.Reference] = respData
+				}
+				results = append(results, string(respBytes))
+			}
+		}
+	}
+
+	// 6) Choose output format
+	var out any
+	if file := viper.GetString("output_file"); file != "" {
+		out = outputRecords
+	} else {
+		out = results
+	}
+
+	b, err := json.Marshal(out)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "final marshal error: %v\n", err)
+		os.Exit(1)
+	}
+	return b
+}
+
+func getNestedValue(data map[string]any, path []string) (any, error) {
 	if len(path) == 0 {
 		return nil, fmt.Errorf("empty path")
 	}
@@ -535,7 +725,7 @@ func getNestedValue(data map[string]interface{}, path []string) (interface{}, er
 		if i == len(path)-1 {
 			return value, nil
 		}
-		next, ok := value.(map[string]interface{})
+		next, ok := value.(map[string]any)
 		if !ok {
 			return nil, fmt.Errorf("value at key '%s' is not an object", key)
 		}

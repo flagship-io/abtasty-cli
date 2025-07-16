@@ -4,12 +4,41 @@ Copyright © 2022 Flagship Team flagship@abtasty.com
 package variation
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
+	"strconv"
+	"strings"
 
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
 )
+
+func CreateVariation(campaignId int, rawData []byte) []byte {
+	variationHeader, err := httprequest.VariationWERequester.HTTPCreateVariationDataRaw(fmt.Sprint(CampaignID), rawData)
+	if err != nil {
+		log.Fatalf("error occurred: %v", err)
+	}
+
+	parts := strings.Split(string(variationHeader), "/")
+	variationID := parts[len(parts)-1]
+	variationIDInt, err := strconv.Atoi(variationID)
+	if err != nil {
+		log.Fatalf("error occurred: %v", err)
+	}
+
+	body, err := httprequest.VariationWERequester.HTTPGetVariation(campaignId, variationIDInt)
+	if err != nil {
+		log.Fatalf("error occurred: %s", err)
+	}
+
+	bodyByte, err := json.Marshal(body)
+	if err != nil {
+		log.Fatalf("error occurred: %s", err)
+	}
+
+	return bodyByte
+}
 
 // createCmd represents the create command
 var createCmd = &cobra.Command{
@@ -17,11 +46,8 @@ var createCmd = &cobra.Command{
 	Short: "Create a variation",
 	Long:  `Create a variation`,
 	Run: func(cmd *cobra.Command, args []string) {
-		body, err := httprequest.VariationWERequester.HTTPCreateVariationDataRaw(fmt.Sprint(CampaignID), []byte(DataRaw))
-		if err != nil {
-			log.Fatalf("error occurred: %v", err)
-		}
-		fmt.Fprintf(cmd.OutOrStdout(), "%s\n", body)
+		resp := CreateVariation(CampaignID, []byte(DataRaw))
+		fmt.Fprintf(cmd.OutOrStdout(), "%s\n", resp)
 	},
 }
 
