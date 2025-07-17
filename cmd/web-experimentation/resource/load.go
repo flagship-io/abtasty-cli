@@ -18,7 +18,6 @@ import (
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/campaign"
 	favorite_url "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/favorite-url"
 	models "github.com/flagship-io/abtasty-cli/models/web_experimentation"
-	"github.com/flagship-io/abtasty-cli/utils"
 	"github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/flagship-io/abtasty-cli/utils/http_request/common"
 	"github.com/spf13/cobra"
@@ -62,13 +61,13 @@ var resourceTypeMap = map[string]ResourceType{
 	"variation":    Variation,
 }
 
-type Resource struct {
+type Resource_ struct {
 	Name            ResourceType
 	ParentID        string
 	Data            Data
 	Reference       string
 	Action          string
-	NestedResources []Resource
+	NestedResources []Resource_
 }
 
 type ResourceCmdStruct struct {
@@ -204,8 +203,8 @@ func (f *VariationData) Delete(campaignId, id int) error {
 	return http_request.VariationWERequester.HTTPDeleteVariation(campaignId, id)
 }
 
-func makeResourcesFromJSON(jsonResources JsonResources) ([]Resource, error) {
-	var resources []Resource
+func makeResourcesFromJSON(jsonResources JsonResources) ([]Resource_, error) {
+	var resources []Resource_
 	for _, r := range jsonResources {
 		name, ok := resourceTypeMap[r.Name]
 		if !ok {
@@ -214,7 +213,7 @@ func makeResourcesFromJSON(jsonResources JsonResources) ([]Resource, error) {
 
 		var data Data = nil
 		var err error = nil
-		var nestedResource []Resource = nil
+		var nestedResource []Resource_ = nil
 
 		switch name {
 
@@ -239,7 +238,7 @@ func makeResourcesFromJSON(jsonResources JsonResources) ([]Resource, error) {
 			return nil, err
 		}
 
-		resources = append(resources, Resource{Name: name, Data: data, Reference: r.Reference, Action: r.Action, NestedResources: nestedResource})
+		resources = append(resources, Resource_{Name: name, Data: data, Reference: r.Reference, Action: r.Action, NestedResources: nestedResource})
 	}
 
 	return resources, nil
@@ -283,7 +282,7 @@ func Init(credL common.RequestConfig) {
 	cred = credL
 }
 
-func ExtractResourcesFromFile(filePath string) ([]Resource, error) {
+func ExtractResourcesFromFile(filePath string) ([]Resource_, error) {
 	var config struct {
 		Resources JsonResources
 	}
@@ -301,58 +300,228 @@ func ExtractResourcesFromFile(filePath string) ([]Resource, error) {
 	return makeResourcesFromJSON(config.Resources)
 }
 
-var gResources []Resource
+var gResources []Resource_
+
+type ResourceAction string
+
+const (
+	ActionCreate ResourceAction = "create"
+	ActionList   ResourceAction = "list"
+	ActionDelete ResourceAction = "delete"
+	ActionSwitch ResourceAction = "switch"
+)
+
+type Resource struct {
+	Type      string         `json:"type"`
+	Ref       string         `json:"$_ref,omitempty"`
+	ParentID  string         `json:"$_parent_id,omitempty"`
+	Action    ResourceAction `json:"action"`
+	Payload   map[string]any `json:"payload,omitempty"`
+	Resources []Resource     `json:"resources,omitempty"`
+}
+
+type LoadResFile struct {
+	Version   int        `json:"version"`
+	Resources []Resource `json:"resources"`
+}
+
+// Reference context for resolving $ref and $parent_id
+type RefContext struct {
+	refs map[string]any
+}
+
+func NewRefContext() *RefContext {
+	return &RefContext{refs: make(map[string]any)}
+}
+
+func (rc *RefContext) Set(ref string, val any) {
+	if ref != "" {
+		rc.refs[ref] = val
+	}
+}
+
+func (rc *RefContext) Get(ref string) (any, bool) {
+	val, ok := rc.refs[ref]
+	return val, ok
+}
+
+// Recursively resolve $-prefixed references in payload and parent_id
+func resolveRefs(val any, rc *RefContext) any {
+	switch v := val.(type) {
+	case map[string]any:
+		for k, vv := range v {
+			if s, ok := vv.(string); ok && strings.HasPrefix(s, "$") {
+				// Reference: $ref.field
+				parts := strings.Split(strings.TrimPrefix(s, "$"), ".")
+				if len(parts) > 1 {
+					if refVal, ok := rc.Get(parts[0]); ok {
+						if m, ok := refVal.(map[string]any); ok {
+							if field, ok := m[parts[1]]; ok {
+								v[k] = field
+							}
+						}
+					}
+				}
+			} else {
+				v[k] = resolveRefs(vv, rc)
+			}
+		}
+	case []any:
+		for i, vv := range v {
+			v[i] = resolveRefs(vv, rc)
+		}
+	}
+	return val
+}
+
+// Main loader for new resource format
+func LoadResources(cmd *cobra.Command, filePath string) error {
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		return fmt.Errorf("failed to read resource file: %w", err)
+	}
+
+	var loadFile LoadResFile
+	if err := json.Unmarshal(data, &loadFile); err != nil {
+		return fmt.Errorf("failed to parse resource file: %w", err)
+	}
+
+	refCtx := NewRefContext()
+	for _, res := range loadFile.Resources {
+		if err := processResource(cmd, res, refCtx); err != nil {
+			fmt.Fprintf(cmd.OutOrStderr(), "Resource error: %v\n", err)
+		}
+	}
+	return nil
+}
+
+// Process a resource and its children recursively
+func processResource(cmd *cobra.Command, res Resource, rc *RefContext) error {
+	// Resolve parent_id and payload references
+	if res.ParentID != "" && strings.HasPrefix(res.ParentID, "$") {
+		parts := strings.Split(strings.TrimPrefix(res.ParentID, "$"), ".")
+		if len(parts) > 1 {
+			if refVal, ok := rc.Get(parts[0]); ok {
+				if m, ok := refVal.(map[string]any); ok {
+					if field, ok := m[parts[1]]; ok {
+						res.ParentID = fmt.Sprintf("%v", field)
+					}
+				}
+			}
+		}
+	}
+	res.Payload = resolveRefs(res.Payload, rc).(map[string]any)
+
+	// Dispatch action
+	var resp map[string]any
+	var err error
+	switch res.Action {
+	case ActionCreate:
+		resp, err = handleCreate(cmd, res)
+	case ActionList:
+		resp, err = handleList(cmd, res)
+	case ActionDelete:
+		err = handleDelete(cmd, res)
+	case ActionSwitch:
+		err = handleSwitch_(cmd, res)
+	default:
+		return fmt.Errorf("unsupported action: %s", res.Action)
+	}
+	if err != nil {
+		return err
+	}
+
+	// Store response for $ref
+	if res.Ref != "" && resp != nil {
+		rc.Set(res.Ref, resp)
+	}
+
+	// Recursively process children
+	for _, child := range res.Resources {
+		// Set parent_id in child if not set
+		if child.ParentID == "" && res.Ref != "" && resp != nil {
+			if id, ok := resp["id"]; ok {
+				child.ParentID = fmt.Sprintf("%v", id)
+			}
+		}
+		if err := processResource(cmd, child, rc); err != nil {
+			fmt.Fprintf(cmd.OutOrStderr(), "Child resource error: %v\n", err)
+		}
+	}
+	return nil
+}
+
+// Example handlers (implement as needed)
+func handleCreate(cmd *cobra.Command, res Resource) (map[string]any, error) {
+	// Map type to actual creation logic
+	payloadBytes, _ := json.Marshal(res.Payload)
+	var respBytes []byte
+	//var err error
+
+	switch res.Type {
+	case "campaign":
+		//respBytes = campaign.CreateCampaign(payloadBytes)
+		fmt.Fprintf(cmd.OutOrStdout(), "Create action for type: %s\n", res.Type)
+		return nil, nil
+	case "variation":
+		// parentID required
+		//parentID, _ := strconv.Atoi(res.ParentID)
+		var v models.VariationWE
+		_ = json.Unmarshal(payloadBytes, &v)
+		//respBytes, err = http_request.VariationWERequester.HTTPCreateVariation(parentID, v)
+		fmt.Fprintf(cmd.OutOrStdout(), "Create action for type: %s\n", res.Type)
+		return nil, nil
+	case "modification":
+		// parentID required
+		//parentID, _ := strconv.Atoi(res.ParentID)
+		var m models.ModificationCodeCreateStruct
+		_ = json.Unmarshal(payloadBytes, &m)
+		//respBytes, err = http_request.ModificationRequester.HTTPCreateModification(parentID, m)
+		fmt.Fprintf(cmd.OutOrStdout(), "Create action for type: %s\n", res.Type)
+		return nil, nil
+	default:
+		return nil, fmt.Errorf("unknown resource type: %s", res.Type)
+	}
+	/* 	if err != nil {
+		return nil, err
+	} */
+	var resp map[string]any
+	_ = json.Unmarshal(respBytes, &resp)
+	return resp, nil
+}
+
+func handleList(cmd *cobra.Command, res Resource) (map[string]any, error) {
+	// Implement as needed
+	fmt.Fprintf(cmd.OutOrStdout(), "List action for type: %s\n", res.Type)
+	return nil, nil
+}
+
+func handleDelete(cmd *cobra.Command, res Resource) error {
+	// Implement as needed
+	fmt.Fprintf(cmd.OutOrStdout(), "Delete action for type: %s\n", res.Type)
+	return nil
+}
+
+func handleSwitch_(cmd *cobra.Command, res Resource) error {
+	// Implement as needed
+	fmt.Fprintf(cmd.OutOrStdout(), "Switch action for type: %s\n", res.Type)
+	return nil
+}
 
 // LoadCmd represents the load command
 var loadCmd = &cobra.Command{
 	Use:   "load [--file=<file>]",
 	Short: "Load your resources",
-	Long:  `Load your resources`,
-	Run: func(cmd *cobra.Command, args []string) {
-		var params []byte
-
-		if resourceFile == "" && !utils.CheckSingleFlag(inputParams != "", inputParamsFile != "") {
-			log.Fatalf("error occurred: %s", "1 flag is required. (input-params, input-params-file)")
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if resourceFile == "" {
+			return fmt.Errorf("missing --file flag")
 		}
-
-		if inputParams != "" {
-			params = []byte(inputParams)
-
-		}
-
-		if inputParamsFile != "" {
-			fileContent, err := os.ReadFile(inputParamsFile)
-			if err != nil {
-				log.Fatalf("error occurred: %s", err)
-			}
-
-			params = fileContent
-		}
-
-		if params != nil {
-			err := json.Unmarshal(params, &inputParamsMap)
-			if err != nil {
-				fmt.Fprintf(cmd.OutOrStderr(), "Error: %s", err)
-				return
-			}
-		}
-
-		jsonBytes := ScriptResource(cmd, gResources, inputParamsMap)
-		if outputFile != "" {
-			os.WriteFile(outputFile, jsonBytes, os.ModePerm)
-			fmt.Fprintf(cmd.OutOrStdout(), "File created at %s\n", outputFile)
-			return
-		}
-
-		if viper.GetString("output_format") == "json" {
-			fmt.Fprintf(cmd.OutOrStdout(), "%s", string(jsonBytes))
-		}
-
+		return LoadResources(cmd, resourceFile)
 	},
 }
 
 func init() {
-	cobra.OnInitialize(initResource)
+	//cobra.OnInitialize(initResource)
 
 	loadCmd.Flags().StringVarP(&resourceFile, "file", "", "", "resource file that contains your resource")
 
@@ -561,7 +730,7 @@ func substituteVars(data map[string]any, inputParams map[string]any) {
 
 func dispatch(
 	cmd *cobra.Command,
-	res Resource,
+	res Resource_,
 	name, method string,
 	payload map[string]any,
 	body []byte,
@@ -585,7 +754,7 @@ func dispatch(
 		}
 		resp := []byte(fmt.Sprintf("Deleted id %s", id))
 		if viper.GetString("output_format") != "json" {
-			fmt.Fprintf(cmd.OutOrStdout(), "%s - %s: %s\n", cyan, name, reset, resp)
+			fmt.Fprintf(cmd.OutOrStdout(), "%s - %s: %s%s\n", cyan, name, reset, resp)
 		}
 		return resp, nil
 
@@ -643,7 +812,7 @@ func recResponse(r ResourceCmdStruct) string {
 	return r.Response
 }
 
-func ScriptResource(cmd *cobra.Command, resources []Resource, inputParams map[string]any) []byte {
+func ScriptResource(cmd *cobra.Command, resources []Resource_, inputParams map[string]any) []byte {
 	refs := make(map[string]any, len(resources))
 	var results []string
 	var outputRecords []ResourceCmdStruct
