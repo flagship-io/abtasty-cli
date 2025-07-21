@@ -12,6 +12,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/campaign"
 	models "github.com/flagship-io/abtasty-cli/models/web_experimentation"
 	"github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/flagship-io/abtasty-cli/utils/http_request/common"
@@ -86,7 +87,9 @@ type ResourceAction string
 
 const (
 	ActionCreate ResourceAction = "create"
+	ActionUpdate ResourceAction = "update"
 	ActionList   ResourceAction = "list"
+	ActionGet    ResourceAction = "get"
 	ActionDelete ResourceAction = "delete"
 	ActionSwitch ResourceAction = "switch"
 )
@@ -184,11 +187,60 @@ func LoadResources(cmd *cobra.Command, filePath string, inputParamsFile string, 
 		refCtx.Set(k, v)
 	}
 
+	// Separate mutating and read actions, preserving file order
+	var mutating, read []Resource
 	for _, res := range loadFile.Resources {
+		switch res.Action {
+		case ActionGet, ActionList:
+			read = append(read, res)
+		default:
+			mutating = append(mutating, res)
+		}
+	}
+
+	// Group resources by type
+	var campaigns, variations, modifications, others []Resource
+	for _, res := range mutating {
+		switch res.Type {
+		case "campaign":
+			campaigns = append(campaigns, res)
+		case "variation":
+			variations = append(variations, res)
+		case "modification":
+			modifications = append(modifications, res)
+		default:
+			others = append(others, res)
+		}
+	}
+
+	// Process in order: campaigns → variations → modifications → others
+	for _, res := range campaigns {
 		if err := processResource(cmd, res, refCtx); err != nil {
 			fmt.Fprintf(cmd.OutOrStderr(), "Resource error: %v\n", err)
 		}
 	}
+	for _, res := range variations {
+		if err := processResource(cmd, res, refCtx); err != nil {
+			fmt.Fprintf(cmd.OutOrStderr(), "Resource error: %v\n", err)
+		}
+	}
+	for _, res := range modifications {
+		if err := processResource(cmd, res, refCtx); err != nil {
+			fmt.Fprintf(cmd.OutOrStderr(), "Resource error: %v\n", err)
+		}
+	}
+	for _, res := range others {
+		if err := processResource(cmd, res, refCtx); err != nil {
+			fmt.Fprintf(cmd.OutOrStderr(), "Resource error: %v\n", err)
+		}
+	}
+
+	for _, res := range read {
+		if err := processResource(cmd, res, refCtx); err != nil {
+			fmt.Fprintf(cmd.OutOrStderr(), "Resource error: %v\n", err)
+		}
+	}
+
 	return nil
 }
 
@@ -213,6 +265,8 @@ func processResource(cmd *cobra.Command, res Resource, rc *RefContext) error {
 	switch res.Action {
 	case ActionCreate:
 		resp, err = handleCreate(cmd, res)
+	case ActionUpdate:
+		resp, err = handleUpdate(cmd, res)
 	case ActionList:
 		resp, err = handleList(cmd, res)
 	case ActionDelete:
@@ -255,7 +309,46 @@ func handleCreate(cmd *cobra.Command, res Resource) (map[string]any, error) {
 
 	switch res.Type {
 	case "campaign":
-		//respBytes = campaign.CreateCampaign(payloadBytes)
+		respBytes = campaign.CreateCampaign(payloadBytes)
+		fmt.Fprintf(cmd.OutOrStdout(), "Create action for type: %s\n", res.Type)
+		return nil, nil
+	case "variation":
+		// parentID required
+		//parentID, _ := strconv.Atoi(res.ParentID)
+		var v models.VariationWE
+		_ = json.Unmarshal(payloadBytes, &v)
+		//respBytes, err = http_request.VariationWERequester.HTTPCreateVariation(parentID, v)
+		fmt.Fprintf(cmd.OutOrStdout(), "Create action for type: %s\n", res.Type)
+		return nil, nil
+	case "modification":
+		// parentID required
+		//parentID, _ := strconv.Atoi(res.ParentID)
+		var m models.ModificationCodeCreateStruct
+		_ = json.Unmarshal(payloadBytes, &m)
+		//respBytes, err = http_request.ModificationRequester.HTTPCreateModification(parentID, m)
+		fmt.Fprintf(cmd.OutOrStdout(), "Create action for type: %s\n", res.Type)
+		return nil, nil
+	default:
+		return nil, fmt.Errorf("unknown resource type: %s", res.Type)
+	}
+	/* 	if err != nil {
+		return nil, err
+	} */
+	var resp map[string]any
+	_ = json.Unmarshal(respBytes, &resp)
+	return resp, nil
+}
+
+// Example handlers (implement as needed)
+func handleUpdate(cmd *cobra.Command, res Resource) (map[string]any, error) {
+	// Map type to actual creation logic
+	payloadBytes, _ := json.Marshal(res.Payload)
+	var respBytes []byte
+	//var err error
+
+	switch res.Type {
+	case "campaign":
+		respBytes = campaign.CreateCampaign(payloadBytes)
 		fmt.Fprintf(cmd.OutOrStdout(), "Create action for type: %s\n", res.Type)
 		return nil, nil
 	case "variation":
