@@ -82,13 +82,6 @@ func CreateCampaign(rawData []byte) []byte {
 		log.Fatalf("error occurred: %s", err)
 	}
 
-	if body.Variations[0].Id != 0 {
-		err = httprequest.VariationWERequester.HTTPDeleteVariation(campaignIDInt, body.Variations[0].Id)
-		if err != nil {
-			log.Fatalf("error occurred: %v", err)
-		}
-	}
-
 	bodyByte, err := json.Marshal(body)
 	if err != nil {
 		log.Fatalf("error occurred: %s", err)

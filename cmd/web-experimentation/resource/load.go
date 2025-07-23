@@ -14,7 +14,9 @@ import (
 	"strings"
 
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/campaign"
+	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/modification"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/variation"
+	"github.com/flagship-io/abtasty-cli/models/web_experimentation"
 	models "github.com/flagship-io/abtasty-cli/models/web_experimentation"
 	"github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
@@ -25,18 +27,6 @@ var (
 	outputFile      string
 	inputParamsRaw  string
 	inputParamsFile string
-)
-
-var inputParamsMap map[string]any
-
-type ResourceType int
-
-const (
-	Campaign ResourceType = iota
-	Audience
-	FavoriteURL
-	Modification
-	Variation
 )
 
 type ResourceAction string
@@ -51,12 +41,13 @@ const (
 )
 
 type Resource struct {
-	Type      string         `json:"type"`
-	Ref       string         `json:"$_ref"`
-	ParentID  string         `json:"$_parent_id"`
-	Action    ResourceAction `json:"action"`
-	Payload   map[string]any `json:"payload"`
-	Resources []Resource     `json:"resources"`
+	Type           string         `json:"type"`
+	Ref            string         `json:"$_ref"`
+	ParentID       string         `json:"$_parent_id"`
+	Action         ResourceAction `json:"action"`
+	Payload        map[string]any `json:"payload"`
+	Resources      []Resource     `json:"resources"`
+	ParentResource *Resource
 }
 
 type LoadResFile struct {
@@ -288,6 +279,7 @@ func processResourceWithResponse(cmd *cobra.Command, res Resource, rc *RefContex
 		if child.ParentID == "" && res.Ref != "" && resp != nil {
 			if id, ok := resp["id"].(float64); ok {
 				child.ParentID = fmt.Sprintf("%v", int(id))
+				child.ParentResource = &res
 			}
 		}
 		_, _ = processResourceWithResponse(cmd, child, rc)
@@ -307,17 +299,37 @@ func handleCreate(cmd *cobra.Command, res Resource) (map[string]any, error) {
 		respBytes = campaign.CreateCampaign(payloadBytes)
 		fmt.Fprintf(cmd.OutOrStdout(), "Create action for type: %s\n", res.Type)
 	case "variation":
-		parentID, _ := strconv.Atoi(res.ParentID)
+		parentID, err := strconv.Atoi(res.ParentID)
+		if err != nil {
+			return nil, err
+		}
+
 		respBytes = variation.CreateVariation(parentID, payloadBytes)
 		fmt.Fprintf(cmd.OutOrStdout(), "Create action for type: %s\n", res.Type)
 	case "modification":
-		// parentID required
-		//parentID, _ := strconv.Atoi(res.ParentID)
-		var m models.ModificationCodeCreateStruct
-		_ = json.Unmarshal(payloadBytes, &m)
-		//respBytes, err = http_request.ModificationRequester.HTTPCreateModification(parentID, m)
+		variationID, err := strconv.Atoi(res.ParentID)
+		if err != nil {
+			return nil, err
+		}
+
+		var modificationResourceLoader web_experimentation.ModificationResourceLoader
+		err = json.Unmarshal(payloadBytes, &modificationResourceLoader)
+		if err != nil {
+			return nil, err
+		}
+
+		if res.ParentResource != nil {
+			campaignIDString := res.ParentResource.ParentID
+			campaignID, err := strconv.Atoi(campaignIDString)
+			if err != nil {
+				log.Fatalf("error occurred: %v", err)
+			}
+
+			modificationResourceLoader.CampaignID = campaignID
+		}
+
+		respBytes = modification.CreateModification(variationID, modificationResourceLoader)
 		fmt.Fprintf(cmd.OutOrStdout(), "Create action for type: %s\n", res.Type)
-		return nil, nil
 	default:
 		return nil, fmt.Errorf("unknown resource type: %s", res.Type)
 	}

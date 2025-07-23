@@ -47,8 +47,8 @@ func (m *ModificationRequester) HTTPEditModificationDataRaw(campaignID int, id i
 	return common.HTTPRequest[models.ModificationDataWE](http.MethodPatch, utils.GetWebExperimentationHost()+"/v1/accounts/"+m.AccountID+"/tests/"+strconv.Itoa(campaignID)+"/modifications/"+strconv.Itoa(id), []byte(data))
 }
 
-func (m *ModificationRequester) HTTPCreateModificationDataRaw(campaignID int, data string) ([]byte, error) {
-	return common.HTTPRequest[models.ModificationDataWE](http.MethodPost, utils.GetWebExperimentationHost()+"/v1/accounts/"+m.AccountID+"/tests/"+strconv.Itoa(campaignID)+"/modifications", []byte(data))
+func (m *ModificationRequester) HTTPCreateModificationDataRaw(campaignID int, data []byte) ([]byte, error) {
+	return common.HTTPRequest[models.ModificationDataWE](http.MethodPost, utils.GetWebExperimentationHost()+"/v1/accounts/"+m.AccountID+"/tests/"+strconv.Itoa(campaignID)+"/modifications", data)
 }
 
 func (m *ModificationRequester) HTTPDeleteModification(campaignID int, id int) error {

@@ -9,7 +9,9 @@ import (
 	"log"
 	"net/url"
 	"strconv"
+	"strings"
 
+	"github.com/flagship-io/abtasty-cli/models/web_experimentation"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
 )
@@ -32,8 +34,28 @@ func getModificationIDsFromURL(rawURL string) ([]int, error) {
 	return ids, nil
 }
 
-func CreateModification(campaignId int, rawData []byte) []byte {
-	modificationHeader, err := httprequest.ModificationRequester.HTTPCreateModificationDataRaw(CampaignID, DataRaw)
+func CreateModification(variationID int, modifResourceLoader web_experimentation.ModificationResourceLoader) []byte {
+
+	m := web_experimentation.ModificationCodeCreateStruct{
+		InputType:   "modification",
+		Name:        modifResourceLoader.Name,
+		Value:       modifResourceLoader.Code,
+		VariationID: variationID,
+		Type:        "customScriptNew",
+		Selector:    modifResourceLoader.Selector,
+		Engine:      modifResourceLoader.Code,
+	}
+
+	if strings.ToLower(modifResourceLoader.Type) == "css" {
+		m.Type = "addCSS"
+	}
+
+	dataRaw, err := json.Marshal(m)
+	if err != nil {
+		log.Fatalf("error occurred: %v", err)
+	}
+
+	modificationHeader, err := httprequest.ModificationRequester.HTTPCreateModificationDataRaw(modifResourceLoader.CampaignID, dataRaw)
 	if err != nil {
 		log.Fatalf("error occurred: %v", err)
 	}
@@ -43,7 +65,7 @@ func CreateModification(campaignId int, rawData []byte) []byte {
 		log.Fatalf("error occurred: %v", err)
 	}
 
-	body, err := httprequest.ModificationRequester.HTTPGetModification(campaignId, modificationIDs[0])
+	body, err := httprequest.ModificationRequester.HTTPGetModification(modifResourceLoader.CampaignID, modificationIDs[0])
 	if err != nil {
 		log.Fatalf("error occurred: %s", err)
 	}
@@ -52,6 +74,7 @@ func CreateModification(campaignId int, rawData []byte) []byte {
 	if err != nil {
 		log.Fatalf("error occurred: %s", err)
 	}
+
 	return bodyByte
 }
 
@@ -61,7 +84,13 @@ var createCmd = &cobra.Command{
 	Short: "Create a modification",
 	Long:  `Create a modification`,
 	Run: func(cmd *cobra.Command, args []string) {
-		resp := CreateModification(CampaignID, []byte(DataRaw))
+		var modificationResourceLoader web_experimentation.ModificationResourceLoader
+		err := json.Unmarshal([]byte(DataRaw), &modificationResourceLoader)
+		if err != nil {
+			log.Fatalf("error occurred: %v", err)
+		}
+
+		resp := CreateModification(CampaignID, modificationResourceLoader)
 		fmt.Fprintf(cmd.OutOrStdout(), "%s\n", resp)
 	},
 }
