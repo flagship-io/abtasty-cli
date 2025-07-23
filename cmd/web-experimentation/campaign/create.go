@@ -10,7 +10,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/flagship-io/abtasty-cli/models/web_experimentation"
 	model "github.com/flagship-io/abtasty-cli/models/web_experimentation"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	we "github.com/flagship-io/abtasty-cli/utils/http_request/web_experimentation"
@@ -57,7 +56,7 @@ func CreateCampaign(rawData []byte) []byte {
 			GlobalCodeCampaign: campaignModel.GlobalCodeCampaign,
 		})
 
-		_, err = httprequest.CampaignWERequester.HTTPEditCampaign(campaignID, campaignPatch)
+		_, err = httprequest.CampaignWERequester.HTTPEditCampaign(campaignIDInt, campaignPatch)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
@@ -78,90 +77,6 @@ func CreateCampaign(rawData []byte) []byte {
 		}
 	}
 
-	if len(campaignModel.Variations) != 0 {
-		for _, v := range campaignModel.Variations {
-			varGlobalCode := v.GlobalCodeVariation
-			variation := struct {
-				Name        string `json:"name,omitempty"`
-				Description string `json:"description,omitempty"`
-				Type        string `json:"type,omitempty"`
-			}{
-				Name:        v.Name,
-				Description: v.Description,
-				Type:        v.Type,
-			}
-
-			variationJSON, err := json.Marshal(variation)
-			if err != nil {
-				log.Fatalf("error occurred: %v", err)
-			}
-
-			variationHeader, err := httprequest.VariationWERequester.HTTPCreateVariationDataRaw(campaignID, variationJSON)
-			if err != nil {
-				log.Fatalf("error occurred: %v", err)
-			}
-
-			parts := strings.Split(string(variationHeader), "/")
-			variationID := parts[len(parts)-1]
-
-			variationPatch := struct {
-				Traffic int `json:"traffic,omitempty"`
-			}{
-				Traffic: v.Traffic,
-			}
-
-			variationPatchJSON, err := json.Marshal(variationPatch)
-			if err != nil {
-				log.Fatalf("error occurred: %v", err)
-			}
-
-			_, err = httprequest.VariationWERequester.HTTPEditVariation(campaignID, variationID, variationPatchJSON)
-			if err != nil {
-				log.Fatalf("error occurred: %v", err)
-			}
-
-			variationIDInt, err := strconv.Atoi(variationID)
-			if err != nil {
-				log.Fatalf("error occurred: %v", err)
-			}
-
-			if varGlobalCode.Js != "" {
-				modificationToPush := web_experimentation.ModificationCodeCreateStruct{
-					InputType:   "modification",
-					Name:        "",
-					Value:       string(varGlobalCode.Js),
-					Selector:    "",
-					Type:        "customScriptNew",
-					Engine:      string(varGlobalCode.Js),
-					VariationID: variationIDInt,
-				}
-
-				_, err = httprequest.ModificationRequester.HTTPCreateModification(campaignIDInt, modificationToPush)
-				if err != nil {
-					log.Fatalf("error occurred: %v", err)
-				}
-			}
-
-			if varGlobalCode.Css != "" {
-				modificationToPush := web_experimentation.ModificationCodeCreateStruct{
-					InputType:   "modification",
-					Name:        "",
-					Value:       string(varGlobalCode.Css),
-					Selector:    "",
-					Type:        "addCSS",
-					Engine:      string(varGlobalCode.Css),
-					VariationID: variationIDInt,
-				}
-
-				_, err := httprequest.ModificationRequester.HTTPCreateModification(campaignIDInt, modificationToPush)
-				if err != nil {
-					log.Fatalf("error occurred: %v", err)
-				}
-			}
-		}
-	}
-
-	//delete origin variation
 	body, err := httprequest.CampaignWERequester.HTTPGetCampaign(campaignID)
 	if err != nil {
 		log.Fatalf("error occurred: %s", err)

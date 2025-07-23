@@ -1,7 +1,6 @@
 package web_experimentation
 
 import (
-	"strconv"
 	"testing"
 
 	"github.com/flagship-io/abtasty-cli/utils/http_request/common"
@@ -26,7 +25,7 @@ func TestHTTPEditCampaign(t *testing.T) {
 
 	data := "{\"name\":\"testCampaignName\",\"type\":\"ab\",\"url\":\"https://abtasty.com\",\"description\":\"testCampaignDescription\",\"global_code\":\"console.log(\"Hello World!\")\"}"
 
-	respBody, err := campaignRequester.HTTPEditCampaign(strconv.Itoa(100000), []byte(data))
+	respBody, err := campaignRequester.HTTPEditCampaign(100000, []byte(data))
 
 	assert.NotNil(t, respBody)
 	assert.Nil(t, err)

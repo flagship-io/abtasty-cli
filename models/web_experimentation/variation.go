@@ -3,12 +3,12 @@ package web_experimentation
 type VariationWE struct {
 	Id           int         `json:"id,omitempty"`
 	Name         string      `json:"name"`
-	Description  string      `json:"description"`
-	Type         string      `json:"type"`
-	Traffic      int         `json:"traffic"`
-	VisualEditor bool        `json:"visual_editor"`
-	CodeEditor   bool        `json:"code_editor"`
-	Components   []Component `json:"components"`
+	Description  string      `json:"description,omitempty"`
+	Type         string      `json:"type,omitempty"`
+	Traffic      int         `json:"traffic,omitempty"`
+	VisualEditor bool        `json:"visual_editor,omitempty"`
+	CodeEditor   bool        `json:"code_editor,omitempty"`
+	Components   []Component `json:"components,omitempty"`
 }
 
 type VariationGlobalCode struct {
@@ -17,8 +17,11 @@ type VariationGlobalCode struct {
 }
 
 type VariationResourceLoader struct {
-	*VariationWE
-	GlobalCodeVariation VariationGlobalCode `json:"variation_global_code,omitempty"`
+	Name        string              `json:"name,omitempty"`
+	Type        string              `json:"type,omitempty"`
+	Description string              `json:"description,omitempty"`
+	Traffic     int                 `json:"traffic,omitempty"`
+	Code        VariationGlobalCode `json:"code,omitempty"`
 }
 
 type Component struct {

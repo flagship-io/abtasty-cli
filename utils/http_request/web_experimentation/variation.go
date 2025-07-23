@@ -23,12 +23,12 @@ func (v *VariationWERequester) HTTPCreateVariation(campaignID int, variationData
 	return common.HTTPRequest[models.VariationWE](http.MethodPost, utils.GetWebExperimentationHost()+"/v1/accounts/"+v.AccountID+"/tests/"+strconv.Itoa(campaignID)+"/variations", data)
 }
 
-func (v *VariationWERequester) HTTPCreateVariationDataRaw(campaignID string, data []byte) ([]byte, error) {
-	return common.HTTPRequest[models.VariationWE](http.MethodPost, utils.GetWebExperimentationHost()+"/v1/accounts/"+v.AccountID+"/tests/"+campaignID+"/variations", data)
+func (v *VariationWERequester) HTTPCreateVariationDataRaw(campaignID int, data []byte) ([]byte, error) {
+	return common.HTTPRequest[models.VariationWE](http.MethodPost, utils.GetWebExperimentationHost()+"/v1/accounts/"+v.AccountID+"/tests/"+strconv.Itoa(campaignID)+"/variations", data)
 }
 
-func (v *VariationWERequester) HTTPEditVariation(campaignID, variationID string, data []byte) ([]byte, error) {
-	return common.HTTPRequest[models.VariationWE](http.MethodPatch, utils.GetWebExperimentationHost()+"/v1/accounts/"+v.AccountID+"/tests/"+campaignID+"/variations/"+variationID, data)
+func (v *VariationWERequester) HTTPEditVariation(campaignID, variationID int, data []byte) ([]byte, error) {
+	return common.HTTPRequest[models.VariationWE](http.MethodPatch, utils.GetWebExperimentationHost()+"/v1/accounts/"+v.AccountID+"/tests/"+strconv.Itoa(campaignID)+"/variations/"+strconv.Itoa(variationID), data)
 }
 
 func (v *VariationWERequester) HTTPGetVariation(testID, id int) (models.VariationWE, error) {

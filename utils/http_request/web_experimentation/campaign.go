@@ -3,6 +3,7 @@ package web_experimentation
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	models "github.com/flagship-io/abtasty-cli/models/web_experimentation"
 	"github.com/flagship-io/abtasty-cli/utils"
@@ -22,8 +23,8 @@ func (t *CampaignWERequester) HTTPCreateCampaign(data []byte) ([]byte, error) {
 	return common.HTTPRequest[models.CampaignWECommon](http.MethodPost, utils.GetWebExperimentationHost()+"/v1/accounts/"+t.AccountID+"/tests", data)
 }
 
-func (t *CampaignWERequester) HTTPEditCampaign(id string, data []byte) ([]byte, error) {
-	return common.HTTPRequest[models.CampaignWE](http.MethodPatch, utils.GetWebExperimentationHost()+"/v1/accounts/"+t.AccountID+"/tests/"+id, data)
+func (t *CampaignWERequester) HTTPEditCampaign(id int, data []byte) ([]byte, error) {
+	return common.HTTPRequest[models.CampaignWE](http.MethodPatch, utils.GetWebExperimentationHost()+"/v1/accounts/"+t.AccountID+"/tests/"+strconv.Itoa(id), data)
 }
 
 func (t *CampaignWERequester) HTTPGetCampaign(id string) (models.CampaignWE, error) {
