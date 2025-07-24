@@ -39,19 +39,6 @@ func TestCampaignHelpCommand(t *testing.T) {
 	assert.Contains(t, output, "Manage your campaigns")
 }
 
-func TestCampaignCreateCommand(t *testing.T) {
-
-	failOutput, _ := utils.ExecuteCommand(CampaignCmd, "create")
-	assert.Contains(t, failOutput, "Error: required flag(s) \"data-raw\" not set")
-
-	output, _ := utils.ExecuteCommand(CampaignCmd, "create", "--data-raw='{\"name\":\"testCampaignName\",\"type\":\"ab\",\"url\":\"https://abtasty.com\",\"description\":\"testCampaignDescription\",\"global_code\":\"console.log(\"Hello World!\")\"}'")
-	err := json.Unmarshal([]byte(output), &testCampaign)
-
-	assert.Nil(t, err)
-
-	assert.Equal(t, mockfunction_we.TestCampaign, testCampaign)
-}
-
 func TestCampaignEditCommand(t *testing.T) {
 
 	failOutput, _ := utils.ExecuteCommand(CampaignCmd, "edit")

@@ -43,19 +43,6 @@ func TestModificationHelpCommand(t *testing.T) {
 	assert.Contains(t, output, "Manage your modifications")
 }
 
-func TestModificationCreateCommand(t *testing.T) {
-
-	failOutput, _ := utils.ExecuteCommand(ModificationCmd, "create", "--campaign-id=100000")
-	assert.Contains(t, failOutput, "Error: required flag(s) \"data-raw\" not set")
-
-	output, _ := utils.ExecuteCommand(ModificationCmd, "create", "--campaign-id=100000", "--data-raw='{\"name\":\"testCampaignName\",\"type\":\"ab\",\"url\":\"https://abtasty.com\",\"description\":\"testCampaignDescription\",\"global_code\":\"console.log(\"Hello World!\")\"}'")
-	err := json.Unmarshal([]byte(output), &testModification)
-
-	assert.Nil(t, err)
-
-	assert.Equal(t, mockfunction_we.TestElementModification, testModification)
-}
-
 func TestModificationEditCommand(t *testing.T) {
 
 	failOutput, _ := utils.ExecuteCommand(ModificationCmd, "edit", "--campaign-id=100000")

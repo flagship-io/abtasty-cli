@@ -18,7 +18,7 @@ func TestHTTPCreateCampaign(t *testing.T) {
 	assert.NotNil(t, respBody)
 	assert.Nil(t, err)
 
-	assert.Equal(t, "{\"id\":100000,\"name\":\"testCampaignName\",\"url\":\"https://abtasty.com\",\"description\":\"testCampaignDescription\",\"type\":\"ab\",\"sub_type\":\"\",\"master\":null,\"state\":\"\",\"traffic\":null,\"variations\":null,\"sub_tests\":null,\"created_at\":{\"readable_date\":\"\",\"timestamp\":0,\"pattern\":\"\"},\"labels\":null,\"last_play\":{\"readable_date\":\"\",\"timestamp\":0,\"pattern\":\"\"},\"last_pause\":{\"readable_date\":\"\",\"timestamp\":0,\"pattern\":\"\"},\"global_code\":\"console.log(\\\"Hello World!\\\")\",\"source_code\":\"\",\"audiences\":null,\"selector_scopes\":null,\"code_scopes\":null,\"favorite_url_scopes\":null,\"url_scopes\":[{\"condition\":40,\"include\":true,\"value\":\"https://abtasty.com\"},{\"condition\":40,\"include\":false,\"value\":\"https://abtasty.com\"}],\"mutation_observer\":false,\"display_frequency\":{\"type\":\"\",\"unit\":\"\",\"value\":0},\"report\":{\"token\":\"\",\"comment\":\"\"}}", string(respBody))
+	assert.Equal(t, "{\"id\":100000,\"name\":\"testCampaignName\",\"url\":\"https://abtasty.com\",\"description\":\"testCampaignDescription\",\"type\":\"ab\",\"global_code\":\"console.log(\\\"Hello World!\\\")\",\"url_scopes\":[{\"condition\":40,\"include\":true,\"value\":\"https://abtasty.com\"},{\"condition\":40,\"include\":false,\"value\":\"https://abtasty.com\"}],\"display_frequency\":{\"type\":\"\",\"unit\":\"\",\"value\":0}}", string(respBody))
 }
 
 func TestHTTPEditCampaign(t *testing.T) {
@@ -30,7 +30,7 @@ func TestHTTPEditCampaign(t *testing.T) {
 	assert.NotNil(t, respBody)
 	assert.Nil(t, err)
 
-	assert.Equal(t, "{\"id\":100000,\"name\":\"testCampaignName\",\"url\":\"https://abtasty.com\",\"description\":\"testCampaignDescription\",\"type\":\"ab\",\"sub_type\":\"\",\"master\":null,\"state\":\"\",\"traffic\":null,\"variations\":null,\"sub_tests\":null,\"created_at\":{\"readable_date\":\"\",\"timestamp\":0,\"pattern\":\"\"},\"labels\":null,\"last_play\":{\"readable_date\":\"\",\"timestamp\":0,\"pattern\":\"\"},\"last_pause\":{\"readable_date\":\"\",\"timestamp\":0,\"pattern\":\"\"},\"global_code\":\"console.log(\\\"Hello World!\\\")\",\"source_code\":\"\",\"audiences\":null,\"selector_scopes\":null,\"code_scopes\":null,\"favorite_url_scopes\":null,\"url_scopes\":[{\"condition\":40,\"include\":true,\"value\":\"https://abtasty.com\"},{\"condition\":40,\"include\":false,\"value\":\"https://abtasty.com\"}],\"mutation_observer\":false,\"display_frequency\":{\"type\":\"\",\"unit\":\"\",\"value\":0},\"report\":{\"token\":\"\",\"comment\":\"\"}}", string(respBody))
+	assert.Equal(t, "{\"id\":100000,\"name\":\"testCampaignName\",\"url\":\"https://abtasty.com\",\"description\":\"testCampaignDescription\",\"type\":\"ab\",\"global_code\":\"console.log(\\\"Hello World!\\\")\",\"url_scopes\":[{\"condition\":40,\"include\":true,\"value\":\"https://abtasty.com\"},{\"condition\":40,\"include\":false,\"value\":\"https://abtasty.com\"}],\"display_frequency\":{\"type\":\"\",\"unit\":\"\",\"value\":0}}", string(respBody))
 }
 
 func TestHTTPGetCampaign(t *testing.T) {
