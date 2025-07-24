@@ -23,10 +23,10 @@ import (
 )
 
 var (
-	resourceFile    string
-	outputFile      string
-	inputParamsRaw  string
-	inputParamsFile string
+	resourceFile string
+	outputFile   string
+	inputRefRaw  string
+	inputRefFile string
 )
 
 type ResourceAction string
@@ -253,11 +253,11 @@ func processResourceWithResponse(cmd *cobra.Command, res Resource, rc *RefContex
 	var err error
 	switch res.Action {
 	case ActionCreate:
-		resp, err = handleCreate(cmd, res)
+		resp, err = handleCreate(res)
 	case ActionUpdate:
 		resp, err = handleUpdate(cmd, res)
 	case ActionList:
-		resp, err = handleList(cmd, res)
+		resp, err = handleList(res)
 	case ActionDelete:
 		err = handleDelete(cmd, res)
 	case ActionSwitch:
@@ -288,7 +288,7 @@ func processResourceWithResponse(cmd *cobra.Command, res Resource, rc *RefContex
 }
 
 // Example handlers (implement as needed)
-func handleCreate(cmd *cobra.Command, res Resource) (map[string]any, error) {
+func handleCreate(res Resource) (map[string]any, error) {
 	// Map type to actual creation logic
 	payloadBytes, _ := json.Marshal(res.Payload)
 	var respBytes []byte
@@ -297,7 +297,6 @@ func handleCreate(cmd *cobra.Command, res Resource) (map[string]any, error) {
 	switch res.Type {
 	case "campaign":
 		respBytes = campaign.CreateCampaign(payloadBytes)
-		fmt.Fprintf(cmd.OutOrStdout(), "Create action for type: %s\n", res.Type)
 	case "variation":
 		parentID, err := strconv.Atoi(res.ParentID)
 		if err != nil {
@@ -305,7 +304,6 @@ func handleCreate(cmd *cobra.Command, res Resource) (map[string]any, error) {
 		}
 
 		respBytes = variation.CreateVariation(parentID, payloadBytes)
-		fmt.Fprintf(cmd.OutOrStdout(), "Create action for type: %s\n", res.Type)
 	case "modification":
 		variationID, err := strconv.Atoi(res.ParentID)
 		if err != nil {
@@ -329,13 +327,10 @@ func handleCreate(cmd *cobra.Command, res Resource) (map[string]any, error) {
 		}
 
 		respBytes = modification.CreateModification(variationID, modificationResourceLoader)
-		fmt.Fprintf(cmd.OutOrStdout(), "Create action for type: %s\n", res.Type)
 	default:
 		return nil, fmt.Errorf("unknown resource type: %s", res.Type)
 	}
-	/* 	if err != nil {
-		return nil, err
-	} */
+
 	var resp map[string]any
 	_ = json.Unmarshal(respBytes, &resp)
 	return resp, nil
@@ -378,10 +373,46 @@ func handleUpdate(cmd *cobra.Command, res Resource) (map[string]any, error) {
 	return resp, nil
 }
 
-func handleList(cmd *cobra.Command, res Resource) (map[string]any, error) {
-	// Implement as needed
-	fmt.Fprintf(cmd.OutOrStdout(), "List action for type: %s\n", res.Type)
-	return nil, nil
+func handleList(res Resource) (map[string]any, error) {
+	var respBytes []byte
+	payloadBytes, _ := json.Marshal(res.Payload)
+
+	switch res.Type {
+	case "campaign":
+		campaignList, err := campaign.ListCampaigns()
+		if err != nil {
+			log.Fatalf("error occurred: %v", err)
+		}
+		respBytes, err = json.Marshal(campaignList)
+	case "modification":
+		var modificationResourceLoader web_experimentation.ModificationResourceLoader
+		err := json.Unmarshal(payloadBytes, &modificationResourceLoader)
+		if err != nil {
+			return nil, err
+		}
+		if res.ParentResource != nil {
+			campaignIDString := res.ParentResource.ParentID
+			campaignID, err := strconv.Atoi(campaignIDString)
+			if err != nil {
+				log.Fatalf("error occurred: %v", err)
+			}
+
+			modificationResourceLoader.CampaignID = campaignID
+		}
+
+		campaignList, err := modification.ListModifications(modificationResourceLoader.CampaignID)
+		if err != nil {
+			log.Fatalf("error occurred: %v", err)
+		}
+
+		respBytes, err = json.Marshal(campaignList)
+	default:
+		return nil, fmt.Errorf("unknown resource type: %s", res.Type)
+	}
+
+	var resp map[string]any
+	_ = json.Unmarshal(respBytes, &resp)
+	return resp, nil
 }
 
 func handleDelete(cmd *cobra.Command, res Resource) error {
@@ -416,7 +447,7 @@ var loadCmd = &cobra.Command{
 		if resourceFile == "" {
 			return fmt.Errorf("missing --file flag")
 		}
-		return LoadResources(cmd, resourceFile, inputParamsFile, inputParamsRaw, outputFile)
+		return LoadResources(cmd, resourceFile, inputRefFile, inputRefRaw, outputFile)
 	},
 }
 
@@ -431,8 +462,8 @@ func init() {
 
 	loadCmd.Flags().StringVarP(&outputFile, "output-file", "", "", "result of the command that contains all resource information")
 
-	loadCmd.Flags().StringVarP(&inputParamsRaw, "input-params", "", "", "params to replace resource loader file")
-	loadCmd.Flags().StringVarP(&inputParamsFile, "input-params-file", "", "", "file that contains params to replace resource loader file")
+	loadCmd.Flags().StringVarP(&inputRefRaw, "input-ref", "", "", "params to replace resource loader file")
+	loadCmd.Flags().StringVarP(&inputRefFile, "input-ref-file", "", "", "file that contains params to replace resource loader file")
 
 	ResourceCmd.AddCommand(loadCmd)
 }

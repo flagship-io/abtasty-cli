@@ -6,11 +6,16 @@ package modification
 import (
 	"log"
 
+	"github.com/flagship-io/abtasty-cli/models/web_experimentation"
 	"github.com/flagship-io/abtasty-cli/utils"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
+
+func ListModifications(campaignID int) ([]web_experimentation.Modification, error) {
+	return httprequest.ModificationRequester.HTTPListModification(campaignID)
+}
 
 // listCmd represents the list command
 var listCmd = &cobra.Command{
@@ -18,7 +23,7 @@ var listCmd = &cobra.Command{
 	Short: "List all modifications",
 	Long:  `List all modifications of a campaign`,
 	Run: func(cmd *cobra.Command, args []string) {
-		body, err := httprequest.ModificationRequester.HTTPListModification(CampaignID)
+		body, err := ListModifications(CampaignID)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}

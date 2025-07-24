@@ -7,39 +7,6 @@
     "master": null,
     "traffic": 79,
     "global_code": "console.log(\"campaign global code test-campaign-1-2-3\")",
-    "variations": [
-        {
-            "name": "Variation 123",
-            "description": "",
-            "type": "onthefly",
-            "traffic": 33,
-            "visual_editor": false,
-            "code_editor": false,
-            "components": null,
-            "variation_global_code": {
-                "js": "console.log(hello)",
-                "css": ".id{color: blue}"
-            }
-        },
-        {
-            "name": "Variation 2",
-            "description": "",
-            "type": "onthefly",
-            "traffic": 0,
-            "visual_editor": false,
-            "code_editor": false,
-            "components": null
-        },
-        {
-            "name": "Variation 3",
-            "description": "",
-            "type": "onthefly",
-            "traffic": 33,
-            "visual_editor": false,
-            "code_editor": false,
-            "components": null
-        }
-    ],
     "campaign_targeting": {
         "segment_ids": [
             "7dcfdb7f-c73a-4d16-a959-21bf17abfe41"

@@ -1,0 +1,140 @@
+{
+    "version": 1,
+    "resources": [
+        {
+            "type": "campaign",
+            "$_ref": "c1",
+            "action": "create",
+            "payload": {
+                "name": "Holiday Promo",
+                "description": "Winter discounts",
+                "url": "https://abtastylab.com/089a60a3357839a57e8b61db66330c3a/",
+                "type": "ab",
+                "status": "pause",
+                "labels": [
+                    "chadi.laoulaou",
+                    "SP"
+                ],
+                "code": "string",
+                "source_code": "",
+                "folder_id": 0,
+                "campaign_targeting": {
+                    "segment_ids": [
+                        "7dcfdb7f-c73a-4d16-a959-21bf17abfe41"
+                    ],
+                    "url_scopes": [
+                        {
+                            "condition": "IS",
+                            "value": "https://abtasty.com"
+                        }
+                    ],
+                    "favorite_url_scopes": [
+                        {
+                            "include": true,
+                            "favorite_url_id": "dc9125d1-4adf-49ff-9997-c6c47fbac711"
+                        }
+                    ],
+                    "selector_scopes": [
+                        {
+                            "condition": "IS_SELECTOR_CLASS",
+                            "value": ".h1"
+                        },
+                        {
+                            "condition": "IS_NOT_SELECTOR_ID",
+                            "value": "#1234"
+                        },
+                        {
+                            "condition": "IS_NOT_SELECTOR_CLASS",
+                            "value": ".#blue"
+                        }
+                    ],
+                    "code_scope": {
+                        "value": "console.log(\"hello world\");"
+                    },
+                    "element_appears_after_page_load": false,
+                    "triggers_ids": [
+                        "30ca5fe9-5fce-4e34-8bc1-db217ae064e1",
+                        "b1b8995b-2ec3-4d4b-a6d6-d7e941600760"
+                    ],
+                    "targeting_frequency": {
+                        "type": "regular",
+                        "unit": "day",
+                        "value": 20
+                    }
+                }
+            },
+            "resources": [
+                {
+                    "type": "variation",
+                    "$_ref": "v1",
+                    "action": "create",
+                    "payload": {
+                        "name": "Variation A",
+                        "description": "Define variation description",
+                        "traffic": 14,
+                        "code": {
+                            "js": "alert('Variation A')",
+                            "css": "p {color: red; text-align: center;}"
+                        }
+                    },
+                    "resources": [
+                        {
+                            "type": "modification",
+                            "$_ref": "m1",
+                            "action": "create",
+                            "payload": {
+                                "name": "modification 1",
+                                "selector": "#main .text-center a",
+                                "type": "js",
+                                "code": "<h1>Click Here !</h1>"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "variation",
+                    "$_ref": "v2",
+                    "action": "create",
+                    "payload": {
+                        "name": "Variation B",
+                        "traffic": 14,
+                        "code": {
+                            "js": "document.querySelector('.btn').textContent = 'CLICK HERE';"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "variation",
+            "$_ref": "v3",
+            "$_parent_id": "$c1.id",
+            "action": "create",
+            "payload": {
+                "name": "Variation C",
+                "code": {
+                    "js": "console.log('Variation C')",
+                    "css": "p {color: purple; text-align: center;}"
+                }
+            }
+        },
+        {
+            "type": "campaign",
+            "$_ref": "c2",
+            "action": "list"
+        },
+        {
+            "type": "modification",
+            "$_ref": "m2",
+            "action": "create",
+            "$_parent_id": "$v1.id",
+            "payload": {
+                "name": "modification 2",
+                "campaign_id": "$c1.id",
+                "selector": "#main",
+                "type": "js",
+                "code": "console.log('hello people!')"
+            }
+        }
+    ]
+}
