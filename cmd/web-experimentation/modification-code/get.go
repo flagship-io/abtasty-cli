@@ -39,9 +39,9 @@ var getCmd = &cobra.Command{
 			log.Fatalf("error occurred: %v", err)
 		}
 
-		for _, modification := range body {
-			if modification.Type == "customScriptNew" && modification.Selector != "" {
-				modif = &modification
+		for body != (web_experimentation.Modification{}) {
+			if body.Type == "customScriptNew" && body.Selector != "" {
+				modif = &body
 			}
 		}
 

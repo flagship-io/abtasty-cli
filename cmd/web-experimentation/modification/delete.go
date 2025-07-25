@@ -26,15 +26,13 @@ var deleteCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
-
 		fmt.Fprintln(cmd.OutOrStdout(), "Modification deleted")
 
-		for _, modification := range body {
-			if modification.Type == "customScriptNew" && modification.Selector != "" {
-				modif = &modification
+		if body != (web_experimentation.Modification{}) {
+			if body.Type == "customScriptNew" && body.Selector != "" {
+				modif = &body
 			}
 		}
-
 		config.DeleteModificationCodeDirectory(httprequest.CampaignWERequester.WorkingDir, httprequest.CampaignWERequester.AccountID, strconv.Itoa(CampaignID), strconv.Itoa(modif.VariationID), strconv.Itoa(ModificationID))
 	},
 }

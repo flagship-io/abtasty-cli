@@ -20,9 +20,13 @@ func (m *ModificationRequester) HTTPListModification(campaignID int) ([]models.M
 	return resp.Data.Modifications, err
 }
 
-func (m *ModificationRequester) HTTPGetModification(campaignID int, id int) ([]models.Modification, error) {
+func (m *ModificationRequester) HTTPGetModification(campaignID int, id int) (models.Modification, error) {
 	resp, err := common.HTTPGetItem[models.ModificationDataWE](utils.GetWebExperimentationHost() + "/v1/accounts/" + m.AccountID + "/tests/" + strconv.Itoa(campaignID) + "/modifications?ids=" + strconv.Itoa(id))
-	return resp.Data.Modifications, err
+	if len(resp.Data.Modifications) == 0 {
+		return models.Modification{}, err
+	}
+
+	return resp.Data.Modifications[0], err
 }
 
 func (m *ModificationRequester) HTTPEditModification(campaignID int, id int, modificationData web_experimentation.ModificationCodeEditStruct) ([]byte, error) {
