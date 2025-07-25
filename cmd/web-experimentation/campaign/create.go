@@ -17,12 +17,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func CreateCampaign(rawData []byte) []byte {
+func CreateCampaign(rawData []byte) ([]byte, error) {
 	var campaignModel model.CampaignWEResourceLoader
 
 	err := json.Unmarshal(rawData, &campaignModel)
 	if err != nil {
-		log.Fatalf("error occurred: %s", err)
+		return nil, fmt.Errorf("error occurred: %s", err)
 	}
 
 	campaignCommon, _ := json.Marshal(struct {
@@ -43,7 +43,7 @@ func CreateCampaign(rawData []byte) []byte {
 
 	campaignIDInt, err := strconv.Atoi(campaignID)
 	if err != nil {
-		log.Fatalf("error occurred: %v", err)
+		return nil, fmt.Errorf("error occurred: %s", err)
 	}
 
 	if campaignModel.Traffic != 0 || campaignModel.GlobalCodeCampaign != "" {
@@ -58,7 +58,7 @@ func CreateCampaign(rawData []byte) []byte {
 
 		_, err = httprequest.CampaignWERequester.HTTPEditCampaign(campaignIDInt, campaignPatch)
 		if err != nil {
-			log.Fatalf("error occurred: %v", err)
+			return nil, fmt.Errorf("error occurred: %s", err)
 		}
 
 	}
@@ -68,26 +68,26 @@ func CreateCampaign(rawData []byte) []byte {
 
 		parsedModel, err := json.Marshal(model)
 		if err != nil {
-			log.Fatalf("error occurred: %s", err)
+			return nil, fmt.Errorf("error occurred: %s", err)
 		}
 
 		_, err = httprequest.CampaignTargetingRequester.HTTPPushCampaignTargeting(campaignID, parsedModel)
 		if err != nil {
-			log.Fatalf("error occurred: %v", err)
+			return nil, fmt.Errorf("error occurred: %s", err)
 		}
 	}
 
 	body, err := httprequest.CampaignWERequester.HTTPGetCampaign(campaignID)
 	if err != nil {
-		log.Fatalf("error occurred: %s", err)
+		return nil, fmt.Errorf("error occurred: %s", err)
 	}
 
 	bodyByte, err := json.Marshal(body)
 	if err != nil {
-		log.Fatalf("error occurred: %s", err)
+		return nil, fmt.Errorf("error occurred: %s", err)
 	}
 
-	return bodyByte
+	return bodyByte, nil
 }
 
 // createCmd represents the create command
@@ -96,7 +96,11 @@ var createCmd = &cobra.Command{
 	Short: "Create a campaign",
 	Long:  `Create a campaign`,
 	Run: func(cmd *cobra.Command, args []string) {
-		resp := CreateCampaign([]byte(DataRaw))
+		resp, err := CreateCampaign([]byte(DataRaw))
+		if err != nil {
+			log.Fatalf("%v", err)
+		}
+
 		fmt.Fprintln(cmd.OutOrStdout(), string(resp))
 	},
 }
