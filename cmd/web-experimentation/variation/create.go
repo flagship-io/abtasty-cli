@@ -16,13 +16,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func CreateVariation(campaignID int, rawData []byte) []byte {
+func CreateVariation(campaignID int, rawData []byte) ([]byte, error) {
 
 	var variationResourceLoader models.VariationResourceLoader
 
 	err := json.Unmarshal(rawData, &variationResourceLoader)
 	if err != nil {
-		log.Fatalf("error occurred: %v", err)
+		return nil, fmt.Errorf("error occurred: %v", err)
 	}
 
 	variationAPI := models.VariationWE{
@@ -33,12 +33,12 @@ func CreateVariation(campaignID int, rawData []byte) []byte {
 
 	variationApiJSON, err := json.Marshal(variationAPI)
 	if err != nil {
-		log.Fatalf("error occurred: %v", err)
+		return nil, fmt.Errorf("error occurred: %v", err)
 	}
 
 	variationHeader, err := httprequest.VariationWERequester.HTTPCreateVariationDataRaw(campaignID, variationApiJSON)
 	if err != nil {
-		log.Fatalf("error occurred: %v", err)
+		return nil, fmt.Errorf("error occurred: %v", err)
 	}
 
 	parts := strings.Split(string(variationHeader), "/")
@@ -52,17 +52,17 @@ func CreateVariation(campaignID int, rawData []byte) []byte {
 
 	variationPatchJSON, err := json.Marshal(variationPatch)
 	if err != nil {
-		log.Fatalf("error occurred: %v", err)
+		return nil, fmt.Errorf("error occurred: %v", err)
 	}
 
 	variationIDInt, err := strconv.Atoi(variationID)
 	if err != nil {
-		log.Fatalf("error occurred: %v", err)
+		return nil, fmt.Errorf("error occurred: %v", err)
 	}
 
 	_, err = httprequest.VariationWERequester.HTTPEditVariation(campaignID, variationIDInt, variationPatchJSON)
 	if err != nil {
-		log.Fatalf("error occurred: %v", err)
+		return nil, fmt.Errorf("error occurred: %v", err)
 	}
 
 	if variationResourceLoader.Code.Js != "" {
@@ -101,15 +101,15 @@ func CreateVariation(campaignID int, rawData []byte) []byte {
 
 	body, err := httprequest.VariationWERequester.HTTPGetVariation(campaignID, variationIDInt)
 	if err != nil {
-		log.Fatalf("error occurred: %s", err)
+		return nil, fmt.Errorf("error occurred: %v", err)
 	}
 
 	bodyByte, err := json.Marshal(body)
 	if err != nil {
-		log.Fatalf("error occurred: %s", err)
+		return nil, fmt.Errorf("error occurred: %v", err)
 	}
 
-	return bodyByte
+	return bodyByte, nil
 }
 
 // createCmd represents the create command
@@ -118,7 +118,11 @@ var createCmd = &cobra.Command{
 	Short: "Create a variation",
 	Long:  `Create a variation`,
 	Run: func(cmd *cobra.Command, args []string) {
-		resp := CreateVariation(CampaignID, []byte(DataRaw))
+		resp, err := CreateVariation(CampaignID, []byte(DataRaw))
+		if err != nil {
+			log.Fatalf("error occurred: %v", err)
+		}
+
 		fmt.Fprintf(cmd.OutOrStdout(), "%s\n", resp)
 	},
 }
