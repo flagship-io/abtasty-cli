@@ -17,7 +17,6 @@ import (
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/modification"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/variation"
 	"github.com/flagship-io/abtasty-cli/models/web_experimentation"
-	models "github.com/flagship-io/abtasty-cli/models/web_experimentation"
 	"github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
 )
@@ -115,7 +114,7 @@ func resolveRefs(val any, rc *RefContext) any {
 }
 
 // Main loader for new resource format
-func LoadResources(cmd *cobra.Command, filePath, inputParamsFile, inputParamsRaw, outputFile string) error {
+func LoadResources(cmd *cobra.Command, filePath, inputRefFile, inputRefRaw, outputFile string) error {
 
 	var results []ResourceResult
 
@@ -136,6 +135,7 @@ func LoadResources(cmd *cobra.Command, filePath, inputParamsFile, inputParamsRaw
 		status := "success"
 		if err != nil {
 			status = "error"
+			resp = err
 		}
 		recordResult(res.Ref, status, resp)
 		return err
@@ -153,19 +153,26 @@ func LoadResources(cmd *cobra.Command, filePath, inputParamsFile, inputParamsRaw
 
 	refCtx := NewRefContext()
 
-	// Load inputParams from file or raw
-	var inputParams map[string]any
-	if inputParamsFile != "" {
-		b, err := os.ReadFile(inputParamsFile)
+	// Load inputRef from file or raw
+	var inputRef map[string]any
+	if inputRefFile != "" {
+		b, err := os.ReadFile(inputRefFile)
 		if err != nil {
-			return fmt.Errorf("failed to read input params file: %w", err)
+			return fmt.Errorf("failed to read input ref file: %w", err)
 		}
-		_ = json.Unmarshal(b, &inputParams)
-	} else if inputParamsRaw != "" {
-		_ = json.Unmarshal([]byte(inputParamsRaw), &inputParams)
+
+		err = json.Unmarshal(b, &inputRef)
+		if err != nil {
+			return fmt.Errorf("failed to read input ref file: %w", err)
+		}
+	} else if inputRefRaw != "" {
+		err = json.Unmarshal([]byte(inputRefRaw), &inputRef)
+		if err != nil {
+			return fmt.Errorf("failed to read input ref file: %w", err)
+		}
 	}
 	// Merge inputParams into refCtx
-	for k, v := range inputParams {
+	for k, v := range inputRef {
 		refCtx.Set(k, v)
 	}
 
@@ -249,13 +256,13 @@ func processResourceWithResponse(cmd *cobra.Command, res Resource, rc *RefContex
 	}
 	res.Payload = resolveRefs(res.Payload, rc).(map[string]any)
 
-	var resp map[string]any
+	var resp any
 	var err error
 	switch res.Action {
 	case ActionCreate:
 		resp, err = handleCreate(res)
-	case ActionUpdate:
-		resp, err = handleUpdate(cmd, res)
+		//	case ActionUpdate:
+		//		resp, err = handleUpdate(cmd, res)
 	case ActionList:
 		resp, err = handleList(res)
 	case ActionDelete:
@@ -275,15 +282,21 @@ func processResourceWithResponse(cmd *cobra.Command, res Resource, rc *RefContex
 	}
 
 	// Recursively process children (collect their results too)
-	for _, child := range res.Resources {
-		if child.ParentID == "" && res.Ref != "" && resp != nil {
-			if id, ok := resp["id"].(float64); ok {
-				child.ParentID = fmt.Sprintf("%v", int(id))
-				child.ParentResource = &res
+	if res.Action == ActionCreate || res.Action == ActionUpdate {
+		for _, child := range res.Resources {
+			if child.ParentID == "" && res.Ref != "" && resp != nil {
+				if id, ok := resp.(map[string]any)["id"].(float64); ok {
+					child.ParentID = fmt.Sprintf("%v", int(id))
+					child.ParentResource = &res
+				}
+			}
+			_, err = processResourceWithResponse(cmd, child, rc)
+			if err != nil {
+				return nil, err
 			}
 		}
-		_, _ = processResourceWithResponse(cmd, child, rc)
 	}
+
 	return resp, nil
 }
 
@@ -296,14 +309,21 @@ func handleCreate(res Resource) (map[string]any, error) {
 
 	switch res.Type {
 	case "campaign":
-		respBytes = campaign.CreateCampaign(payloadBytes)
+		var err error
+		respBytes, err = campaign.CreateCampaign(payloadBytes)
+		if err != nil {
+			return nil, err
+		}
 	case "variation":
 		parentID, err := strconv.Atoi(res.ParentID)
 		if err != nil {
 			return nil, err
 		}
 
-		respBytes = variation.CreateVariation(parentID, payloadBytes)
+		respBytes, err = variation.CreateVariation(parentID, payloadBytes)
+		if err != nil {
+			return nil, err
+		}
 	case "modification":
 		variationID, err := strconv.Atoi(res.ParentID)
 		if err != nil {
@@ -320,13 +340,19 @@ func handleCreate(res Resource) (map[string]any, error) {
 			campaignIDString := res.ParentResource.ParentID
 			campaignID, err := strconv.Atoi(campaignIDString)
 			if err != nil {
-				log.Fatalf("error occurred: %v", err)
+				return nil, err
 			}
 
 			modificationResourceLoader.CampaignID = campaignID
 		}
 
-		respBytes = modification.CreateModification(variationID, modificationResourceLoader)
+		respBytes, err = modification.CreateModification(variationID, modificationResourceLoader)
+		if err != nil {
+			return nil, err
+		}
+
+		fmt.Println(string(respBytes))
+
 	default:
 		return nil, fmt.Errorf("unknown resource type: %s", res.Type)
 	}
@@ -337,7 +363,7 @@ func handleCreate(res Resource) (map[string]any, error) {
 }
 
 // Example handlers (implement as needed)
-func handleUpdate(cmd *cobra.Command, res Resource) (map[string]any, error) {
+/* func handleUpdate(cmd *cobra.Command, res Resource) (map[string]any, error) {
 	// Map type to actual creation logic
 	payloadBytes, _ := json.Marshal(res.Payload)
 	var respBytes []byte
@@ -367,13 +393,13 @@ func handleUpdate(cmd *cobra.Command, res Resource) (map[string]any, error) {
 	}
 	/* 	if err != nil {
 		return nil, err
-	} */
+	}
 	var resp map[string]any
 	_ = json.Unmarshal(respBytes, &resp)
 	return resp, nil
-}
+} */
 
-func handleList(res Resource) (map[string]any, error) {
+func handleList(res Resource) (any, error) {
 	var respBytes []byte
 	payloadBytes, _ := json.Marshal(res.Payload)
 
@@ -381,9 +407,13 @@ func handleList(res Resource) (map[string]any, error) {
 	case "campaign":
 		campaignList, err := campaign.ListCampaigns()
 		if err != nil {
-			log.Fatalf("error occurred: %v", err)
+			return nil, err
 		}
+
 		respBytes, err = json.Marshal(campaignList)
+		if err != nil {
+			return nil, err
+		}
 	case "modification":
 		var modificationResourceLoader web_experimentation.ModificationResourceLoader
 		err := json.Unmarshal(payloadBytes, &modificationResourceLoader)
@@ -394,24 +424,28 @@ func handleList(res Resource) (map[string]any, error) {
 			campaignIDString := res.ParentResource.ParentID
 			campaignID, err := strconv.Atoi(campaignIDString)
 			if err != nil {
-				log.Fatalf("error occurred: %v", err)
+				return nil, err
 			}
 
 			modificationResourceLoader.CampaignID = campaignID
 		}
 
-		campaignList, err := modification.ListModifications(modificationResourceLoader.CampaignID)
+		modificationList, err := modification.ListModifications(modificationResourceLoader.CampaignID)
 		if err != nil {
-			log.Fatalf("error occurred: %v", err)
+			return nil, err
 		}
 
-		respBytes, err = json.Marshal(campaignList)
+		respBytes, err = json.Marshal(modificationList)
 	default:
 		return nil, fmt.Errorf("unknown resource type: %s", res.Type)
 	}
 
-	var resp map[string]any
-	_ = json.Unmarshal(respBytes, &resp)
+	var resp any
+	err := json.Unmarshal(respBytes, &resp)
+	if err != nil {
+		return nil, err
+	}
+
 	return resp, nil
 }
 
