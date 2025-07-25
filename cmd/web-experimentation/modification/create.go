@@ -34,7 +34,7 @@ func getModificationIDsFromURL(rawURL string) ([]int, error) {
 	return ids, nil
 }
 
-func CreateModification(variationID int, modifResourceLoader web_experimentation.ModificationResourceLoader) []byte {
+func CreateModification(variationID int, modifResourceLoader web_experimentation.ModificationResourceLoader) ([]byte, error) {
 
 	m := web_experimentation.ModificationCodeCreateStruct{
 		InputType:   "modification",
@@ -52,30 +52,30 @@ func CreateModification(variationID int, modifResourceLoader web_experimentation
 
 	dataRaw, err := json.Marshal(m)
 	if err != nil {
-		log.Fatalf("error occurred: %v", err)
+		return nil, fmt.Errorf("error occurred: %v", err)
 	}
 
 	modificationHeader, err := httprequest.ModificationRequester.HTTPCreateModificationDataRaw(modifResourceLoader.CampaignID, dataRaw)
 	if err != nil {
-		log.Fatalf("error occurred: %v", err)
+		return nil, fmt.Errorf("error occurred: %v", err)
 	}
 
 	modificationIDs, err := getModificationIDsFromURL(string(modificationHeader))
 	if err != nil {
-		log.Fatalf("error occurred: %v", err)
+		return nil, fmt.Errorf("error occurred: %v", err)
 	}
 
 	body, err := httprequest.ModificationRequester.HTTPGetModification(modifResourceLoader.CampaignID, modificationIDs[0])
 	if err != nil {
-		log.Fatalf("error occurred: %s", err)
+		return nil, fmt.Errorf("error occurred: %v", err)
 	}
 
 	bodyByte, err := json.Marshal(body)
 	if err != nil {
-		log.Fatalf("error occurred: %s", err)
+		return nil, fmt.Errorf("error occurred: %v", err)
 	}
 
-	return bodyByte
+	return bodyByte, nil
 }
 
 // createCmd represents the create command
@@ -90,7 +90,11 @@ var createCmd = &cobra.Command{
 			log.Fatalf("error occurred: %v", err)
 		}
 
-		resp := CreateModification(CampaignID, modificationResourceLoader)
+		resp, err := CreateModification(CampaignID, modificationResourceLoader)
+		if err != nil {
+			log.Fatalf("error occurred: %v", err)
+		}
+
 		fmt.Fprintf(cmd.OutOrStdout(), "%s\n", resp)
 	},
 }
