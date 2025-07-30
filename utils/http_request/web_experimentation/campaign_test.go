@@ -35,7 +35,7 @@ func TestHTTPEditCampaign(t *testing.T) {
 
 func TestHTTPGetCampaign(t *testing.T) {
 
-	respBody, err := campaignRequester.HTTPGetCampaign("100000")
+	respBody, err := campaignRequester.HTTPGetCampaign(100000)
 
 	assert.NotNil(t, respBody)
 	assert.Nil(t, err)
@@ -71,14 +71,14 @@ func TestHTTPListCampaign(t *testing.T) {
 
 func TestHTTPDeleteCampaign(t *testing.T) {
 
-	err := campaignRequester.HTTPDeleteCampaign("100000")
+	err := campaignRequester.HTTPDeleteCampaign(100000)
 
 	assert.Nil(t, err)
 }
 
 func TestHTTPSwitchCampaign(t *testing.T) {
 
-	err := campaignRequester.HTTPSwitchStateCampaign("100000", "active")
+	err := campaignRequester.HTTPSwitchStateCampaign(100000, "active")
 
 	assert.Nil(t, err)
 }

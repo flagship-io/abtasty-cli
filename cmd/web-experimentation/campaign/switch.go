@@ -32,7 +32,7 @@ var SwitchCmd = &cobra.Command{
 
 func init() {
 
-	SwitchCmd.Flags().StringVarP(&CampaignID, "id", "i", "", "id of the campaign you want to switch state")
+	SwitchCmd.Flags().IntVarP(&CampaignID, "id", "i", 0, "id of the campaign you want to switch state")
 	SwitchCmd.Flags().StringVarP(&Status, "status", "s", "", "status you want set to the campaign. Only 2 values are possible: active and paused")
 
 	if err := SwitchCmd.MarkFlagRequired("id"); err != nil {

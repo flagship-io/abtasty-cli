@@ -71,13 +71,13 @@ func CreateCampaign(rawData []byte) ([]byte, error) {
 			return nil, fmt.Errorf("error occurred: %s", err)
 		}
 
-		_, err = httprequest.CampaignTargetingRequester.HTTPPushCampaignTargeting(campaignID, parsedModel)
+		_, err = httprequest.CampaignTargetingRequester.HTTPPushCampaignTargeting(campaignIDInt, parsedModel)
 		if err != nil {
 			return nil, fmt.Errorf("error occurred: %s", err)
 		}
 	}
 
-	body, err := httprequest.CampaignWERequester.HTTPGetCampaign(campaignID)
+	body, err := httprequest.CampaignWERequester.HTTPGetCampaign(campaignIDInt)
 	if err != nil {
 		return nil, fmt.Errorf("error occurred: %s", err)
 	}

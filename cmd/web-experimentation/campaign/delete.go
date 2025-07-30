@@ -6,6 +6,7 @@ package campaign
 import (
 	"fmt"
 	"log"
+	"strconv"
 
 	"github.com/flagship-io/abtasty-cli/utils/config"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
@@ -25,12 +26,12 @@ var deleteCmd = &cobra.Command{
 
 		fmt.Fprintln(cmd.OutOrStdout(), "Campaign deleted")
 
-		config.DeleteCampaignGlobalCodeDirectory(httprequest.CampaignWERequester.WorkingDir, httprequest.CampaignWERequester.AccountID, CampaignID)
+		config.DeleteCampaignGlobalCodeDirectory(httprequest.CampaignWERequester.WorkingDir, httprequest.CampaignWERequester.AccountID, strconv.Itoa(CampaignID))
 	},
 }
 
 func init() {
-	deleteCmd.Flags().StringVarP(&CampaignID, "id", "i", "", "id of the campaign you want to delete")
+	deleteCmd.Flags().IntVarP(&CampaignID, "id", "i", 0, "id of the campaign you want to delete")
 
 	if err := deleteCmd.MarkFlagRequired("id"); err != nil {
 		log.Fatalf("error occurred: %v", err)

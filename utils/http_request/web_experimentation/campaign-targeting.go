@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	models "github.com/flagship-io/abtasty-cli/models/web_experimentation"
 	"github.com/flagship-io/abtasty-cli/utils"
@@ -14,12 +15,12 @@ type CampaignTargetingRequester struct {
 	*common.ResourceRequest
 }
 
-func (c *CampaignTargetingRequester) HTTPPushCampaignTargeting(id string, code []byte) ([]byte, error) {
-	return common.HTTPRequest[models.CampaignWE](http.MethodPatch, utils.GetWebExperimentationHost()+"/v1/accounts/"+c.AccountID+"/tests/"+id, []byte(code))
+func (c *CampaignTargetingRequester) HTTPPushCampaignTargeting(id int, code []byte) ([]byte, error) {
+	return common.HTTPRequest[models.CampaignWE](http.MethodPatch, utils.GetWebExperimentationHost()+"/v1/accounts/"+c.AccountID+"/tests/"+strconv.Itoa(id), []byte(code))
 }
 
-func (c *CampaignTargetingRequester) HTTPGetCampaignTargeting(id string) (models.TargetingCampaignModelJSON, error) {
-	resp, err := common.HTTPGetItem[models.CampaignWE](utils.GetWebExperimentationHost() + "/v1/accounts/" + c.AccountID + "/tests/" + id)
+func (c *CampaignTargetingRequester) HTTPGetCampaignTargeting(id int) (models.TargetingCampaignModelJSON, error) {
+	resp, err := common.HTTPGetItem[models.CampaignWE](utils.GetWebExperimentationHost() + "/v1/accounts/" + c.AccountID + "/tests/" + strconv.Itoa(id))
 
 	var segmentIds []string = []string{}
 	var triggerIds []string = []string{}

@@ -27,17 +27,17 @@ func (t *CampaignWERequester) HTTPEditCampaign(id int, data []byte) ([]byte, err
 	return common.HTTPRequest[models.CampaignWE](http.MethodPatch, utils.GetWebExperimentationHost()+"/v1/accounts/"+t.AccountID+"/tests/"+strconv.Itoa(id), data)
 }
 
-func (t *CampaignWERequester) HTTPGetCampaign(id string) (models.CampaignWE, error) {
-	return common.HTTPGetItem[models.CampaignWE](utils.GetWebExperimentationHost() + "/v1/accounts/" + t.AccountID + "/tests/" + id)
+func (t *CampaignWERequester) HTTPGetCampaign(id int) (models.CampaignWE, error) {
+	return common.HTTPGetItem[models.CampaignWE](utils.GetWebExperimentationHost() + "/v1/accounts/" + t.AccountID + "/tests/" + strconv.Itoa(id))
 }
 
-func (t *CampaignWERequester) HTTPDeleteCampaign(id string) error {
-	_, err := common.HTTPRequest[models.CampaignWE](http.MethodDelete, utils.GetWebExperimentationHost()+"/v1/accounts/"+t.AccountID+"/tests/"+id, nil)
+func (t *CampaignWERequester) HTTPDeleteCampaign(id int) error {
+	_, err := common.HTTPRequest[models.CampaignWE](http.MethodDelete, utils.GetWebExperimentationHost()+"/v1/accounts/"+t.AccountID+"/tests/"+strconv.Itoa(id), nil)
 
 	return err
 }
 
-func (t *CampaignWERequester) HTTPSwitchStateCampaign(id, state string) error {
+func (t *CampaignWERequester) HTTPSwitchStateCampaign(id int, state string) error {
 	status := "play"
 	if state == "paused" {
 		status = "pause"
@@ -52,6 +52,6 @@ func (t *CampaignWERequester) HTTPSwitchStateCampaign(id, state string) error {
 		return err
 	}
 
-	_, err = common.HTTPRequest[models.CampaignWE](http.MethodPatch, utils.GetWebExperimentationHost()+"/v1/accounts/"+t.AccountID+"/tests/"+id, campaignSwitchRequestJSON)
+	_, err = common.HTTPRequest[models.CampaignWE](http.MethodPatch, utils.GetWebExperimentationHost()+"/v1/accounts/"+t.AccountID+"/tests/"+strconv.Itoa(id), campaignSwitchRequestJSON)
 	return err
 }

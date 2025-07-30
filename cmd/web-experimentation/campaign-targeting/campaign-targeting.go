@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var CampaignID string
+var CampaignID int
 
 // CampaignTargetingCmd represents the campaign targeting command
 var CampaignTargetingCmd = &cobra.Command{
