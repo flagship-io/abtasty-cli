@@ -176,6 +176,10 @@ func LoadResources(cmd *cobra.Command, filePath, inputRefFile, inputRefRaw, outp
 		refCtx.Set(k, v)
 	}
 
+	if err := ValidateResources(&loadFile, refCtx); err != nil {
+		return fmt.Errorf("Validation failed: %v\n", err)
+	}
+
 	// Separate mutating and read actions, preserving file order
 	var mutating, read []Resource
 	for _, res := range loadFile.Resources {
@@ -226,8 +230,16 @@ func LoadResources(cmd *cobra.Command, filePath, inputRefFile, inputRefRaw, outp
 	// Output results
 	loaderResults := LoaderResults{Results: results}
 	if outputFile != "" {
-		b, _ := json.MarshalIndent(loaderResults, "", "  ")
-		_ = os.WriteFile(outputFile, b, 0644)
+		b, err := json.MarshalIndent(loaderResults, "", "  ")
+		if err != nil {
+			return err
+		}
+
+		err = os.WriteFile(outputFile, b, 0644)
+		if err != nil {
+			return err
+		}
+
 		fmt.Fprintf(cmd.OutOrStdout(), "Results written to %s\n", outputFile)
 	} else {
 		// Print as table
@@ -272,6 +284,7 @@ func processResourceWithResponse(cmd *cobra.Command, res Resource, rc *RefContex
 	default:
 		err = fmt.Errorf("unsupported action: %s", res.Action)
 	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -303,7 +316,11 @@ func processResourceWithResponse(cmd *cobra.Command, res Resource, rc *RefContex
 // Example handlers (implement as needed)
 func handleCreate(res Resource) (map[string]any, error) {
 	// Map type to actual creation logic
-	payloadBytes, _ := json.Marshal(res.Payload)
+	payloadBytes, err := json.Marshal(res.Payload)
+	if err != nil {
+		return nil, err
+	}
+
 	var respBytes []byte
 	//var err error
 
@@ -358,7 +375,11 @@ func handleCreate(res Resource) (map[string]any, error) {
 	}
 
 	var resp map[string]any
-	_ = json.Unmarshal(respBytes, &resp)
+	err = json.Unmarshal(respBytes, &resp)
+	if err != nil {
+		return nil, err
+	}
+
 	return resp, nil
 }
 
@@ -401,7 +422,11 @@ func handleCreate(res Resource) (map[string]any, error) {
 
 func handleList(res Resource) (any, error) {
 	var respBytes []byte
-	payloadBytes, _ := json.Marshal(res.Payload)
+	var err error
+	payloadBytes, err := json.Marshal(res.Payload)
+	if err != nil {
+		return nil, err
+	}
 
 	switch res.Type {
 	case "campaign":
@@ -441,7 +466,7 @@ func handleList(res Resource) (any, error) {
 	}
 
 	var resp any
-	err := json.Unmarshal(respBytes, &resp)
+	err = json.Unmarshal(respBytes, &resp)
 	if err != nil {
 		return nil, err
 	}
@@ -469,6 +494,37 @@ func handleSwitch(cmd *cobra.Command, res Resource) error {
 		fmt.Fprintf(cmd.OutOrStdout(), "Switch error: %v\n", err)
 	} else {
 		fmt.Fprintf(cmd.OutOrStdout(), "Campaign status set to %s\n", state)
+	}
+	return nil
+}
+
+// Dry-run validation function
+func ValidateResources(loadFile *LoadResFile, refCtx *RefContext) error {
+	for _, res := range loadFile.Resources {
+		// Example checks:
+		if res.Type == "" {
+			return fmt.Errorf("resource with $_ref=%s is missing 'type'", res.Ref)
+		}
+		if res.Action == "" {
+			return fmt.Errorf("resource with $_ref=%s is missing 'action'", res.Ref)
+		}
+		// Check references
+		if strings.HasPrefix(res.ParentID, "$") {
+			parts := strings.Split(strings.TrimPrefix(res.ParentID, "$"), ".")
+			if len(parts) < 2 {
+				return fmt.Errorf("invalid reference format in $_parent_id for $_ref=%s", res.Ref)
+			}
+			if _, ok := refCtx.Get(parts[0]); !ok {
+				return fmt.Errorf("reference %s not found for $_ref=%s", parts[0], res.Ref)
+			}
+		}
+		// Recursively validate children
+		if len(res.Resources) > 0 {
+			childFile := LoadResFile{Resources: res.Resources}
+			if err := ValidateResources(&childFile, refCtx); err != nil {
+				return err
+			}
+		}
 	}
 	return nil
 }
