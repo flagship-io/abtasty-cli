@@ -19,7 +19,7 @@ var (
 
 // VariationCmd represents the variation command
 var VariationCmd = &cobra.Command{
-	Use:   "variation [get|delete]",
+	Use:   "variation [create|edit|get|delete]",
 	Short: "Manage your variations",
 	Long:  `Manage your variations`,
 	Run: func(cmd *cobra.Command, args []string) {

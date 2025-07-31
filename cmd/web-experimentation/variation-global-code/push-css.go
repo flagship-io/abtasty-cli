@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strconv"
 
 	"github.com/flagship-io/abtasty-cli/models/web_experimentation"
 	"github.com/flagship-io/abtasty-cli/utils"
@@ -25,34 +24,16 @@ var pushCSSCmd = &cobra.Command{
 	Short: "Push variation global css code",
 	Long:  `Push variation global css code`,
 	Run: func(cmd *cobra.Command, args []string) {
-		var modificationId int
-		var modificationValue string
+
 		var codeByte []byte
 
 		if !utils.CheckSingleFlag(cssFilePath != "", cssCode != "") {
 			log.Fatalf("error occurred: %s", "1 flag is required. (file, code)")
 		}
 
-		campaignID, err := strconv.Atoi(CampaignID)
+		m, err := GetModification(VariationID, CampaignID, ModificationCSS)
 		if err != nil {
-			log.Fatalf("error occurred: %v", err)
-		}
-
-		variationID, err := strconv.Atoi(VariationID)
-		if err != nil {
-			log.Fatalf("error occurred: %v", err)
-		}
-
-		modifList, err := httprequest.ModificationRequester.HTTPListModification(campaignID)
-		if err != nil {
-			log.Fatalf("error occurred: %v", err)
-		}
-
-		for _, modification := range modifList {
-			if modification.VariationID == variationID && modification.Type == "addCSS" && modification.Selector == "" {
-				modificationId = modification.Id
-				modificationValue = modification.Value
-			}
+			log.Fatalf("error occurred: %s", err)
 		}
 
 		if cssFilePath != "" {
@@ -68,7 +49,7 @@ var pushCSSCmd = &cobra.Command{
 			codeByte = []byte(cssCode)
 		}
 
-		if modificationId == 0 {
+		if m.Id == 0 {
 			modificationToPush := web_experimentation.ModificationCodeCreateStruct{
 				InputType:   "modification",
 				Name:        "",
@@ -76,10 +57,10 @@ var pushCSSCmd = &cobra.Command{
 				Selector:    "",
 				Type:        "addCSS",
 				Engine:      string(codeByte),
-				VariationID: variationID,
+				VariationID: VariationID,
 			}
 
-			body, err := httprequest.ModificationRequester.HTTPCreateModification(campaignID, modificationToPush)
+			body, err := httprequest.ModificationRequester.HTTPCreateModification(CampaignID, modificationToPush)
 			if err != nil {
 				log.Fatalf("error occurred: %v", err)
 			}
@@ -95,14 +76,14 @@ var pushCSSCmd = &cobra.Command{
 		}
 
 		if !Override {
-			apiHash := config.HashString(modificationValue)
+			apiHash := config.HashString(m.Value)
 			strHash := config.HashString(string(codeByte))
 			if apiHash != strHash {
 				log.Fatalf("error occurred: %s", utils.ERROR_LOCAL_CHANGED_FROM_REMOTE)
 			}
 		}
 
-		body, err := httprequest.ModificationRequester.HTTPEditModification(campaignID, modificationId, modificationToPush)
+		body, err := httprequest.ModificationRequester.HTTPEditModification(CampaignID, m.Id, modificationToPush)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
@@ -112,12 +93,12 @@ var pushCSSCmd = &cobra.Command{
 }
 
 func init() {
-	pushCSSCmd.Flags().StringVarP(&CampaignID, "campaign-id", "", "", "id of the campaign")
+	pushCSSCmd.Flags().IntVarP(&CampaignID, "campaign-id", "", 0, "id of the campaign")
 	if err := pushCSSCmd.MarkFlagRequired("campaign-id"); err != nil {
 		log.Fatalf("error occurred: %v", err)
 	}
 
-	pushCSSCmd.Flags().StringVarP(&VariationID, "id", "i", "", "id of variation")
+	pushCSSCmd.Flags().IntVarP(&VariationID, "id", "i", 0, "id of variation")
 	if err := pushCSSCmd.MarkFlagRequired("id"); err != nil {
 		log.Fatalf("error occurred: %v", err)
 	}

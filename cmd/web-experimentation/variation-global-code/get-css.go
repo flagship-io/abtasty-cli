@@ -23,29 +23,16 @@ var getCSSCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		var cssCode string
 
-		campaignID, err := strconv.Atoi(CampaignID)
-		if err != nil {
-			log.Fatalf("error occurred: %v", err)
-		}
-		variationID, err := strconv.Atoi(VariationID)
+		m, err := GetModification(VariationID, CampaignID, ModificationCSS)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
 
-		body, err := httprequest.ModificationRequester.HTTPListModification(campaignID)
-		if err != nil {
-			log.Fatalf("error occurred: %v", err)
-		}
-
-		for _, modification := range body {
-			if modification.VariationID == variationID && modification.Type == "addCSS" && modification.Selector == "" {
-				cssCode = modification.Value
-			}
-		}
+		cssCode = m.Value
 
 		if CreateFile && len(cssCode) > 0 {
 			if !Override {
-				cssFilePath := config.VariationGlobalCodeCSSFilePath(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, VariationID)
+				cssFilePath := config.VariationGlobalCodeCSSFilePath(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, strconv.Itoa(CampaignID), strconv.Itoa(VariationID))
 				if _, err := os.Stat(cssFilePath); err == nil {
 					fileHash, err := config.HashFile(cssFilePath)
 					if err != nil {
@@ -59,7 +46,7 @@ var getCSSCmd = &cobra.Command{
 				}
 			}
 
-			_, err := config.WriteVariationGlobalCodeCSS(httprequest.ModificationRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, VariationID, cssCode)
+			_, err := config.WriteVariationGlobalCodeCSS(httprequest.ModificationRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, strconv.Itoa(CampaignID), strconv.Itoa(VariationID), cssCode)
 			if err != nil {
 				log.Fatalf("error occurred: %v", err)
 			}
@@ -75,13 +62,13 @@ var getCSSCmd = &cobra.Command{
 }
 
 func init() {
-	getCSSCmd.Flags().StringVarP(&CampaignID, "campaign-id", "", "", "campaign id of the variation")
+	getCSSCmd.Flags().IntVarP(&CampaignID, "campaign-id", "", 0, "campaign id of the variation")
 
 	if err := getCSSCmd.MarkFlagRequired("campaign-id"); err != nil {
 		log.Fatalf("error occurred: %v", err)
 	}
 
-	getCSSCmd.Flags().StringVarP(&VariationID, "id", "i", "", "variation id")
+	getCSSCmd.Flags().IntVarP(&VariationID, "id", "i", 0, "variation id")
 
 	if err := getCSSCmd.MarkFlagRequired("id"); err != nil {
 		log.Fatalf("error occurred: %v", err)

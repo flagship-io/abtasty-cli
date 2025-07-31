@@ -23,30 +23,16 @@ var getJSCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		var jsCode string
 
-		campaignID, err := strconv.Atoi(CampaignID)
+		m, err := GetModification(VariationID, CampaignID, ModificationJS)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
 
-		variationID, err := strconv.Atoi(VariationID)
-		if err != nil {
-			log.Fatalf("error occurred: %v", err)
-		}
-
-		body, err := httprequest.ModificationRequester.HTTPListModification(campaignID)
-		if err != nil {
-			log.Fatalf("error occurred: %v", err)
-		}
-
-		for _, modification := range body {
-			if modification.VariationID == variationID && modification.Type == "customScriptNew" && modification.Selector == "" {
-				jsCode = modification.Value
-			}
-		}
+		jsCode = m.Value
 
 		if CreateFile && len(jsCode) > 0 {
 			if !Override {
-				jsFilePath := config.VariationGlobalCodeJSFilePath(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, VariationID)
+				jsFilePath := config.VariationGlobalCodeJSFilePath(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, strconv.Itoa(CampaignID), strconv.Itoa(VariationID))
 				if _, err := os.Stat(jsFilePath); err == nil {
 					fileHash, err := config.HashFile(jsFilePath)
 					if err != nil {
@@ -60,7 +46,7 @@ var getJSCmd = &cobra.Command{
 				}
 			}
 
-			_, err := config.WriteVariationGlobalCodeJS(httprequest.ModificationRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, VariationID, jsCode)
+			_, err := config.WriteVariationGlobalCodeJS(httprequest.ModificationRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, strconv.Itoa(CampaignID), strconv.Itoa(VariationID), jsCode)
 			if err != nil {
 				log.Fatalf("error occurred: %v", err)
 			}
@@ -76,13 +62,13 @@ var getJSCmd = &cobra.Command{
 }
 
 func init() {
-	getJSCmd.Flags().StringVarP(&CampaignID, "campaign-id", "", "", "id of the campaign you want to display")
+	getJSCmd.Flags().IntVarP(&CampaignID, "campaign-id", "", 0, "id of the campaign you want to display")
 
 	if err := getJSCmd.MarkFlagRequired("campaign-id"); err != nil {
 		log.Fatalf("error occurred: %v", err)
 	}
 
-	getJSCmd.Flags().StringVarP(&VariationID, "id", "i", "", "id of the variation you want to display")
+	getJSCmd.Flags().IntVarP(&VariationID, "id", "i", 0, "id of the variation you want to display")
 
 	if err := getJSCmd.MarkFlagRequired("id"); err != nil {
 		log.Fatalf("error occurred: %v", err)

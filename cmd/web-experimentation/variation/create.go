@@ -78,7 +78,7 @@ func CreateVariation(campaignID int, rawData []byte) ([]byte, error) {
 
 		_, err = httprequest.ModificationRequester.HTTPCreateModification(campaignID, modificationToPush)
 		if err != nil {
-			log.Fatalf("error occurred: %v", err)
+			return nil, fmt.Errorf("error occurred: %v", err)
 		}
 	}
 
@@ -95,7 +95,7 @@ func CreateVariation(campaignID int, rawData []byte) ([]byte, error) {
 
 		_, err := httprequest.ModificationRequester.HTTPCreateModification(campaignID, modificationToPush)
 		if err != nil {
-			log.Fatalf("error occurred: %v", err)
+			return nil, fmt.Errorf("error occurred: %v", err)
 		}
 	}
 

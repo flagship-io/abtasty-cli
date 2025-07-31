@@ -2,7 +2,7 @@ package web_experimentation
 
 type VariationWE struct {
 	Id           int         `json:"id,omitempty"`
-	Name         string      `json:"name"`
+	Name         string      `json:"name,omitempty"`
 	Description  string      `json:"description,omitempty"`
 	Type         string      `json:"type,omitempty"`
 	Traffic      int         `json:"traffic,omitempty"`

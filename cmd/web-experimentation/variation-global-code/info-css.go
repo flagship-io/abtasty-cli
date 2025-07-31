@@ -5,11 +5,9 @@ package variation_global_code
 
 import (
 	"log"
-	"strconv"
 
 	"github.com/flagship-io/abtasty-cli/models/web_experimentation"
 	"github.com/flagship-io/abtasty-cli/utils"
-	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -22,39 +20,24 @@ var infoCSSCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		var modif web_experimentation.Modification
 
-		campaignID, err := strconv.Atoi(CampaignID)
+		m, err := GetModification(VariationID, CampaignID, ModificationCSS)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
 
-		variationID, err := strconv.Atoi(VariationID)
-		if err != nil {
-			log.Fatalf("error occurred: %v", err)
-		}
-
-		body, err := httprequest.ModificationRequester.HTTPListModification(campaignID)
-		if err != nil {
-			log.Fatalf("error occurred: %v", err)
-		}
-
-		for _, modification := range body {
-			if modification.VariationID == variationID && modification.Type == "addCSS" && modification.Selector == "" {
-				modif = modification
-			}
-		}
-
+		modif = m
 		utils.FormatItem([]string{"Id", "Name", "Type", "VariationID", "Selector", "Engine", "Value"}, modif, viper.GetString("output_format"), cmd.OutOrStdout())
 	},
 }
 
 func init() {
-	infoCSSCmd.Flags().StringVarP(&CampaignID, "campaign-id", "", "", "id of the campaign you want to display")
+	infoCSSCmd.Flags().IntVarP(&CampaignID, "campaign-id", "", 0, "id of the campaign you want to display")
 
 	if err := infoCSSCmd.MarkFlagRequired("campaign-id"); err != nil {
 		log.Fatalf("error occurred: %v", err)
 	}
 
-	infoCSSCmd.Flags().StringVarP(&VariationID, "id", "i", "", "id of the variation you want to display")
+	infoCSSCmd.Flags().IntVarP(&VariationID, "id", "i", 0, "id of the variation you want to display")
 
 	if err := infoCSSCmd.MarkFlagRequired("id"); err != nil {
 		log.Fatalf("error occurred: %v", err)

@@ -31,11 +31,11 @@ func (v *VariationWERequester) HTTPEditVariation(campaignID, variationID int, da
 	return common.HTTPRequest[models.VariationWE](http.MethodPatch, utils.GetWebExperimentationHost()+"/v1/accounts/"+v.AccountID+"/tests/"+strconv.Itoa(campaignID)+"/variations/"+strconv.Itoa(variationID), data)
 }
 
-func (v *VariationWERequester) HTTPGetVariation(testID, id int) (models.VariationWE, error) {
-	return common.HTTPGetItem[models.VariationWE](utils.GetWebExperimentationHost() + "/v1/accounts/" + v.AccountID + "/tests/" + strconv.Itoa(testID) + "/variations/" + strconv.Itoa(id))
+func (v *VariationWERequester) HTTPGetVariation(campaignID, variationID int) (models.VariationWE, error) {
+	return common.HTTPGetItem[models.VariationWE](utils.GetWebExperimentationHost() + "/v1/accounts/" + v.AccountID + "/tests/" + strconv.Itoa(campaignID) + "/variations/" + strconv.Itoa(variationID))
 }
 
-func (v *VariationWERequester) HTTPDeleteVariation(testID, id int) error {
-	_, err := common.HTTPRequest[models.VariationWE](http.MethodDelete, utils.GetWebExperimentationHost()+"/v1/accounts/"+v.AccountID+"/tests/"+strconv.Itoa(testID)+"/variations/"+strconv.Itoa(id), nil)
+func (v *VariationWERequester) HTTPDeleteVariation(campaignID, variationID int) error {
+	_, err := common.HTTPRequest[models.VariationWE](http.MethodDelete, utils.GetWebExperimentationHost()+"/v1/accounts/"+v.AccountID+"/tests/"+strconv.Itoa(campaignID)+"/variations/"+strconv.Itoa(variationID), nil)
 	return err
 }
