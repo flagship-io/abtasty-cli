@@ -9,6 +9,7 @@ type CampaignWECommon struct {
 	SubType            string          `json:"sub_type,omitempty"`
 	Master             *CampaignWE     `json:"master,omitempty"`
 	State              string          `json:"state,omitempty"`
+	Status             string          `json:"status,omitempty"`
 	SubTests           []CampaignWE    `json:"sub_tests,omitempty"`
 	CreatingDate       *DateTemplate   `json:"created_at,omitempty"`
 	Labels             []string        `json:"labels,omitempty"`

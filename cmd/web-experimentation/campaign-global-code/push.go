@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/flagship-io/abtasty-cli/utils"
 	"github.com/flagship-io/abtasty-cli/utils/config"
@@ -42,12 +43,11 @@ var pushCmd = &cobra.Command{
 			codeByte = []byte(code)
 		}
 
-		apiCampaignGlobalCode, err := httprequest.CampaignGlobalCodeRequester.HTTPGetCampaignGlobalCode(CampaignID)
-		if err != nil {
-			log.Fatalf("error occurred: %v", err)
-		}
-
 		if !Override {
+			apiCampaignGlobalCode, err := httprequest.CampaignGlobalCodeRequester.HTTPGetCampaignGlobalCode(strconv.Itoa(CampaignID))
+			if err != nil {
+				log.Fatalf("error occurred: %v", err)
+			}
 			apiHash := config.HashString(apiCampaignGlobalCode)
 			strHash := config.HashString(string(codeByte))
 			if apiHash != strHash {
@@ -55,7 +55,7 @@ var pushCmd = &cobra.Command{
 			}
 		}
 
-		body, err := httprequest.CampaignGlobalCodeRequester.HTTPPushCampaignGlobalCode(CampaignID, codeByte)
+		body, err := httprequest.CampaignGlobalCodeRequester.HTTPPushCampaignGlobalCode(strconv.Itoa(CampaignID), codeByte)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
@@ -65,7 +65,7 @@ var pushCmd = &cobra.Command{
 }
 
 func init() {
-	pushCmd.Flags().StringVarP(&CampaignID, "id", "i", "", "id of the campaign")
+	pushCmd.Flags().IntVarP(&CampaignID, "id", "i", 0, "id of the campaign")
 	if err := pushCmd.MarkFlagRequired("id"); err != nil {
 		log.Fatalf("error occurred: %v", err)
 	}

@@ -37,19 +37,23 @@ func EditCampaign(campaignID int, rawData []byte) ([]byte, error) {
 	}
 
 	campaignCommon, err := json.Marshal(struct {
-		Name               string `json:"name,omitempty"`
-		Url                string `json:"url,omitempty"`
-		Description        string `json:"description,omitempty"`
-		Type               string `json:"type,omitempty"`
-		Traffic            int    `json:"traffic,omitempty"`
-		GlobalCodeCampaign string `json:"global_code,omitempty"`
+		Name               string   `json:"name,omitempty"`
+		Url                string   `json:"url,omitempty"`
+		Description        string   `json:"description,omitempty"`
+		Traffic            int      `json:"traffic,omitempty"`
+		GlobalCodeCampaign string   `json:"global_code,omitempty"`
+		SourceCode         string   `json:"source_code,omitempty"`
+		Labels             []string `json:"labels,omitempty"`
+		Status             string   `json:"status,omitempty"`
 	}{
 		Name:               campaignModel.Name,
 		Url:                campaignModel.Url,
 		Description:        campaignModel.Description,
-		Type:               campaignModel.Type,
 		Traffic:            campaignModel.Traffic,
 		GlobalCodeCampaign: campaignModel.GlobalCodeCampaign,
+		SourceCode:         campaignModel.SourceCode,
+		Labels:             campaignModel.Labels,
+		Status:             campaignModel.Status,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("error occurred: %s", err)

@@ -56,11 +56,17 @@ func CreateCampaign(rawData []byte) ([]byte, error) {
 	if campaignModel.Traffic != 0 || campaignModel.GlobalCodeCampaign != "" {
 
 		campaignPatch, err := json.Marshal(struct {
-			Traffic            int    `json:"traffic,omitempty"`
-			GlobalCodeCampaign string `json:"global_code,omitempty"`
+			Traffic            int      `json:"traffic,omitempty"`
+			GlobalCodeCampaign string   `json:"global_code,omitempty"`
+			SourceCode         string   `json:"source_code,omitempty"`
+			Labels             []string `json:"labels,omitempty"`
+			Status             string   `json:"status,omitempty"`
 		}{
 			Traffic:            campaignModel.Traffic,
 			GlobalCodeCampaign: campaignModel.GlobalCodeCampaign,
+			SourceCode:         campaignModel.SourceCode,
+			Labels:             campaignModel.Labels,
+			Status:             campaignModel.Status,
 		})
 		if err != nil {
 			return nil, fmt.Errorf("error occurred: %s", err)
