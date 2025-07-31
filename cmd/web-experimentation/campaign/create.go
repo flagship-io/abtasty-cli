@@ -25,7 +25,7 @@ func CreateCampaign(rawData []byte) ([]byte, error) {
 		return nil, fmt.Errorf("error occurred: %s", err)
 	}
 
-	campaignCommon, _ := json.Marshal(struct {
+	campaignCommon, err := json.Marshal(struct {
 		Name        string `json:"name"`
 		Url         string `json:"url"`
 		Description string `json:"description"`
@@ -36,8 +36,15 @@ func CreateCampaign(rawData []byte) ([]byte, error) {
 		Description: campaignModel.Description,
 		Type:        campaignModel.Type,
 	})
+	if err != nil {
+		return nil, fmt.Errorf("error occurred: %s", err)
+	}
 
 	campaignHeader, err := httprequest.CampaignWERequester.HTTPCreateCampaign(campaignCommon)
+	if err != nil {
+		return nil, fmt.Errorf("error occurred: %s", err)
+	}
+
 	parts := strings.Split(string(campaignHeader), "/")
 	campaignID := parts[len(parts)-1]
 
@@ -48,13 +55,16 @@ func CreateCampaign(rawData []byte) ([]byte, error) {
 
 	if campaignModel.Traffic != 0 || campaignModel.GlobalCodeCampaign != "" {
 
-		campaignPatch, _ := json.Marshal(struct {
+		campaignPatch, err := json.Marshal(struct {
 			Traffic            int    `json:"traffic,omitempty"`
 			GlobalCodeCampaign string `json:"global_code,omitempty"`
 		}{
 			Traffic:            campaignModel.Traffic,
 			GlobalCodeCampaign: campaignModel.GlobalCodeCampaign,
 		})
+		if err != nil {
+			return nil, fmt.Errorf("error occurred: %s", err)
+		}
 
 		_, err = httprequest.CampaignWERequester.HTTPEditCampaign(campaignIDInt, campaignPatch)
 		if err != nil {
