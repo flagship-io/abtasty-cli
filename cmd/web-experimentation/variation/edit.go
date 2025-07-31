@@ -62,23 +62,6 @@ func EditVariation(variationID, campaignID int, rawData []byte) ([]byte, error) 
 		return nil, fmt.Errorf("error occurred: %v", err)
 	}
 
-	variationAPI := models.VariationWE{
-		Name:        variationResourceLoader.Name,
-		Description: variationResourceLoader.Description,
-		Type:        "onthefly",
-		Traffic:     variationResourceLoader.Traffic,
-	}
-
-	variationApiJSON, err := json.Marshal(variationAPI)
-	if err != nil {
-		return nil, fmt.Errorf("error occurred: %v", err)
-	}
-
-	variationPatch, err := httprequest.VariationWERequester.HTTPEditVariation(campaignID, variationID, variationApiJSON)
-	if err != nil {
-		return nil, fmt.Errorf("error occurred: %v", err)
-	}
-
 	if variationResourceLoader.Code.Js != "" {
 		err = createOrEditVariationGlobalCode(variationID, campaignID, variationResourceLoader.Code.Js, vgc.ModificationJS)
 		if err != nil {
@@ -91,6 +74,22 @@ func EditVariation(variationID, campaignID int, rawData []byte) ([]byte, error) 
 		if err != nil {
 			return nil, fmt.Errorf("error occurred: %v", err)
 		}
+	}
+
+	variationAPI := models.VariationWE{
+		Name:        variationResourceLoader.Name,
+		Description: variationResourceLoader.Description,
+		Traffic:     variationResourceLoader.Traffic,
+	}
+
+	variationApiJSON, err := json.Marshal(variationAPI)
+	if err != nil {
+		return nil, fmt.Errorf("error occurred: %v", err)
+	}
+
+	variationPatch, err := httprequest.VariationWERequester.HTTPEditVariation(campaignID, variationID, variationApiJSON)
+	if err != nil {
+		return nil, fmt.Errorf("error occurred: %v", err)
 	}
 
 	return variationPatch, nil

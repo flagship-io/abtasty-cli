@@ -34,7 +34,16 @@ func getModificationIDsFromURL(rawURL string) ([]int, error) {
 	return ids, nil
 }
 
-func CreateModification(variationID int, modifResourceLoader web_experimentation.ModificationResourceLoader) ([]byte, error) {
+func CreateModification(variationID int, rawData []byte) ([]byte, error) {
+	var modifResourceLoader web_experimentation.ModificationResourceLoader
+	err := json.Unmarshal(rawData, &modifResourceLoader)
+	if err != nil {
+		return nil, fmt.Errorf("error occurred: %v", err)
+	}
+
+	if modifResourceLoader.CampaignID == 0 {
+		return nil, fmt.Errorf("error occurred: missing property %s", "campaign_id")
+	}
 
 	m := web_experimentation.ModificationCodeCreateStruct{
 		InputType:   "modification",
@@ -80,17 +89,11 @@ func CreateModification(variationID int, modifResourceLoader web_experimentation
 
 // createCmd represents the create command
 var createCmd = &cobra.Command{
-	Use:   "create [--campaign-id=<campaign-id>] [-d <data-raw> | --data-raw=<data-raw>]",
+	Use:   "create [--variation-id=<variation-id>] [-d <data-raw> | --data-raw=<data-raw>]",
 	Short: "Create a modification",
 	Long:  `Create a modification`,
 	Run: func(cmd *cobra.Command, args []string) {
-		var modificationResourceLoader web_experimentation.ModificationResourceLoader
-		err := json.Unmarshal([]byte(DataRaw), &modificationResourceLoader)
-		if err != nil {
-			log.Fatalf("error occurred: %v", err)
-		}
-
-		resp, err := CreateModification(CampaignID, modificationResourceLoader)
+		resp, err := CreateModification(VariationID, []byte(DataRaw))
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
@@ -101,8 +104,12 @@ var createCmd = &cobra.Command{
 
 func init() {
 
-	createCmd.Flags().StringVarP(&DataRaw, "data-raw", "d", "", "raw data contains all the info to create your modification, check the doc for details")
+	createCmd.Flags().IntVarP(&VariationID, "variation-id", "", 0, "variation id of your modifications")
+	if err := ModificationCmd.MarkFlagRequired("variation-id"); err != nil {
+		log.Fatalf("error occurred: %v", err)
+	}
 
+	createCmd.Flags().StringVarP(&DataRaw, "data-raw", "d", "", "raw data contains all the info to create your modification, check the doc for details")
 	if err := createCmd.MarkFlagRequired("data-raw"); err != nil {
 		log.Fatalf("error occurred: %v", err)
 	}

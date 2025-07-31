@@ -21,8 +21,11 @@ var deleteCmd = &cobra.Command{
 	Long:  `Delete a modification`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var modif *web_experimentation.Modification
-		body, _ := httprequest.ModificationRequester.HTTPGetModification(CampaignID, ModificationID)
-		err := httprequest.ModificationRequester.HTTPDeleteModification(CampaignID, ModificationID)
+		body, err := httprequest.ModificationRequester.HTTPGetModification(CampaignID, ModificationID)
+		if err != nil {
+			log.Fatalf("error occurred: %v", err)
+		}
+		err = httprequest.ModificationRequester.HTTPDeleteModification(CampaignID, ModificationID)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
