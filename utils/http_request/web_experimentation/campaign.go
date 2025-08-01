@@ -2,6 +2,7 @@ package web_experimentation
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -31,10 +32,13 @@ func (t *CampaignWERequester) HTTPGetCampaign(id int) (models.CampaignWE, error)
 	return common.HTTPGetItem[models.CampaignWE](utils.GetWebExperimentationHost() + "/v1/accounts/" + t.AccountID + "/tests/" + strconv.Itoa(id))
 }
 
-func (t *CampaignWERequester) HTTPDeleteCampaign(id int) error {
+func (t *CampaignWERequester) HTTPDeleteCampaign(id int) (string, error) {
 	_, err := common.HTTPRequest[models.CampaignWE](http.MethodDelete, utils.GetWebExperimentationHost()+"/v1/accounts/"+t.AccountID+"/tests/"+strconv.Itoa(id), nil)
+	if err != nil {
+		return "", err
+	}
 
-	return err
+	return fmt.Sprintf("Campaign %d deleted", id), nil
 }
 
 func (t *CampaignWERequester) HTTPSwitchStateCampaign(id int, state string) error {

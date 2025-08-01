@@ -2,6 +2,7 @@ package web_experimentation
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -35,7 +36,11 @@ func (v *VariationWERequester) HTTPGetVariation(campaignID, variationID int) (mo
 	return common.HTTPGetItem[models.VariationWE](utils.GetWebExperimentationHost() + "/v1/accounts/" + v.AccountID + "/tests/" + strconv.Itoa(campaignID) + "/variations/" + strconv.Itoa(variationID))
 }
 
-func (v *VariationWERequester) HTTPDeleteVariation(campaignID, variationID int) error {
+func (v *VariationWERequester) HTTPDeleteVariation(campaignID, variationID int) (string, error) {
 	_, err := common.HTTPRequest[models.VariationWE](http.MethodDelete, utils.GetWebExperimentationHost()+"/v1/accounts/"+v.AccountID+"/tests/"+strconv.Itoa(campaignID)+"/variations/"+strconv.Itoa(variationID), nil)
-	return err
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("Variation %d deleted", variationID), nil
 }

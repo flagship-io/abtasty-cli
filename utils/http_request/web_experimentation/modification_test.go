@@ -57,7 +57,7 @@ func TestHTTPGetModification(t *testing.T) {
 
 func TestHTTPDeleteModification(t *testing.T) {
 
-	err := modificationRequester.HTTPDeleteModification(100000, 120003)
-
+	resp, err := modificationRequester.HTTPDeleteModification(100000, 120003)
 	assert.Nil(t, err)
+	assert.NotNil(t, resp)
 }

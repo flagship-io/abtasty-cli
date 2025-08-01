@@ -2,6 +2,7 @@ package web_experimentation
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -55,7 +56,11 @@ func (m *ModificationRequester) HTTPCreateModificationDataRaw(campaignID int, da
 	return common.HTTPRequest[models.ModificationDataWE](http.MethodPost, utils.GetWebExperimentationHost()+"/v1/accounts/"+m.AccountID+"/tests/"+strconv.Itoa(campaignID)+"/modifications", data)
 }
 
-func (m *ModificationRequester) HTTPDeleteModification(campaignID int, id int) error {
+func (m *ModificationRequester) HTTPDeleteModification(campaignID int, id int) (string, error) {
 	_, err := common.HTTPRequest[models.ModificationDataWE](http.MethodDelete, utils.GetWebExperimentationHost()+"/v1/accounts/"+m.AccountID+"/tests/"+strconv.Itoa(campaignID)+"/modifications/"+strconv.Itoa(id)+"?input_type=modification", nil)
-	return err
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("Modification %d deleted", id), nil
 }

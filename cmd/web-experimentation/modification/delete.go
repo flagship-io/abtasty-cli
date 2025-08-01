@@ -25,11 +25,13 @@ var deleteCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
-		err = httprequest.ModificationRequester.HTTPDeleteModification(CampaignID, ModificationID)
+
+		resp, err := httprequest.ModificationRequester.HTTPDeleteModification(CampaignID, ModificationID)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
-		fmt.Fprintln(cmd.OutOrStdout(), "Modification deleted")
+
+		fmt.Fprintln(cmd.OutOrStdout(), resp)
 
 		if body != (web_experimentation.Modification{}) {
 			if body.Type == "customScriptNew" && body.Selector != "" {

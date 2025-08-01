@@ -71,9 +71,9 @@ func TestHTTPListCampaign(t *testing.T) {
 
 func TestHTTPDeleteCampaign(t *testing.T) {
 
-	err := campaignRequester.HTTPDeleteCampaign(100000)
-
+	resp, err := campaignRequester.HTTPDeleteCampaign(100000)
 	assert.Nil(t, err)
+	assert.NotNil(t, resp)
 }
 
 func TestHTTPSwitchCampaign(t *testing.T) {

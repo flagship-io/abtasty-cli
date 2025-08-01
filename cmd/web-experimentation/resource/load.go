@@ -17,6 +17,7 @@ import (
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/modification"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/variation"
 	"github.com/flagship-io/abtasty-cli/models/web_experimentation"
+	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
 )
 
@@ -64,6 +65,38 @@ type ResourceResult struct {
 
 type LoaderResults struct {
 	Results []ResourceResult `json:"results"`
+}
+
+type funcModifType func(int, []byte) ([]byte, error)
+
+func createOrEditModification(id int, res Resource, payloadBytes []byte, createOrEditModif funcModifType) ([]byte, error) {
+	var modificationResourceLoader web_experimentation.ModificationResourceLoader
+	err := json.Unmarshal(payloadBytes, &modificationResourceLoader)
+	if err != nil {
+		return nil, err
+	}
+
+	if res.ParentResource != nil {
+		campaignIDString := res.ParentResource.ParentID
+		campaignID, err := strconv.Atoi(campaignIDString)
+		if err != nil {
+			return nil, err
+		}
+
+		modificationResourceLoader.CampaignID = campaignID
+	}
+
+	payloadBytes, err = json.Marshal(modificationResourceLoader)
+	if err != nil {
+		return nil, err
+	}
+
+	respBytes, err := createOrEditModif(id, payloadBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	return respBytes, nil
 }
 
 func NewRefContext() *RefContext {
@@ -264,7 +297,7 @@ func processResourceWithResponse(cmd *cobra.Command, res Resource, rc *RefContex
 	case ActionList:
 		resp, err = handleList(res)
 	case ActionDelete:
-		err = handleDelete(cmd, res)
+		resp, err = handleDelete(res)
 	default:
 		err = fmt.Errorf("unsupported action: %s", res.Action)
 	}
@@ -326,33 +359,10 @@ func handleCreate(res Resource) (map[string]any, error) {
 			return nil, err
 		}
 
-		var modificationResourceLoader web_experimentation.ModificationResourceLoader
-		err = json.Unmarshal(payloadBytes, &modificationResourceLoader)
+		respBytes, err = createOrEditModification(variationID, res, payloadBytes, modification.CreateModification)
 		if err != nil {
 			return nil, err
 		}
-
-		if res.ParentResource != nil {
-			campaignIDString := res.ParentResource.ParentID
-			campaignID, err := strconv.Atoi(campaignIDString)
-			if err != nil {
-				return nil, err
-			}
-
-			modificationResourceLoader.CampaignID = campaignID
-		}
-
-		payloadBytes, err = json.Marshal(modificationResourceLoader)
-		if err != nil {
-			return nil, err
-		}
-
-		respBytes, err = modification.CreateModification(variationID, payloadBytes)
-		if err != nil {
-			return nil, err
-		}
-
-		fmt.Println(string(respBytes))
 
 	default:
 		return nil, fmt.Errorf("unknown resource type: %s", res.Type)
@@ -375,21 +385,16 @@ func handleEdit(res Resource) (map[string]any, error) {
 		return nil, err
 	}
 
-	var id = res.Payload["id"].(string)
+	var id = res.Payload["id"].(float64)
 
-	if id != "" {
+	if id == 0 {
 		return nil, fmt.Errorf("error occurred: missing property %s", "id")
-	}
-
-	idInt, err := strconv.Atoi(id)
-	if err != nil {
-		return nil, err
 	}
 
 	switch res.Type {
 	case "campaign":
 		var err error
-		respBytes, err = campaign.EditCampaign(idInt, payloadBytes)
+		respBytes, err = campaign.EditCampaign(int(id), payloadBytes)
 		if err != nil {
 			return nil, err
 		}
@@ -399,38 +404,15 @@ func handleEdit(res Resource) (map[string]any, error) {
 			return nil, err
 		}
 
-		respBytes, err = variation.EditVariation(idInt, parentID, payloadBytes)
+		respBytes, err = variation.EditVariation(int(id), parentID, payloadBytes)
 		if err != nil {
 			return nil, err
 		}
 	case "modification":
-		var modificationResourceLoader web_experimentation.ModificationResourceLoader
-		err = json.Unmarshal(payloadBytes, &modificationResourceLoader)
+		respBytes, err = createOrEditModification(int(id), res, payloadBytes, modification.EditModification)
 		if err != nil {
 			return nil, err
 		}
-
-		if res.ParentResource != nil {
-			campaignIDString := res.ParentResource.ParentID
-			campaignID, err := strconv.Atoi(campaignIDString)
-			if err != nil {
-				return nil, err
-			}
-
-			modificationResourceLoader.CampaignID = campaignID
-		}
-
-		payloadBytes, err = json.Marshal(modificationResourceLoader)
-		if err != nil {
-			return nil, err
-		}
-
-		respBytes, err = modification.EditModification(idInt, payloadBytes)
-		if err != nil {
-			return nil, err
-		}
-
-		fmt.Println(string(respBytes))
 
 	default:
 		return nil, fmt.Errorf("unknown resource type: %s", res.Type)
@@ -486,6 +468,9 @@ func handleList(res Resource) (any, error) {
 		}
 
 		respBytes, err = json.Marshal(modificationList)
+		if err != nil {
+			return nil, err
+		}
 	default:
 		return nil, fmt.Errorf("unknown resource type: %s", res.Type)
 	}
@@ -499,9 +484,77 @@ func handleList(res Resource) (any, error) {
 	return resp, nil
 }
 
-func handleDelete(cmd *cobra.Command, res Resource) error {
-	fmt.Fprintf(cmd.OutOrStdout(), "Delete action for type: %s\n", res.Type)
-	return nil
+func handleDelete(res Resource) (any, error) {
+	var respBytes []byte
+
+	payloadBytes, err := json.Marshal(res.Payload)
+	if err != nil {
+		return nil, err
+	}
+
+	var id = res.Payload["id"].(float64)
+
+	if id == 0 {
+		return nil, fmt.Errorf("error occurred: missing property %s", "id")
+	}
+
+	switch res.Type {
+	case "campaign":
+		resp, err := httprequest.CampaignWERequester.HTTPDeleteCampaign(int(id))
+		if err != nil {
+			return nil, err
+		}
+
+		respBytes, err = json.Marshal(resp)
+		if err != nil {
+			return nil, err
+		}
+	case "variation":
+		parentID, err := strconv.Atoi(res.ParentID)
+		if err != nil {
+			return nil, err
+		}
+
+		resp, err := httprequest.VariationWERequester.HTTPDeleteVariation(parentID, int(id))
+		if err != nil {
+			return nil, err
+		}
+
+		respBytes, err = json.Marshal(resp)
+		if err != nil {
+			return nil, err
+		}
+	case "modification":
+		var modifResourceLoader web_experimentation.ModificationResourceLoader
+		err := json.Unmarshal(payloadBytes, &modifResourceLoader)
+		if err != nil {
+			return nil, fmt.Errorf("error occurred: %v", err)
+		}
+
+		if modifResourceLoader.CampaignID == 0 {
+			return nil, fmt.Errorf("error occurred: missing property %s", "campaign_id")
+		}
+
+		resp, err := httprequest.ModificationRequester.HTTPDeleteModification(modifResourceLoader.CampaignID, int(id))
+		if err != nil {
+			return nil, fmt.Errorf("error occurred: %v", err)
+		}
+
+		respBytes, err = json.Marshal(resp)
+		if err != nil {
+			return nil, err
+		}
+	default:
+		return nil, fmt.Errorf("unknown resource type: %s", res.Type)
+	}
+
+	var resp any
+	err = json.Unmarshal(respBytes, &resp)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }
 
 func ValidateResources(loadFile *LoadResFile, refCtx *RefContext) error {
@@ -514,15 +567,16 @@ func ValidateResources(loadFile *LoadResFile, refCtx *RefContext) error {
 			return fmt.Errorf("resource with $_ref=%s is missing 'action'", res.Ref)
 		}
 
-		if strings.HasPrefix(res.ParentID, "$") {
+		/* 		if strings.HasPrefix(res.ParentID, "$") {
 			parts := strings.Split(strings.TrimPrefix(res.ParentID, "$"), ".")
 			if len(parts) < 2 {
 				return fmt.Errorf("invalid reference format in $_parent_id for $_ref=%s", res.Ref)
 			}
+
 			if _, ok := refCtx.Get(parts[0]); !ok {
 				return fmt.Errorf("reference %s not found for $_ref=%s", parts[0], res.Ref)
 			}
-		}
+		} */
 
 		if len(res.Resources) > 0 {
 			childFile := LoadResFile{Resources: res.Resources}

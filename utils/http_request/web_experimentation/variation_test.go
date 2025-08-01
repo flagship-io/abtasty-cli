@@ -23,7 +23,8 @@ func TestHTTPGetVariation(t *testing.T) {
 
 func TestHTTPDeleteVariation(t *testing.T) {
 
-	err := variationRequester.HTTPDeleteVariation(100000, 110000)
+	resp, err := variationRequester.HTTPDeleteVariation(100000, 110000)
 
 	assert.Nil(t, err)
+	assert.NotNil(t, resp)
 }
