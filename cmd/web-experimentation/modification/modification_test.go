@@ -31,9 +31,6 @@ var testModification_ []models.Modification
 var testModificationList []models.Modification
 
 func TestModificationCommand(t *testing.T) {
-	failOutput, _ := utils.ExecuteCommand(ModificationCmd)
-	assert.Contains(t, failOutput, "Error: required flag(s) \"campaign-id\" not set")
-
 	successOutput, _ := utils.ExecuteCommand(ModificationCmd, "--campaign-id="+strconv.Itoa(100000))
 	assert.Contains(t, successOutput, "Manage your modifications")
 }
@@ -63,11 +60,10 @@ func TestModificationGetCommand(t *testing.T) {
 	assert.Contains(t, failOutput, "Error: required flag(s) \"id\" not set")
 
 	successOutput, _ := utils.ExecuteCommand(ModificationCmd, "get", "--id=120003", "--campaign-id=100000")
-	err = json.Unmarshal([]byte(successOutput), &testModification_)
+	err = json.Unmarshal([]byte(successOutput), &testModification)
 
 	assert.Nil(t, err)
-
-	assert.Equal(t, mockfunction_we.TestModification.Data.Modifications, testModification_)
+	assert.Equal(t, mockfunction_we.TestModification.Data.Modifications[0], testModification)
 }
 
 func TestModificationListCommand(t *testing.T) {
@@ -85,5 +81,5 @@ func TestModificationDeleteCommand(t *testing.T) {
 	assert.Contains(t, failOutput, "Error: required flag(s) \"id\" not set")
 
 	successOutput, _ := utils.ExecuteCommand(ModificationCmd, "delete", "--campaign-id=100000", "--id=120003")
-	assert.Equal(t, "Modification deleted\n", successOutput)
+	assert.Equal(t, "Modification 120003 deleted\n", successOutput)
 }

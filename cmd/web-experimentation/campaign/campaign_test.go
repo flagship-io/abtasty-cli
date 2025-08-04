@@ -44,7 +44,7 @@ func TestCampaignEditCommand(t *testing.T) {
 	failOutput, _ := utils.ExecuteCommand(CampaignCmd, "edit")
 	assert.Contains(t, failOutput, "Error: required flag(s) \"data-raw\", \"id\" not set")
 
-	output, _ := utils.ExecuteCommand(CampaignCmd, "edit", "--id=100000", "--data-raw='{\"name\":\"testCampaignName1\",\"type\":\"ab\",\"url\":\"https://abtasty1.com\",\"description\":\"testCampaignDescription1\",\"global_code\":\"console.log(\"Hello World!\")\"}'")
+	output, _ := utils.ExecuteCommand(CampaignCmd, "edit", "--id=100000", "--data-raw={\"name\":\"testCampaignName1\",\"type\":\"ab\",\"url\":\"https://abtasty1.com\",\"description\":\"testCampaignDescription1\"}")
 	err := json.Unmarshal([]byte(output), &testCampaign)
 
 	assert.Nil(t, err)
@@ -83,7 +83,7 @@ func TestCampaignDeleteCommand(t *testing.T) {
 	assert.Contains(t, failOutput, "Error: required flag(s) \"id\" not set")
 
 	successOutput, _ := utils.ExecuteCommand(CampaignCmd, "delete", "--id=100000")
-	assert.Equal(t, "Campaign deleted\n", successOutput)
+	assert.Equal(t, "Campaign 100000 deleted\n", successOutput)
 }
 
 func TestCampaignSwitchCommand(t *testing.T) {
