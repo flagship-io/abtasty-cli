@@ -11,12 +11,12 @@ import (
 )
 
 var TestFolder = models.Folder{
-	Id:   100000,
+	Id:   900000,
 	Name: "testFolderName",
 }
 
 var TestFolder1 = models.Folder{
-	Id:   100001,
+	Id:   900001,
 	Name: "testFolderName1",
 }
 
@@ -47,6 +47,26 @@ func APIFolder() {
 		func(req *http.Request) (*http.Response, error) {
 			resp, _ := httpmock.NewJsonResponse(200, respList)
 			return resp, nil
+		},
+	)
+
+	httpmock.RegisterResponder("POST", utils.GetWebExperimentationHost()+"/v1/accounts/"+mockfunction.Auth.AccountID+"/folders",
+		func(req *http.Request) (*http.Response, error) {
+			resp, _ := httpmock.NewJsonResponse(200, TestFolder)
+			return resp, nil
+		},
+	)
+
+	httpmock.RegisterResponder("PATCH", utils.GetWebExperimentationHost()+"/v1/accounts/"+mockfunction.Auth.AccountID+"/folders/"+strconv.Itoa(TestFolder.Id),
+		func(req *http.Request) (*http.Response, error) {
+			resp, _ := httpmock.NewJsonResponse(200, TestFolder)
+			return resp, nil
+		},
+	)
+
+	httpmock.RegisterResponder("DELETE", utils.GetWebExperimentationHost()+"/v1/accounts/"+mockfunction.Auth.AccountID+"/folders/"+strconv.Itoa(TestFolder.Id),
+		func(req *http.Request) (*http.Response, error) {
+			return httpmock.NewStringResponse(204, ""), nil
 		},
 	)
 

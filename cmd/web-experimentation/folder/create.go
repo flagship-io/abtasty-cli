@@ -14,30 +14,30 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func CreateFolder(dataRaw []byte) []byte {
+func CreateFolder(dataRaw []byte) ([]byte, error) {
 	folderHeader, err := httprequest.FolderRequester.HTTPCreateFolder(dataRaw)
 	if err != nil {
-		log.Fatalf("error occurred: %v", err)
+		return nil, err
 	}
 
 	parts := strings.Split(string(folderHeader), "/")
 	folderID := parts[len(parts)-1]
 	folderIDInt, err := strconv.Atoi(folderID)
 	if err != nil {
-		log.Fatalf("error occurred: %v", err)
+		return nil, err
 	}
 
 	body, err := httprequest.FolderRequester.HTTPGetFolder(folderIDInt)
 	if err != nil {
-		log.Fatalf("error occurred: %s", err)
+		return nil, err
 	}
 
 	bodyByte, err := json.Marshal(body)
 	if err != nil {
-		log.Fatalf("error occurred: %s", err)
+		return nil, err
 	}
 
-	return bodyByte
+	return bodyByte, nil
 }
 
 // createCmd represents the create command
@@ -46,7 +46,10 @@ var createCmd = &cobra.Command{
 	Short: "Create an folder",
 	Long:  `Create an folder`,
 	Run: func(cmd *cobra.Command, args []string) {
-		resp := CreateFolder([]byte(DataRaw))
+		resp, err := CreateFolder([]byte(DataRaw))
+		if err != nil {
+			log.Fatalf("error occurred: %v", err)
+		}
 
 		fmt.Fprintf(cmd.OutOrStdout(), "%s\n", string(resp))
 	},

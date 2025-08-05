@@ -46,7 +46,7 @@ func TestFolderGetCommand(t *testing.T) {
 	failOutput, _ := utils.ExecuteCommand(FolderCmd, "get")
 	assert.Contains(t, failOutput, "Error: required flag(s) \"id\" not set")
 
-	successOutput, _ := utils.ExecuteCommand(FolderCmd, "get", "--id=100000")
+	successOutput, _ := utils.ExecuteCommand(FolderCmd, "get", "--id=900000")
 
 	err := json.Unmarshal([]byte(successOutput), &testFolder)
 
@@ -64,4 +64,13 @@ func TestFolderListCommand(t *testing.T) {
 	assert.Nil(t, err)
 
 	assert.Equal(t, mockfunction_we.TestFolderList, testFolderList)
+}
+
+func TestFolderDeleteCommand(t *testing.T) {
+
+	failOutput, _ := utils.ExecuteCommand(FolderCmd, "delete")
+	assert.Contains(t, failOutput, "Error: required flag(s) \"id\" not set")
+
+	successOutput, _ := utils.ExecuteCommand(FolderCmd, "delete", "--id=900000")
+	assert.Equal(t, "Folder 900000 deleted\n", successOutput)
 }
