@@ -6,7 +6,6 @@ package variation_global_code
 import (
 	"log"
 
-	"github.com/flagship-io/abtasty-cli/models/web_experimentation"
 	"github.com/flagship-io/abtasty-cli/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -18,15 +17,11 @@ var infoCSSCmd = &cobra.Command{
 	Short: "Get variation global css code info",
 	Long:  `Get variation global css code info `,
 	Run: func(cmd *cobra.Command, args []string) {
-		var modif web_experimentation.Modification
-
-		m, err := GetModification(VariationID, CampaignID, ModificationCSS)
+		m, err := GetVariationGlobalCodePerType(VariationID, CampaignID, ModificationCSS)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
-
-		modif = m
-		utils.FormatItem([]string{"Id", "Name", "Type", "VariationID", "Selector", "Engine", "Value"}, modif, viper.GetString("output_format"), cmd.OutOrStdout())
+		utils.FormatItem([]string{"Id", "Name", "Type", "VariationID", "Selector", "Engine", "Value"}, m, viper.GetString("output_format"), cmd.OutOrStdout())
 	},
 }
 

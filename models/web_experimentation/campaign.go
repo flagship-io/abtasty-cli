@@ -34,7 +34,6 @@ type CampaignWE struct {
 
 type CampaignWEResourceLoader struct {
 	*CampaignWECommon
-	Variations        []VariationResourceLoader   `json:"variations,omitempty"`
 	Traffic           int                         `json:"traffic,omitempty"`
 	CampaignTargeting *TargetingCampaignModelJSON `json:"campaign_targeting,omitempty"`
 }

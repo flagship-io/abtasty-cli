@@ -16,7 +16,7 @@ import (
 )
 
 func createOrEditVariationGlobalCode(variationID, campaignID int, code string, modifType vgc.ModificationType) error {
-	modif, err := vgc.GetModification(variationID, campaignID, modifType)
+	modif, err := vgc.GetVariationGlobalCodePerType(variationID, campaignID, modifType)
 	if err != nil {
 		return fmt.Errorf("error occurred: %v", err)
 	}

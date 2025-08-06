@@ -24,14 +24,13 @@ var pushCSSCmd = &cobra.Command{
 	Short: "Push variation global css code",
 	Long:  `Push variation global css code`,
 	Run: func(cmd *cobra.Command, args []string) {
-
 		var codeByte []byte
 
 		if !utils.CheckSingleFlag(cssFilePath != "", cssCode != "") {
 			log.Fatalf("error occurred: %s", "1 flag is required. (file, code)")
 		}
 
-		m, err := GetModification(VariationID, CampaignID, ModificationCSS)
+		m, err := GetVariationGlobalCodePerType(VariationID, CampaignID, ModificationCSS)
 		if err != nil {
 			log.Fatalf("error occurred: %s", err)
 		}

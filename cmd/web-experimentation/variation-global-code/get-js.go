@@ -23,7 +23,7 @@ var getJSCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		var jsCode string
 
-		m, err := GetModification(VariationID, CampaignID, ModificationJS)
+		m, err := GetVariationGlobalCodePerType(VariationID, CampaignID, ModificationJS)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
@@ -58,6 +58,8 @@ var getJSCmd = &cobra.Command{
 			fmt.Fprintln(cmd.OutOrStdout(), jsCode)
 			return
 		}
+
+		fmt.Fprintln(cmd.OutOrStdout(), "No variation global code found")
 	},
 }
 

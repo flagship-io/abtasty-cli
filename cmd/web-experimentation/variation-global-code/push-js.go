@@ -30,7 +30,7 @@ var pushJSCmd = &cobra.Command{
 			log.Fatalf("error occurred: %s", "1 flag is required. (file, code)")
 		}
 
-		m, err := GetModification(VariationID, CampaignID, ModificationJS)
+		m, err := GetVariationGlobalCodePerType(VariationID, CampaignID, ModificationJS)
 		if err != nil {
 			log.Fatalf("error occurred: %s", err)
 		}

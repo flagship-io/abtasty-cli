@@ -25,6 +25,13 @@ func APIVariation() {
 		},
 	)
 
+	httpmock.RegisterResponder("GET", utils.GetWebExperimentationHost()+"/v1/accounts/"+mockfunction.Auth.AccountID+"/tests/"+strconv.Itoa(TestCampaign.Id)+"/modifications",
+		func(req *http.Request) (*http.Response, error) {
+			resp, _ := httpmock.NewJsonResponse(200, TestModifications)
+			return resp, nil
+		},
+	)
+
 	httpmock.RegisterResponder("DELETE", utils.GetWebExperimentationHost()+"/v1/accounts/"+mockfunction.Auth.AccountID+"/tests/"+strconv.Itoa(TestCampaign.Id)+"/variations/"+strconv.Itoa(TestVariation.Id),
 		func(req *http.Request) (*http.Response, error) {
 			return httpmock.NewStringResponse(204, ""), nil

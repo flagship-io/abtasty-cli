@@ -22,7 +22,7 @@ const (
 	ModificationCSS ModificationType = "addCSS"
 )
 
-func GetModification(variationID, campaignID int, mType ModificationType) (m web_experimentation.Modification, err error) {
+func GetVariationGlobalCodePerType(variationID, campaignID int, mType ModificationType) (m web_experimentation.Modification, err error) {
 	body, err := httprequest.ModificationRequester.HTTPListModification(campaignID)
 	if err != nil {
 		return web_experimentation.Modification{}, err
@@ -35,6 +35,25 @@ func GetModification(variationID, campaignID int, mType ModificationType) (m web
 	}
 
 	return m, nil
+}
+
+func GetVariationGlobalCode(variationID, campaignID int) (vgc web_experimentation.VariationGlobalCode, err error) {
+	body, err := httprequest.ModificationRequester.HTTPListModification(campaignID)
+	if err != nil {
+		return web_experimentation.VariationGlobalCode{}, err
+	}
+
+	for _, modification := range body {
+		if modification.VariationID == variationID && modification.Type == string(ModificationJS) && modification.Selector == "" {
+			vgc.Js = modification.Value
+		}
+
+		if modification.VariationID == variationID && modification.Type == string(ModificationCSS) && modification.Selector == "" {
+			vgc.Css = modification.Value
+		}
+	}
+
+	return vgc, nil
 }
 
 // VariationGlobalCodeCmd represents the variation global code command

@@ -17,6 +17,7 @@ type VariationGlobalCode struct {
 }
 
 type VariationResourceLoader struct {
+	Id          int                 `json:"id,omitempty"`
 	Name        string              `json:"name,omitempty"`
 	Type        string              `json:"type,omitempty"`
 	Description string              `json:"description,omitempty"`

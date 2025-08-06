@@ -6,6 +6,7 @@ package variation
 import (
 	"log"
 
+	variation_global_code "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/variation-global-code"
 	"github.com/flagship-io/abtasty-cli/models/web_experimentation"
 	"github.com/flagship-io/abtasty-cli/utils"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
@@ -13,13 +14,24 @@ import (
 	"github.com/spf13/viper"
 )
 
-func ListVariations(campaignID int) ([]web_experimentation.VariationWE, error) {
-	body, err := httprequest.CampaignWERequester.HTTPGetCampaign(campaignID)
+func ListVariations(campaignID int) (variations []web_experimentation.VariationResourceLoader, err error) {
+	campaign, err := httprequest.CampaignWERequester.HTTPGetCampaign(campaignID)
 	if err != nil {
-		return []web_experimentation.VariationWE{}, err
+		return []web_experimentation.VariationResourceLoader{}, err
 	}
 
-	return body.Variations, nil
+	for _, variation := range campaign.Variations {
+		variationResourceLoader := web_experimentation.VariationResourceLoader{Id: variation.Id, Name: variation.Name, Type: variation.Type, Description: variation.Description, Traffic: variation.Traffic}
+		vgc, err := variation_global_code.GetVariationGlobalCode(variation.Id, campaignID)
+		if err != nil {
+			return []web_experimentation.VariationResourceLoader{}, err
+		}
+
+		variationResourceLoader.Code = vgc
+		variations = append(variations, variationResourceLoader)
+	}
+
+	return variations, nil
 }
 
 // listCmd represents the list command
