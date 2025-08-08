@@ -6,11 +6,21 @@ package campaign
 import (
 	"log"
 
+	"github.com/flagship-io/abtasty-cli/models/web_experimentation"
 	"github.com/flagship-io/abtasty-cli/utils"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
+
+func GetCampaign(campaignID int) (web_experimentation.CampaignWE, error) {
+	body, err := httprequest.CampaignWERequester.HTTPGetCampaign(campaignID)
+	if err != nil {
+		return web_experimentation.CampaignWE{}, err
+	}
+
+	return body, nil
+}
 
 // getCmd represents get command
 var getCmd = &cobra.Command{
@@ -18,7 +28,7 @@ var getCmd = &cobra.Command{
 	Short: "Get a campaign",
 	Long:  `Get a campaign`,
 	Run: func(cmd *cobra.Command, args []string) {
-		body, err := httprequest.CampaignWERequester.HTTPGetCampaign(CampaignID)
+		body, err := GetCampaign(CampaignID)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}

@@ -13,8 +13,17 @@ import (
 	"github.com/spf13/viper"
 )
 
-func ListModifications(campaignID int) ([]web_experimentation.Modification, error) {
-	return httprequest.ModificationRequester.HTTPListModification(campaignID)
+func ListModifications(campaignID int) (modificationsRL []web_experimentation.ModificationResourceLoader, err error) {
+	modifications, err := httprequest.ModificationRequester.HTTPListModification(campaignID)
+	if err != nil {
+		return []web_experimentation.ModificationResourceLoader{}, err
+	}
+
+	for _, modification := range modifications {
+		modificationsRL = append(modificationsRL, web_experimentation.ModificationResourceLoader{Id: modification.Id, Name: modification.Name, Type: getTypeFromModificationAPI(modification.Type), CampaignID: campaignID, Selector: modification.Selector, Code: modification.Value, VariationID: modification.VariationID})
+	}
+
+	return modificationsRL, nil
 }
 
 // listCmd represents the list command
@@ -27,10 +36,16 @@ var listCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
-		utils.FormatItem([]string{"Id", "Name", "Type", "VariationID", "Selector", "Engine", "Value"}, body, viper.GetString("output_format"), cmd.OutOrStdout())
+
+		utils.FormatItem([]string{"Id", "Name", "Type", "VariationID", "CampaignID", "Selector", "Code"}, body, viper.GetString("output_format"), cmd.OutOrStdout())
 	},
 }
 
 func init() {
+	listCmd.Flags().IntVarP(&CampaignID, "campaign-id", "", 0, "campaign id of your modification")
+	if err := listCmd.MarkFlagRequired("campaign-id"); err != nil {
+		log.Fatalf("error occurred: %v", err)
+	}
+
 	ModificationCmd.AddCommand(listCmd)
 }

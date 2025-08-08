@@ -103,7 +103,6 @@ var createCmd = &cobra.Command{
 }
 
 func init() {
-
 	createCmd.Flags().IntVarP(&VariationID, "variation-id", "", 0, "variation id of your modifications")
 	if err := createCmd.MarkFlagRequired("variation-id"); err != nil {
 		log.Fatalf("error occurred: %v", err)

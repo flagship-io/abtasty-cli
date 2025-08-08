@@ -49,5 +49,10 @@ func init() {
 		log.Fatalf("error occurred: %v", err)
 	}
 
+	deleteCmd.Flags().IntVarP(&CampaignID, "campaign-id", "", 0, "campaign id of your modification")
+	if err := deleteCmd.MarkFlagRequired("campaign-id"); err != nil {
+		log.Fatalf("error occurred: %v", err)
+	}
+
 	ModificationCmd.AddCommand(deleteCmd)
 }

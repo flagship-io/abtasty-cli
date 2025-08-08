@@ -16,6 +16,8 @@ type CampaignWECommon struct {
 	LastPlayTimestamp  *DateTemplate   `json:"last_play,omitempty"`
 	LastPauseTimestamp *DateTemplate   `json:"last_pause,omitempty"`
 	GlobalCodeCampaign string          `json:"global_code,omitempty"`
+	Code               string          `json:"code,omitempty"`
+	FolderID           int             `json:"folder_id,omitempty"`
 	SourceCode         string          `json:"source_code,omitempty"`
 	Report             *CampaignReport `json:"report,omitempty"`
 }

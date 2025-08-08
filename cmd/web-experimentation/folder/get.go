@@ -6,11 +6,21 @@ package folder
 import (
 	"log"
 
+	"github.com/flagship-io/abtasty-cli/models/web_experimentation"
 	"github.com/flagship-io/abtasty-cli/utils"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
+
+func GetFolder(folderID int) (web_experimentation.Folder, error) {
+	body, err := httprequest.FolderRequester.HTTPGetFolder(folderID)
+	if err != nil {
+		return web_experimentation.Folder{}, err
+	}
+
+	return body, nil
+}
 
 // getCmd represents get command
 var getCmd = &cobra.Command{
@@ -18,12 +28,12 @@ var getCmd = &cobra.Command{
 	Short: "Get an folder",
 	Long:  `Get an folder`,
 	Run: func(cmd *cobra.Command, args []string) {
-		body, err := httprequest.FolderRequester.HTTPGetFolder(FolderID)
+		body, err := GetFolder(FolderID)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
-		utils.FormatItem([]string{"Id", "Name"}, body, viper.GetString("output_format"), cmd.OutOrStdout())
 
+		utils.FormatItem([]string{"Id", "Name"}, body, viper.GetString("output_format"), cmd.OutOrStdout())
 	},
 }
 

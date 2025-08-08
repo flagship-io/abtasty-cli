@@ -41,7 +41,6 @@ func TestModificationHelpCommand(t *testing.T) {
 }
 
 func TestModificationEditCommand(t *testing.T) {
-
 	failOutput, _ := utils.ExecuteCommand(ModificationCmd, "edit", "--campaign-id=100000")
 	assert.Contains(t, failOutput, "Error: required flag(s) \"data-raw\", \"id\" not set")
 
@@ -55,7 +54,6 @@ func TestModificationEditCommand(t *testing.T) {
 }
 
 func TestModificationGetCommand(t *testing.T) {
-
 	failOutput, err := utils.ExecuteCommand(ModificationCmd, "get", "--campaign-id=100000")
 	assert.Contains(t, failOutput, "Error: required flag(s) \"id\" not set")
 
@@ -67,7 +65,6 @@ func TestModificationGetCommand(t *testing.T) {
 }
 
 func TestModificationListCommand(t *testing.T) {
-
 	output, err := utils.ExecuteCommand(ModificationCmd, "list", "--campaign-id=100000")
 	err = json.Unmarshal([]byte(output), &testModificationList)
 
@@ -76,7 +73,6 @@ func TestModificationListCommand(t *testing.T) {
 }
 
 func TestModificationDeleteCommand(t *testing.T) {
-
 	failOutput, _ := utils.ExecuteCommand(ModificationCmd, "delete", "--campaign-id=100000")
 	assert.Contains(t, failOutput, "Error: required flag(s) \"id\" not set")
 

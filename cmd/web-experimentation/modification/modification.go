@@ -25,6 +25,9 @@ var ModificationCmd = &cobra.Command{
 	},
 }
 
-func init() {
-	ModificationCmd.PersistentFlags().IntVarP(&CampaignID, "campaign-id", "", 0, "campaign id of your modifications")
+func getTypeFromModificationAPI(t string) string {
+	if t == "addCSS" {
+		return "css"
+	}
+	return "js"
 }

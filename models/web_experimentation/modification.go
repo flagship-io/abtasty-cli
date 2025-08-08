@@ -27,9 +27,11 @@ type ModificationDataWE struct {
 }
 
 type ModificationResourceLoader struct {
-	Name       string `json:"name,omitempty"`
-	Type       string `json:"type,omitempty"`
-	CampaignID int    `json:"campaign_id,omitempty"`
-	Selector   string `json:"selector,omitempty"`
-	Code       string `json:"code,omitempty"`
+	Id          int    `json:"id,omitempty"`
+	Name        string `json:"name,omitempty"`
+	Type        string `json:"type,omitempty"`
+	CampaignID  int    `json:"campaign_id,omitempty"`
+	VariationID int    `json:"variation_id,omitempty"`
+	Selector    string `json:"selector,omitempty"`
+	Code        string `json:"code,omitempty"`
 }
