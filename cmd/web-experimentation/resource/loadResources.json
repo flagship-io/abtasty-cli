@@ -2,6 +2,14 @@
     "version": 1,
     "resources": [
         {
+            "type": "folder",
+            "$_ref": "f1",
+            "action": "create",
+            "payload": {
+                "name": "Summer 2025"
+            }
+        },
+        {
             "type": "campaign",
             "$_ref": "c1",
             "action": "create",
@@ -15,9 +23,9 @@
                     "chadi.laoulaou",
                     "SP"
                 ],
-                "code": "string",
+                "code": "console.log('global code!')",
                 "source_code": "",
-                "folder_id": 0,
+                "folder_id": "$f1.id",
                 "campaign_targeting": {
                     "segment_ids": [
                         "7dcfdb7f-c73a-4d16-a959-21bf17abfe41"
@@ -117,11 +125,6 @@
                     "css": "p {color: purple; text-align: center;}"
                 }
             }
-        },
-        {
-            "type": "campaign",
-            "$_ref": "c2",
-            "action": "list"
         },
         {
             "type": "modification",
