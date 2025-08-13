@@ -10,6 +10,44 @@
             }
         },
         {
+            "type": "audience",
+            "$_ref": "a1",
+            "action": "create",
+            "payload": {
+                "name": "Segment",
+                "description": "description_1",
+                "hidden": true,
+                "allow_duplicated_config": true,
+                "groups": [
+                    [
+                        {
+                            "operator": "or",
+                            "mutation_observer": false,
+                            "type": 42,
+                            "conditions": [
+                                {
+                                    "include": true,
+                                    "value": "hello2025"
+                                }
+                            ]
+                        },
+                        {
+                            "operator": "auto",
+                            "mutation_observer": false,
+                            "type": 34,
+                            "conditions": [
+                                {
+                                    "condition": 1,
+                                    "include": true,
+                                    "value": 60
+                                }
+                            ]
+                        }
+                    ]
+                ]
+            }
+        },
+        {
             "type": "campaign",
             "$_ref": "c1",
             "action": "create",
@@ -28,7 +66,7 @@
                 "folder_id": "$f1.id",
                 "campaign_targeting": {
                     "segment_ids": [
-                        "7dcfdb7f-c73a-4d16-a959-21bf17abfe41"
+                        "$a1.id"
                     ],
                     "url_scopes": [
                         {

@@ -14,6 +14,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/audience"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/campaign"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/folder"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/modification"
@@ -46,6 +47,7 @@ const (
 	Campaign     string = "campaign"
 	Variation    string = "variation"
 	Modification string = "modification"
+	Audience     string = "audience"
 )
 
 type Resource struct {
@@ -126,29 +128,36 @@ func (rc *RefContext) Get(ref string) (any, bool) {
 
 func resolveRefs(val any, rc *RefContext) any {
 	switch v := val.(type) {
-	case map[string]any:
-		for k, vv := range v {
-			if s, ok := vv.(string); ok && strings.HasPrefix(s, "$") {
-				parts := strings.Split(strings.TrimPrefix(s, "$"), ".")
-				if len(parts) > 1 {
-					if refVal, ok := rc.Get(parts[0]); ok {
-						if m, ok := refVal.(map[string]any); ok {
-							if field, ok := m[parts[1]]; ok {
-								v[k] = field
-							}
+	case string:
+		if strings.HasPrefix(v, "$") {
+			parts := strings.Split(strings.TrimPrefix(v, "$"), ".")
+			if len(parts) > 1 {
+				if refVal, ok := rc.Get(parts[0]); ok {
+					if m, ok := refVal.(map[string]interface{}); ok {
+						if field, ok := m[parts[1]]; ok {
+							return field
 						}
 					}
 				}
-			} else {
-				v[k] = resolveRefs(vv, rc)
 			}
 		}
-	case []any:
-		for i, vv := range v {
-			v[i] = resolveRefs(vv, rc)
+		return v
+
+	case []interface{}:
+		for i, item := range v {
+			v[i] = resolveRefs(item, rc)
 		}
+		return v
+
+	case map[string]interface{}:
+		for k, mapVal := range v {
+			v[k] = resolveRefs(mapVal, rc)
+		}
+		return v
+
+	default:
+		return val
 	}
-	return val
 }
 
 func LoadResources(cmd *cobra.Command, filePath, inputRefFile, inputRefRaw, outputFile string) error {
@@ -224,9 +233,11 @@ func LoadResources(cmd *cobra.Command, filePath, inputRefFile, inputRefRaw, outp
 		}
 	}
 
-	var folders, campaigns, variations, modifications, others []Resource
+	var audiences, folders, campaigns, variations, modifications, others []Resource
 	for _, res := range mutating {
 		switch res.Type {
+		case Audience:
+			audiences = append(audiences, res)
 		case Folder:
 			folders = append(folders, res)
 		case Campaign:
@@ -241,6 +252,10 @@ func LoadResources(cmd *cobra.Command, filePath, inputRefFile, inputRefRaw, outp
 	}
 
 	for _, res := range folders {
+		processAndRecord(cmd, res, refCtx)
+	}
+
+	for _, res := range audiences {
 		processAndRecord(cmd, res, refCtx)
 	}
 
@@ -297,6 +312,10 @@ func processResourceWithResponse(cmd *cobra.Command, res Resource, rc *RefContex
 					if field, ok := m[parts[1]].(float64); ok {
 						res.ParentID = fmt.Sprintf("%v", int(field))
 					}
+
+					if field, ok := m[parts[1]].(string); ok {
+						res.ParentID = fmt.Sprintf("%v", field)
+					}
 				}
 			}
 		}
@@ -335,7 +354,14 @@ func processResourceWithResponse(cmd *cobra.Command, res Resource, rc *RefContex
 					child.ParentID = fmt.Sprintf("%v", int(id))
 					child.ParentResource = &res
 				}
+
+				if id, ok := resp.(map[string]any)["id"].(string); ok {
+					child.ParentID = fmt.Sprintf("%v", id)
+					child.ParentResource = &res
+
+				}
 			}
+
 			_, err = processResourceWithResponse(cmd, child, rc)
 			if err != nil {
 				return nil, err
@@ -362,6 +388,11 @@ func handleCreate(res Resource) (resp map[string]any, err error) {
 		}
 	case Campaign:
 		respBytes, err = campaign.CreateCampaign(payloadBytes)
+		if err != nil {
+			return nil, err
+		}
+	case Audience:
+		respBytes, err = audience.CreateAudience(payloadBytes)
 		if err != nil {
 			return nil, err
 		}
@@ -728,7 +759,7 @@ func ValidateResources(loadFile *LoadResFile, refCtx *RefContext) error {
 			return fmt.Errorf("resource with $_ref: %s is missing 'type'", res.Ref)
 		}
 
-		if res.Type != Campaign && res.Type != Variation && res.Type != Modification && res.Type != Folder {
+		if res.Type != Campaign && res.Type != Variation && res.Type != Modification && res.Type != Folder && res.Type != Audience {
 			return fmt.Errorf("resource with $_ref: %s has unknown type: %s, only %s, %s, %s, %s are allowed", res.Ref, res.Type, Folder, Campaign, Variation, Modification)
 		}
 
@@ -769,6 +800,11 @@ func ValidateResources(loadFile *LoadResFile, refCtx *RefContext) error {
 		dec.DisallowUnknownFields()
 
 		switch res.Type {
+		case Audience:
+			var audienceModel web_experimentation.AudiencePayload
+			if err := dec.Decode(&audienceModel); err != nil {
+				return fmt.Errorf("%v in %s", err, res.Type)
+			}
 		case Folder:
 			var folderModel web_experimentation.Folder
 			if err := dec.Decode(&folderModel); err != nil {
@@ -815,16 +851,9 @@ func ValidateResources(loadFile *LoadResFile, refCtx *RefContext) error {
 		}
 
 		for k, v := range res.Payload {
-			if s, ok := v.(string); ok && strings.HasPrefix(s, "$") {
-				parts := strings.Split(strings.TrimPrefix(s, "$"), ".")
-				if len(parts) < 2 {
-					return fmt.Errorf("invalid $ reference format in payload for key %s in $_ref=%s", k, res.Ref)
-				}
-
-				if _, ok := refCtx.Get(parts[0]); !ok {
-					return fmt.Errorf("reference %s not found for payload key %s in $_ref=%s", parts[0], k, res.Ref)
-
-				}
+			path := k
+			if err := validateReferences(v, refCtx, path, res.Ref); err != nil {
+				return err
 			}
 		}
 
@@ -897,9 +926,42 @@ func init() {
 	}
 
 	loadCmd.Flags().StringVarP(&outputFile, "output-file", "", "", "result of the command that contains all resource information")
-
 	loadCmd.Flags().StringVarP(&inputRefRaw, "input-ref", "", "", "params to replace resource loader file")
 	loadCmd.Flags().StringVarP(&inputRefFile, "input-ref-file", "", "", "file that contains params to replace resource loader file")
 
 	ResourceCmd.AddCommand(loadCmd)
+}
+
+func validateReferences(value interface{}, refCtx *RefContext, path string, resRef string) error {
+	switch v := value.(type) {
+	case string:
+		if strings.HasPrefix(v, "$") {
+			parts := strings.Split(strings.TrimPrefix(v, "$"), ".")
+			if len(parts) < 2 {
+				return fmt.Errorf("invalid $ reference format at %s in $_ref=%s", path, resRef)
+			}
+
+			if _, ok := refCtx.Get(parts[0]); !ok {
+				return fmt.Errorf("reference %s not found at %s in $_ref=%s", parts[0], path, resRef)
+			}
+		}
+
+	case []interface{}:
+		for i, item := range v {
+			itemPath := fmt.Sprintf("%s[%d]", path, i)
+			if err := validateReferences(item, refCtx, itemPath, resRef); err != nil {
+				return err
+			}
+		}
+
+	case map[string]interface{}:
+		for k, val := range v {
+			nestedPath := fmt.Sprintf("%s.%s", path, k)
+			if err := validateReferences(val, refCtx, nestedPath, resRef); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
 }
