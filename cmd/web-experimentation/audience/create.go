@@ -9,29 +9,36 @@ import (
 	"log"
 	"strings"
 
+	models "github.com/flagship-io/abtasty-cli/models/web_experimentation"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
 )
 
-func CreateAudience(dataRaw []byte) []byte {
+func CreateAudience(dataRaw []byte) ([]byte, error) {
+	var audiencePayload models.AudiencePayload
+	err := json.Unmarshal(dataRaw, &audiencePayload)
+	if err != nil {
+		return nil, err
+	}
+
 	audienceHeader, err := httprequest.AudienceRequester.HTTPCreateAudience(dataRaw)
 	if err != nil {
-		log.Fatalf("error occurred: %v", err)
+		return nil, err
 	}
 
 	parts := strings.Split(string(audienceHeader), "/")
 	audienceID := parts[len(parts)-1]
 	body, err := httprequest.AudienceRequester.HTTPGetAudience(audienceID)
 	if err != nil {
-		log.Fatalf("error occurred: %s", err)
+		return nil, err
 	}
 
 	bodyByte, err := json.Marshal(body)
 	if err != nil {
-		log.Fatalf("error occurred: %s", err)
+		return nil, err
 	}
 
-	return bodyByte
+	return bodyByte, nil
 }
 
 // createCmd represents the create command
@@ -40,8 +47,11 @@ var createCmd = &cobra.Command{
 	Short: "Create an audience",
 	Long:  `Create an audience`,
 	Run: func(cmd *cobra.Command, args []string) {
-		resp := CreateAudience([]byte(DataRaw))
+		resp, err := CreateAudience([]byte(DataRaw))
+		if err != nil {
+			log.Fatalf("error occurred: %s", err)
 
+		}
 		fmt.Fprintf(cmd.OutOrStdout(), "%s\n", string(resp))
 	},
 }

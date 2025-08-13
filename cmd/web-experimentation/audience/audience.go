@@ -14,7 +14,7 @@ var (
 
 // AudienceCmd represents the audience command
 var AudienceCmd = &cobra.Command{
-	Use:   "audience [list|get]",
+	Use:   "audience [list|get|create|delete]",
 	Short: "Manage your audiences",
 	Long:  `Manage your audiences`,
 	Run: func(cmd *cobra.Command, args []string) {

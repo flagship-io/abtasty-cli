@@ -6,20 +6,21 @@ import "encoding/json"
 type Audience struct {
 	Id              string       `json:"id,omitempty"`
 	Name            string       `json:"name"`
-	Description     string       `json:"description"`
-	Hidden          bool         `json:"hidden"`
-	CreatedAt       DateTemplate `json:"created_at"`
-	UpdatedAt       DateTemplate `json:"updated_at"`
-	Archive         bool         `json:"archive"`
-	IsSegment       bool         `json:"is_segment"`
-	TestIDs         []int        `json:"test_ids"`
-	LiveTestIDs     []int        `json:"live_test_ids"`
+	Description     string       `json:"description,omitempty"`
+	Hidden          bool         `json:"hidden,omitempty"`
+	CreatedAt       DateTemplate `json:"created_at,omitempty"`
+	UpdatedAt       DateTemplate `json:"updated_at,omitempty"`
+	Archive         bool         `json:"archive,omitempty"`
+	IsSegment       bool         `json:"is_segment,omitempty"`
+	TestIDs         []int        `json:"test_ids,omitempty"`
+	LiveTestIDs     []int        `json:"live_test_ids,omitempty"`
 	ListTestsSource []struct {
 		Id   int    `json:"id,omitempty"`
 		Name string `json:"name"`
 		Type string `json:"type"`
-	} `json:"live_tests_source"`
-	Groups []Group `json:"groups"`
+	} `json:"live_tests_source,omitempty"`
+	Groups                []Group `json:"groups"`
+	AllowDuplicatedConfig bool    `json:"allow_duplicated_config"`
 }
 
 type Group struct {
@@ -31,26 +32,22 @@ type TargetingGroup struct {
 	Id               string `json:"id,omitempty"`
 	Operator         string `json:"operator"`
 	MutationObserver bool   `json:"mutation_observer"`
-	Type             struct {
-		Id   int    `json:"id,omitempty"`
-		Name string `json:"name"`
-	} `json:"type"`
-	TimeFrame    int           `json:"timeframe,omitempty"`
-	VisitedPages int           `json:"visited_pages,omitempty"`
-	Conditions   []interface{} `json:"conditions"`
-}
-type AudienceResourceLoader struct {
-	Name                  string                  `json:"name"`
-	Description           string                  `json:"description"`
-	Hidden                bool                    `json:"hidden"`
-	Groups                [][]GroupResourceLoader `json:"groups"`
-	AllowDuplicatedConfig bool                    `json:"allow_duplicated_config"`
+	TimeFrame        int    `json:"timeframe,omitempty"` // for PAGES_INTEREST
+	VisitedPages     int    `json:"visited_pages,omitempty"`
+	Conditions       []any  `json:"conditions"`
+	Count            int    `json:"count,omitempty"`              // for PAGE_VIEW
+	Type             any    `json:"type"`                         // struct{id int, name string}, or string/int
+	CheckMode        string `json:"check_mode,omitempty"`         // Defined only for DATALAYER_TYPE and JS_VARIABLE targetings Possible values: loading, periodic, custom
+	CheckModeLatency int    `json:"check_mode_latency,omitempty"` // for DATALAYER_TYPE, JS_VARIABLE
 }
 
-type GroupResourceLoader struct {
-	Operator   string `json:"operator"`
-	Conditions any    `json:"conditions"`
-	Type       string `json:"type"`
+type AudiencePayload struct {
+	Id                    string             `json:"id,omitempty"`
+	Name                  string             `json:"name"`
+	Description           string             `json:"description,omitempty"`
+	Hidden                bool               `json:"hidden,omitempty"`
+	Groups                [][]TargetingGroup `json:"groups"`
+	AllowDuplicatedConfig bool               `json:"allow_duplicated_config"`
 }
 
 type Device struct {
@@ -85,6 +82,12 @@ type GeoLocation struct {
 
 type UrlParameter = IncludeNameValue
 type Cookie = IncludeNameValue
+
+type IncludeNameValue struct {
+	Include bool   `json:"include"`
+	Name    string `json:"name"`
+	Value   string `json:"value,omitempty"`
+}
 
 type Selector struct {
 	Include   bool   `json:"include"`
@@ -123,12 +126,6 @@ type Condition struct {
 type Rule struct {
 	Type    string          `json:"type"`
 	Payload json.RawMessage `json:"payload"`
-}
-
-type IncludeNameValue struct {
-	Include bool   `json:"include"`
-	Name    string `json:"name"`
-	Value   string `json:"value,omitempty"`
 }
 
 type IncludeSegmentName struct {
