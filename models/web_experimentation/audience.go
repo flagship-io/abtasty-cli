@@ -119,7 +119,7 @@ type JSVariable struct {
 	Value     string `json:"value,omitempty"`
 }
 
-type PageInterestPayload = StringMatchPayload
+type PageInterest = StringMatchPayload
 
 type CampaignExposure struct {
 	Include     bool `json:"include"`
