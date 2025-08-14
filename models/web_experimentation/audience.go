@@ -35,8 +35,8 @@ type TargetingGroup struct {
 	TimeFrame        int    `json:"timeframe,omitempty"` // for PAGES_INTEREST
 	VisitedPages     int    `json:"visited_pages,omitempty"`
 	Conditions       []any  `json:"conditions"`
-	Count            int    `json:"count,omitempty"`              // for PAGE_VIEW
-	Type             any    `json:"type"`                         // struct{id int, name string}, or string/int
+	Count            int    `json:"count,omitempty"` // for PAGE_VIEW
+	Type             any    `json:"type"`
 	CheckMode        string `json:"check_mode,omitempty"`         // Defined only for DATALAYER_TYPE and JS_VARIABLE targetings Possible values: loading, periodic, custom
 	CheckModeLatency int    `json:"check_mode_latency,omitempty"` // for DATALAYER_TYPE, JS_VARIABLE
 }
@@ -100,7 +100,7 @@ type Provider struct {
 	SegmentName    string `json:"segment_name"`
 	Value          string `json:"value"`
 	SecondaryValue string `json:"secondary_value,omitempty"`
-	Condition      *int   `json:"condition,omitempty"`
+	Condition      int    `json:"condition,omitempty"`
 	ProviderID     int    `json:"provider_id"`
 }
 
@@ -108,6 +108,55 @@ type LandingPage = StringMatchPayload
 
 type NewOrReturningVisitorPayload struct {
 	NewVisitor bool `json:"new_visitor"`
+}
+
+type PageViewPayload = StringMatchPayload
+
+type JSVariable struct {
+	Include   bool   `json:"include"`
+	Name      string `json:"name"`
+	Condition int    `json:"condition"`
+	Value     string `json:"value,omitempty"`
+}
+
+type PageInterestPayload = StringMatchPayload
+
+type CampaignExposure struct {
+	Include     bool `json:"include"`
+	Type        int  `json:"type"`
+	CampaignID  int  `json:"campaign_id"`
+	VariationID int  `json:"variation_id,omitempty"`
+}
+
+type NumberPageView = ValueNonNegative
+
+type Browser struct {
+	Include     bool   `json:"include"`
+	Value       int    `json:"value"`
+	ValueCustom string `json:"value_custom,omitempty"`
+	Version     string `json:"version,omitempty"`
+}
+
+type CustomVariable struct {
+	Include  bool   `json:"include"`
+	Category string `json:"category"`
+	Action   string `json:"action,omitempty"`
+}
+
+type ScreenSize struct {
+	Include bool `json:"include"`
+	Min     int  `json:"min,omitempty"`
+	Max     int  `json:"max,omitempty"`
+}
+
+type PreviousPage = StringMatchPayload
+
+type ActionTracking = IncludeValueString
+type SessionNumber struct {
+	Include        bool `json:"include"`
+	Value          int  `json:"value"`
+	Condition      int  `json:"condition"`
+	SecondaryValue int  `json:"secondary_value,omitempty"`
 }
 
 // Non Supported
@@ -142,7 +191,7 @@ type IncludeSegmentIDIntCond struct {
 	Include      bool `json:"include"`
 	Condition    int  `json:"condition,omitempty"`
 	SegmentID    int  `json:"segment_id"`
-	SegmentValue *int `json:"segment_value,omitempty"`
+	SegmentValue int  `json:"segment_value,omitempty"`
 }
 
 type IncludeSegTypeNameCond struct {
@@ -151,7 +200,7 @@ type IncludeSegTypeNameCond struct {
 	SegmentName    string `json:"segment_name"`
 	Condition      int    `json:"condition"`
 	AttributeValue string `json:"attribute_value,omitempty"`
-	SegmentValue   *int   `json:"segment_value,omitempty"`
+	SegmentValue   int    `json:"segment_value,omitempty"`
 }
 
 type IncludeSegTypeName struct {
@@ -171,48 +220,14 @@ type StringMatchPayload struct {
 	Value     string `json:"value"`
 }
 
-type BrowserPayload struct {
-	Include     bool   `json:"include"`
-	Value       int    `json:"value"`
-	ValueCustom string `json:"value_custom,omitempty"`
-	Version     string `json:"version,omitempty"`
-}
-
 type SourceTypePayload struct {
 	Include bool `json:"include"`
 	Type    int  `json:"type"`
 }
 
-type ScreenSizePayload struct {
-	Include bool `json:"include"`
-	Min     *int `json:"min,omitempty"`
-	Max     *int `json:"max,omitempty"`
-}
-
-type JSVarPayload struct {
-	Include   bool   `json:"include"`
-	Name      string `json:"name"`
-	Condition int    `json:"condition"`
-	Value     string `json:"value,omitempty"`
-}
-
-type CampaignExpoPayload struct {
-	Include     bool `json:"include"`
-	Type        int  `json:"type"`
-	CampaignID  int  `json:"campaign_id"`
-	VariationID *int `json:"variation_id,omitempty"`
-}
-
 type IncludeValueString struct {
 	Include bool   `json:"include"`
 	Value   string `json:"value"`
-}
-
-type NumericWithConditionPayload struct {
-	Include        bool `json:"include"`
-	Value          int  `json:"value"`
-	Condition      int  `json:"condition"`
-	SecondaryValue *int `json:"secondary_value,omitempty"`
 }
 
 type ValueNonNegative struct {
@@ -221,10 +236,10 @@ type ValueNonNegative struct {
 }
 
 type WeatherPayload struct {
-	Include   bool     `json:"include"`
-	Condition int      `json:"condition"`
-	Min       float64  `json:"min"`
-	Max       *float64 `json:"max,omitempty"`
+	Include   bool    `json:"include"`
+	Condition int     `json:"condition"`
+	Min       float64 `json:"min"`
+	Max       float64 `json:"max,omitempty"`
 }
 
 type EcommercePayload struct {
@@ -233,19 +248,13 @@ type EcommercePayload struct {
 	Value   string `json:"value"`
 }
 
-type CustomVarPayload struct {
-	Include  bool   `json:"include"`
-	Category string `json:"category"`
-	Action   string `json:"action,omitempty"`
-}
-
 type LastPurchasePayload struct {
 	Include    bool       `json:"include"`
 	Condition  int        `json:"condition"`
 	MinDate    string     `json:"min_date,omitempty"`
 	MaxDate    string     `json:"max_date,omitempty"`
-	MinDay     *int       `json:"min_day,omitempty"`
-	MaxDay     *int       `json:"max_day,omitempty"`
+	MinDay     int        `json:"min_day,omitempty"`
+	MaxDay     int        `json:"max_day,omitempty"`
 	Properties []Property `json:"properties"`
 }
 
@@ -256,8 +265,8 @@ type PurchaseFrequencyPayload struct {
 	Value      int        `json:"value"`
 	MinDate    string     `json:"min_date,omitempty"`
 	MaxDate    string     `json:"max_date,omitempty"`
-	MinDay     *int       `json:"min_day,omitempty"`
-	MaxDay     *int       `json:"max_day,omitempty"`
+	MinDay     int        `json:"min_day,omitempty"`
+	MaxDay     int        `json:"max_day,omitempty"`
 	Properties []Property `json:"properties"`
 }
 
@@ -282,10 +291,6 @@ type AbandonedCartPayload struct {
 	Properties []AbandonedCartProperty `json:"properties"`
 }
 
-type ActionTrackingPayload = IncludeValueString
-
-type NumberPageViewPayload = ValueNonNegative
-
 type DaySincePayload = ValueNonNegative
 
 type IncludeOnly struct {
@@ -293,8 +298,6 @@ type IncludeOnly struct {
 }
 
 type SourcePayload = IncludeValueString
-
-type PageMatchPayload = StringMatchPayload
 
 type IncludeSegmentIDInt struct {
 	Include   bool `json:"include"`
@@ -323,14 +326,14 @@ type CSATPayload struct {
 	Feedback    string `json:"feedback"`
 	Type        string `json:"type"`
 	CampaignID  int    `json:"campaign_id"`
-	VariationID *int   `json:"variation_id,omitempty"`
+	VariationID int    `json:"variation_id,omitempty"`
 }
 
 type NPSPayload struct {
 	Condition      string `json:"condition"`
 	Grade          int    `json:"grade"`
-	SecondaryGrade *int   `json:"secondary_grade,omitempty"`
+	SecondaryGrade int    `json:"secondary_grade,omitempty"`
 	Type           string `json:"type"`
 	CampaignID     int    `json:"campaign_id"`
-	VariationID    *int   `json:"variation_id,omitempty"`
+	VariationID    int    `json:"variation_id,omitempty"`
 }

@@ -16,14 +16,14 @@
             "payload": {
                 "name": "Segment",
                 "description": "description_1",
-                "hidden": true,
+                "hidden": false,
                 "allow_duplicated_config": true,
                 "groups": [
                     [
                         {
                             "operator": "or",
                             "mutation_observer": false,
-                            "type": 42,
+                            "type": "ACTION_TRACKING",
                             "conditions": [
                                 {
                                     "include": true,
@@ -34,7 +34,7 @@
                         {
                             "operator": "auto",
                             "mutation_observer": false,
-                            "type": 34,
+                            "type": "SESSION_NUMBER",
                             "conditions": [
                                 {
                                     "condition": 1,
