@@ -47,7 +47,7 @@ type AudiencePayload struct {
 	Description           string             `json:"description,omitempty"`
 	Hidden                bool               `json:"hidden,omitempty"`
 	Groups                [][]TargetingGroup `json:"groups"`
-	AllowDuplicatedConfig bool               `json:"allow_duplicated_config"`
+	AllowDuplicatedConfig bool               `json:"allow_duplicated_config,omitempty"`
 }
 
 type Device struct {
