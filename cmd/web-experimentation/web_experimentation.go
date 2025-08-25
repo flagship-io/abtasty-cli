@@ -21,7 +21,8 @@ import (
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/resource"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/segment"
 	tag_rebuild "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/tag-rebuild"
-	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/token"
+	t "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/token"
+
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/trigger"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/variation"
 	variation_global_code "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/variation-global-code"
@@ -36,6 +37,8 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
+
+var accountID, token string
 
 // WebExperimentationCmd represents the web experimentation command
 var WebExperimentationCmd = &cobra.Command{
@@ -60,7 +63,7 @@ func addSubCommandPalettes() {
 	WebExperimentationCmd.AddCommand(account_global_code.AccountGlobalCodeCmd)
 	WebExperimentationCmd.AddCommand(variation_global_code.VariationGlobalCodeCmd)
 	WebExperimentationCmd.AddCommand(modification_code.ModificationCodeCmd)
-	WebExperimentationCmd.AddCommand(token.TokenCmd)
+	WebExperimentationCmd.AddCommand(t.TokenCmd)
 	WebExperimentationCmd.AddCommand(modification.ModificationCmd)
 	WebExperimentationCmd.AddCommand(working_directory.WorkingDirectoryCmd)
 	WebExperimentationCmd.AddCommand(tag_rebuild.RebuildTagCmd)
@@ -76,6 +79,10 @@ func addSubCommandPalettes() {
 
 func init() {
 	addSubCommandPalettes()
+
+	WebExperimentationCmd.PersistentFlags().StringVarP(&accountID, "account-id", "i", "", "override account ID in command")
+	WebExperimentationCmd.PersistentFlags().StringVarP(&token, "token", "t", "", "override token in command")
+
 }
 
 func initConfig() {
@@ -89,6 +96,14 @@ func initConfig() {
 		vL, err := config.ReadAuth(utils.WEB_EXPERIMENTATION, v.GetString("current_used_credential"))
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
+		}
+
+		if accountID != "" {
+			v.Set("account_id", accountID)
+		}
+
+		if token != "" {
+			v.Set("token", token)
 		}
 
 		v.MergeConfigMap(vL.AllSettings())
@@ -105,5 +120,4 @@ func initConfig() {
 	}
 
 	r.Init(&requestConfig)
-	return
 }
