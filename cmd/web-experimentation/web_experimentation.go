@@ -80,8 +80,8 @@ func addSubCommandPalettes() {
 func init() {
 	addSubCommandPalettes()
 
-	WebExperimentationCmd.PersistentFlags().StringVarP(&accountID, "account-id", "i", "", "override account ID in command")
-	WebExperimentationCmd.PersistentFlags().StringVarP(&token, "token", "t", "", "override token in command")
+	WebExperimentationCmd.PersistentFlags().StringVarP(&accountID, "account-id", "", "", "override account ID in command")
+	WebExperimentationCmd.PersistentFlags().StringVarP(&token, "token", "", "", "override token in command")
 
 }
 
@@ -98,15 +98,17 @@ func initConfig() {
 			log.Fatalf("error occurred: %v", err)
 		}
 
-		if accountID != "" {
-			v.Set("account_id", accountID)
-		}
-
-		if token != "" {
-			v.Set("token", token)
-		}
-
 		v.MergeConfigMap(vL.AllSettings())
+	}
+
+	if accountID != "" {
+		v.Set("username", "no-username")
+		v.Set("account_id", accountID)
+	}
+
+	if token != "" {
+		v.Set("username", "no-username")
+		v.Set("token", token)
 	}
 
 	v.Unmarshal(&requestConfig)
