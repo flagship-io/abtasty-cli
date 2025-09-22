@@ -30,6 +30,7 @@ var (
 	outputFile   string
 	inputRefRaw  string
 	inputRefFile string
+	dryRun       bool
 )
 
 type ResourceAction string
@@ -221,6 +222,11 @@ func LoadResources(cmd *cobra.Command, filePath, inputRefFile, inputRefRaw, outp
 
 	if err := ValidateResources(&loadFile, refCtx); err != nil {
 		return fmt.Errorf("Validation failed: %v\n", err)
+	}
+
+	if dryRun {
+		fmt.Fprintf(cmd.OutOrStdout(), "Dry-run mode: resources validated, no changes applied.\n")
+		return nil
 	}
 
 	var mutating, read []Resource
@@ -928,6 +934,7 @@ func init() {
 	loadCmd.Flags().StringVarP(&outputFile, "output-file", "", "", "result of the command that contains all resource information")
 	loadCmd.Flags().StringVarP(&inputRefRaw, "input-ref", "", "", "params to replace resource loader file")
 	loadCmd.Flags().StringVarP(&inputRefFile, "input-ref-file", "", "", "file that contains params to replace resource loader file")
+	loadCmd.Flags().BoolVarP(&dryRun, "dry-run", "", false, "perform dry run to validate resources without load resource to the API")
 
 	ResourceCmd.AddCommand(loadCmd)
 }
