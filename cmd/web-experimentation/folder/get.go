@@ -25,8 +25,8 @@ func GetFolder(folderID int) (web_experimentation.Folder, error) {
 // getCmd represents get command
 var getCmd = &cobra.Command{
 	Use:   "get [-i <folder-id> | --id <folder-id>]",
-	Short: "Get an folder",
-	Long:  `Get an folder`,
+	Short: "Get a folder",
+	Long:  `Get a folder`,
 	Run: func(cmd *cobra.Command, args []string) {
 		body, err := GetFolder(FolderID)
 		if err != nil {

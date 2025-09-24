@@ -43,8 +43,8 @@ func CreateFolder(dataRaw []byte) ([]byte, error) {
 // createCmd represents the create command
 var createCmd = &cobra.Command{
 	Use:   "create [-d <data-raw> | --data-raw=<data-raw>]",
-	Short: "Create an folder",
-	Long:  `Create an folder`,
+	Short: "Create a folder",
+	Long:  `Create a folder`,
 	Run: func(cmd *cobra.Command, args []string) {
 		resp, err := CreateFolder([]byte(DataRaw))
 		if err != nil {
