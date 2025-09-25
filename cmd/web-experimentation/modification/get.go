@@ -19,7 +19,7 @@ func GetModification(campaignID, modificationID int) (web_experimentation.Modifi
 		return web_experimentation.ModificationResourceLoader{}, err
 	}
 
-	return web_experimentation.ModificationResourceLoader{Name: modification.Name, Type: getTypeFromModificationAPI(modification.Type), CampaignID: campaignID, Selector: modification.Selector, Code: modification.Value, VariationID: modification.VariationID}, nil
+	return web_experimentation.ModificationResourceLoader{Id: modification.Id, Name: modification.Name, Type: getTypeFromModificationAPI(modification.Type), CampaignID: campaignID, Selector: modification.Selector, Code: modification.Value, VariationID: modification.VariationID}, nil
 }
 
 // getCmd represents get command
@@ -33,7 +33,7 @@ var getCmd = &cobra.Command{
 			log.Fatalf("error occurred: %v", err)
 		}
 
-		utils.FormatItem([]string{"Id", "Name", "Type", "VariationID", "Selector", "Engine", "Value"}, body, viper.GetString("output_format"), cmd.OutOrStdout())
+		utils.FormatItem([]string{"Id", "Name", "Type", "VariationID", "Selector", "Code"}, body, viper.GetString("output_format"), cmd.OutOrStdout())
 	},
 }
 
