@@ -11,7 +11,7 @@ echo "Distribution: $distro"
 echo "Architecture: $arch"
 
 # AB Tasty CLI version
-version="1.2.3"
+version="1.4.0"
 
 echo "Version: v$version"
 echo "------------------------"
