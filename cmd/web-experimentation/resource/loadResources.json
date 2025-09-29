@@ -1,0 +1,181 @@
+{
+    "version": 1,
+    "resources": [
+        {
+            "type": "folder",
+            "$_ref": "f1",
+            "action": "create",
+            "payload": {
+                "name": "Summer 2025"
+            }
+        },
+        {
+            "type": "audience",
+            "$_ref": "a1",
+            "action": "create",
+            "payload": {
+                "name": "Segment",
+                "description": "description_1",
+                "hidden": false,
+                "allow_duplicated_config": true,
+                "groups": [
+                    [
+                        {
+                            "operator": "or",
+                            "mutation_observer": false,
+                            "type": "ACTION_TRACKING",
+                            "conditions": [
+                                {
+                                    "include": true,
+                                    "value": "hello2025"
+                                }
+                            ]
+                        },
+                        {
+                            "operator": "auto",
+                            "mutation_observer": false,
+                            "type": "SESSION_NUMBER",
+                            "conditions": [
+                                {
+                                    "condition": 1,
+                                    "include": true,
+                                    "value": 60
+                                }
+                            ]
+                        }
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "campaign",
+            "$_ref": "c1",
+            "action": "create",
+            "payload": {
+                "name": "Holiday Promo",
+                "description": "Winter discounts",
+                "url": "URL",
+                "type": "ab",
+                "status": "pause",
+                "labels": [
+                    "chadi.laoulaou",
+                    "SP"
+                ],
+                "code": "console.log('global code!')",
+                "source_code": "",
+                "folder_id": "$f1.id",
+                "campaign_targeting": {
+                    "segment_ids": [
+                        "$a1.id"
+                    ],
+                    "url_scopes": [
+                        {
+                            "condition": "IS",
+                            "value": "https://abtasty.com"
+                        }
+                    ],
+                    "favorite_url_scopes": [
+                        {
+                            "include": true,
+                            "favorite_url_id": "ID"
+                        }
+                    ],
+                    "selector_scopes": [
+                        {
+                            "condition": "IS_SELECTOR_CLASS",
+                            "value": ".h1"
+                        },
+                        {
+                            "condition": "IS_NOT_SELECTOR_ID",
+                            "value": "#1234"
+                        },
+                        {
+                            "condition": "IS_NOT_SELECTOR_CLASS",
+                            "value": ".#blue"
+                        }
+                    ],
+                    "code_scope": {
+                        "value": "console.log(\"hello world\");"
+                    },
+                    "element_appears_after_page_load": false,
+                    "triggers_ids": [
+                        "ID",
+                        "ID-1"
+                    ],
+                    "targeting_frequency": {
+                        "type": "regular",
+                        "unit": "day",
+                        "value": 20
+                    }
+                }
+            },
+            "resources": [
+                {
+                    "type": "variation",
+                    "$_ref": "v1",
+                    "action": "create",
+                    "payload": {
+                        "name": "Variation A",
+                        "description": "Define variation description",
+                        "traffic": 14,
+                        "code": {
+                            "js": "alert('Variation A')",
+                            "css": "p {color: red; text-align: center;}"
+                        }
+                    },
+                    "resources": [
+                        {
+                            "type": "modification",
+                            "$_ref": "m1",
+                            "action": "create",
+                            "payload": {
+                                "name": "modification 1",
+                                "selector": "#main .text-center a",
+                                "type": "js",
+                                "code": "<h1>Click Here !</h1>"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "variation",
+                    "$_ref": "v2",
+                    "action": "create",
+                    "payload": {
+                        "name": "Variation B",
+                        "traffic": 14,
+                        "code": {
+                            "js": "document.querySelector('.btn').textContent = 'CLICK HERE';"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "variation",
+            "$_ref": "v3",
+            "$_parent_id": "$c1.id",
+            "action": "create",
+            "payload": {
+                "name": "Variation C",
+                "code": {
+                    "js": "console.log('Variation C')",
+                    "css": "p {color: purple; text-align: center;}"
+                }
+            }
+        },
+        {
+            "type": "modification",
+            "$_ref": "m2",
+            "action": "create",
+            "$_parent_id": "$v1.id",
+            "payload": {
+                "name": "modification 2",
+                "campaign_id": "$c1.id",
+                "selector": "#main",
+                "type": "js",
+                "code": "console.log('hello people!')"
+            }
+        }
+    ]
+}

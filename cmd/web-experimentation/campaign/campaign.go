@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	CampaignID string
+	CampaignID int
 	Status     string
 	DataRaw    string
 )

@@ -14,7 +14,7 @@ import (
 )
 
 type WebPreview struct {
-	CampaignID  string `json:"campaign_id"`
+	CampaignID  int    `json:"campaign_id"`
 	VariationID int    `json:"variation_id"`
 	Url         string `json:"url"`
 }
@@ -52,7 +52,7 @@ var openCmd = &cobra.Command{
 }
 
 func init() {
-	openCmd.Flags().StringVarP(&CampaignID, "campaign-id", "", "", "id of the campaign you want to display")
+	openCmd.Flags().IntVarP(&CampaignID, "campaign-id", "", 0, "id of the campaign you want to display")
 	if err := openCmd.MarkFlagRequired("campaign-id"); err != nil {
 		log.Fatalf("error occurred: %v", err)
 	}

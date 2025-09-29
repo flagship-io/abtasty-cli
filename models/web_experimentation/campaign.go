@@ -1,31 +1,43 @@
 package web_experimentation
 
+type CampaignWECommon struct {
+	Id                 int             `json:"id,omitempty"`
+	Name               string          `json:"name"`
+	Url                string          `json:"url"`
+	Description        string          `json:"description"`
+	Type               string          `json:"type"`
+	SubType            string          `json:"sub_type,omitempty"`
+	Master             *CampaignWE     `json:"master,omitempty"`
+	State              string          `json:"state,omitempty"`
+	Status             string          `json:"status,omitempty"`
+	SubTests           []CampaignWE    `json:"sub_tests,omitempty"`
+	CreatingDate       *DateTemplate   `json:"created_at,omitempty"`
+	Labels             []string        `json:"labels,omitempty"`
+	LastPlayTimestamp  *DateTemplate   `json:"last_play,omitempty"`
+	LastPauseTimestamp *DateTemplate   `json:"last_pause,omitempty"`
+	GlobalCodeCampaign string          `json:"global_code,omitempty"`
+	Code               string          `json:"code,omitempty"`
+	FolderID           int             `json:"folder_id,omitempty"`
+	SourceCode         string          `json:"source_code,omitempty"`
+	Report             *CampaignReport `json:"report,omitempty"`
+}
 type CampaignWE struct {
-	Id                 int                         `json:"id,omitempty"`
-	Name               string                      `json:"name"`
-	Url                string                      `json:"url"`
-	Description        string                      `json:"description"`
-	Type               string                      `json:"type"`
-	SubType            string                      `json:"sub_type"`
-	Master             *CampaignWE                 `json:"master"`
-	State              string                      `json:"state"`
-	Traffic            *Traffic                    `json:"traffic"`
-	Variations         []VariationWE               `json:"variations"`
-	SubTests           []CampaignWE                `json:"sub_tests"`
-	CreatingDate       DateTemplate                `json:"created_at"`
-	Labels             []string                    `json:"labels"`
-	LastPlayTimestamp  DateTemplate                `json:"last_play"`
-	LastPauseTimestamp DateTemplate                `json:"last_pause"`
-	GlobalCodeCampaign string                      `json:"global_code"`
-	SourceCode         string                      `json:"source_code"`
-	Audiences          []AudienceCampaign          `json:"audiences"`
-	SelectorScopes     []SelectorScopesCampaign    `json:"selector_scopes"`
-	CodeScopes         []CodeScopesCampaign        `json:"code_scopes"`
-	FavoriteUrlScopes  []FavoriteUrlScopesCampaign `json:"favorite_url_scopes"`
-	UrlScopes          []UrlScopesCampaign         `json:"url_scopes"`
-	MutationObserver   bool                        `json:"mutation_observer"`
-	DisplayFrequency   DisplayFrequencyCampaign    `json:"display_frequency"`
-	Report             CampaignReport              `json:"report"`
+	*CampaignWECommon
+	Variations        []VariationWE               `json:"variations,omitempty"`
+	Traffic           *Traffic                    `json:"traffic,omitempty"`
+	Audiences         []AudienceCampaign          `json:"audiences,omitempty"`
+	SelectorScopes    []SelectorScopesCampaign    `json:"selector_scopes,omitempty"`
+	CodeScopes        []CodeScopesCampaign        `json:"code_scopes,omitempty"`
+	FavoriteUrlScopes []FavoriteUrlScopesCampaign `json:"favorite_url_scopes,omitempty"`
+	UrlScopes         []UrlScopesCampaign         `json:"url_scopes,omitempty"`
+	MutationObserver  bool                        `json:"mutation_observer,omitempty"`
+	DisplayFrequency  DisplayFrequencyCampaign    `json:"display_frequency,omitempty"`
+}
+
+type CampaignWEResourceLoader struct {
+	*CampaignWECommon
+	Traffic           int                         `json:"traffic,omitempty"`
+	CampaignTargeting *TargetingCampaignModelJSON `json:"campaign_targeting,omitempty"`
 }
 
 type Traffic struct {
@@ -47,15 +59,15 @@ type CampaignState struct {
 }
 
 type AudienceCampaign struct {
-	Id               string       `json:"id,omitempty"`
-	Name             string       `json:"name"`
-	AudienceOriginID int          `json:"audience_origin_id"`
-	Hidden           bool         `json:"hidden"`
-	CreatedAt        DateTemplate `json:"created_at"`
-	UpdatedAt        DateTemplate `json:"updated_at"`
-	Archive          bool         `json:"archive"`
-	IsSegment        bool         `json:"is_segment"`
-	AccountID        int          `json:"account_id"`
+	Id               string        `json:"id,omitempty"`
+	Name             string        `json:"name"`
+	AudienceOriginID int           `json:"audience_origin_id"`
+	Hidden           bool          `json:"hidden"`
+	CreatedAt        *DateTemplate `json:"created_at,omitempty"`
+	UpdatedAt        *DateTemplate `json:"updated_at,omitempty"`
+	Archive          bool          `json:"archive"`
+	IsSegment        bool          `json:"is_segment"`
+	AccountID        int           `json:"account_id"`
 }
 
 type SelectorScopesCampaign struct {
@@ -115,17 +127,14 @@ type TargetingCampaign struct {
 }
 
 type TargetingCampaignModelJSON struct {
-	SegmentIDs []string `json:"segment_ids"`
-
+	SegmentIDs                  []string                          `json:"segment_ids"`
 	UrlScopes                   []UrlScopesCampaignModelJSON      `json:"url_scopes"`
 	FavoriteUrlScopes           []FavoriteUrlScopesCampaign       `json:"favorite_url_scopes"`
 	SelectorScopes              []SelectorScopesCampaignModelJSON `json:"selector_scopes"`
-	CodeScope                   CodeScopesCampaign                `json:"code_scope"`
+	CodeScope                   *CodeScopesCampaign               `json:"code_scope"`
 	ElementAppearsAfterPageLoad bool                              `json:"element_appears_after_page_load"`
-
-	TriggerIDs []string `json:"triggers_ids"`
-
-	TargetingFrequency TargetingFrequency `json:"targeting_frequency"`
+	TriggerIDs                  []string                          `json:"triggers_ids"`
+	TargetingFrequency          *TargetingFrequency               `json:"targeting_frequency"`
 }
 
 type CampaignReport struct {

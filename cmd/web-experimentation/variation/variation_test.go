@@ -57,5 +57,5 @@ func TestVariationDeleteCommand(t *testing.T) {
 	assert.Contains(t, failOutput, "Error: required flag(s) \"id\" not set")
 
 	successOutput, _ := utils.ExecuteCommand(VariationCmd, "delete", "--campaign-id=100000", "--id=110000")
-	assert.Equal(t, "Variation deleted\n", successOutput)
+	assert.Equal(t, "Variation 110000 deleted\n", successOutput)
 }

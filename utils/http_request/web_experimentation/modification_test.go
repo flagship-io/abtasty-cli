@@ -41,7 +41,6 @@ func TestHTTPListModification(t *testing.T) {
 	assert.Nil(t, err)
 
 	assert.Equal(t, web_experimentation.TestModifications.Data.Modifications, respBody)
-
 }
 
 func TestHTTPGetModification(t *testing.T) {
@@ -51,13 +50,12 @@ func TestHTTPGetModification(t *testing.T) {
 	assert.NotNil(t, respBody)
 	assert.Nil(t, err)
 
-	assert.Equal(t, []models.Modification{web_experimentation.TestModification.Data.Modifications[0]}, respBody)
-
+	assert.Equal(t, web_experimentation.TestModification.Data.Modifications[0], respBody)
 }
 
 func TestHTTPDeleteModification(t *testing.T) {
 
-	err := modificationRequester.HTTPDeleteModification(100000, 120003)
-
+	resp, err := modificationRequester.HTTPDeleteModification(100000, 120003)
 	assert.Nil(t, err)
+	assert.NotNil(t, resp)
 }

@@ -5,11 +5,8 @@ package variation_global_code
 
 import (
 	"log"
-	"strconv"
 
-	"github.com/flagship-io/abtasty-cli/models/web_experimentation"
 	"github.com/flagship-io/abtasty-cli/utils"
-	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -20,41 +17,23 @@ var infoJSCmd = &cobra.Command{
 	Short: "Get variation global js code info",
 	Long:  `Get variation global js code info `,
 	Run: func(cmd *cobra.Command, args []string) {
-		var modif web_experimentation.Modification
-
-		campaignID, err := strconv.Atoi(CampaignID)
+		m, err := GetVariationGlobalCodePerType(VariationID, CampaignID, ModificationJS)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
 
-		variationID, err := strconv.Atoi(VariationID)
-		if err != nil {
-			log.Fatalf("error occurred: %v", err)
-		}
-
-		body, err := httprequest.ModificationRequester.HTTPListModification(campaignID)
-		if err != nil {
-			log.Fatalf("error occurred: %v", err)
-		}
-
-		for _, modification := range body {
-			if modification.VariationID == variationID && modification.Type == "customScriptNew" && modification.Selector == "" {
-				modif = modification
-			}
-		}
-
-		utils.FormatItem([]string{"Id", "Name", "Type", "VariationID", "Selector", "Engine", "Value"}, modif, viper.GetString("output_format"), cmd.OutOrStdout())
+		utils.FormatItem([]string{"Id", "Name", "Type", "VariationID", "Selector", "Engine", "Value"}, m, viper.GetString("output_format"), cmd.OutOrStdout())
 	},
 }
 
 func init() {
-	infoJSCmd.Flags().StringVarP(&CampaignID, "campaign-id", "", "", "campaign id of the variation")
+	infoJSCmd.Flags().IntVarP(&CampaignID, "campaign-id", "", 0, "campaign id of the variation")
 
 	if err := infoJSCmd.MarkFlagRequired("campaign-id"); err != nil {
 		log.Fatalf("error occurred: %v", err)
 	}
 
-	infoJSCmd.Flags().StringVarP(&VariationID, "id", "i", "", "id of the variation you want to display")
+	infoJSCmd.Flags().IntVarP(&VariationID, "id", "i", 0, "id of the variation you want to display")
 
 	if err := infoJSCmd.MarkFlagRequired("id"); err != nil {
 		log.Fatalf("error occurred: %v", err)

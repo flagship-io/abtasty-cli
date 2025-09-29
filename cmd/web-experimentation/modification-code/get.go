@@ -23,8 +23,6 @@ var getCmd = &cobra.Command{
 	Short: "Get modification code",
 	Long:  `Get modification code`,
 	Run: func(cmd *cobra.Command, args []string) {
-		var modif *web_experimentation.Modification
-
 		campaignID, err := strconv.Atoi(CampaignID)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
@@ -39,26 +37,20 @@ var getCmd = &cobra.Command{
 			log.Fatalf("error occurred: %v", err)
 		}
 
-		for _, modification := range body {
-			if modification.Type == "customScriptNew" && modification.Selector != "" {
-				modif = &modification
-			}
-		}
-
-		if modif == nil {
+		if body == (web_experimentation.Modification{}) {
 			log.Fatalf("error occurred: no modification found")
 		}
 
 		if CreateFile {
 			if !Override {
-				jsFilePath := config.ModificationCodeFilePath(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, strconv.Itoa(modif.VariationID), ModificationID)
+				jsFilePath := config.ModificationCodeFilePath(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, strconv.Itoa(body.VariationID), ModificationID)
 				if _, err := os.Stat(jsFilePath); err == nil {
 					fileHash, err := config.HashFile(jsFilePath)
 					if err != nil {
 						log.Fatalf("Error hashing file: %v", err)
 					}
 
-					strHash := config.HashString(modif.Value)
+					strHash := config.HashString(body.Value)
 					if fileHash != strHash {
 						log.Fatalf("error occurred: %s", utils.ERROR_REMOTE_CHANGED_FROM_LOCAL)
 					}
@@ -68,8 +60,8 @@ var getCmd = &cobra.Command{
 			pattern := `/\*\s*Selector: (.+)*\s*\*/`
 			re := regexp.MustCompile(pattern)
 
-			fileCode := config.AddHeaderSelectorComment(modif.Selector, []byte(modif.Value), re)
-			_, err := config.WriteModificationCode(httprequest.ModificationRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, strconv.Itoa(modif.VariationID), ModificationID, fileCode)
+			fileCode := config.AddHeaderSelectorComment(body.Selector, []byte(body.Value), re)
+			_, err := config.WriteModificationCode(httprequest.ModificationRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, strconv.Itoa(body.VariationID), ModificationID, fileCode)
 			if err != nil {
 				log.Fatalf("error occurred: %v", err)
 			}
@@ -77,7 +69,7 @@ var getCmd = &cobra.Command{
 			return
 		}
 
-		fmt.Fprintln(cmd.OutOrStdout(), string(modif.Value))
+		fmt.Fprintln(cmd.OutOrStdout(), string(body.Value))
 	},
 }
 

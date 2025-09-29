@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strconv"
 
 	"github.com/flagship-io/abtasty-cli/utils/config"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
@@ -34,7 +35,7 @@ var getCmd = &cobra.Command{
 		}
 
 		if createFile && len(string(bodyStringify)) > 0 {
-			_, err := config.CampaignTargetingDirectory(httprequest.CampaignTargetingRequester.WorkingDir, httprequest.CampaignTargetingRequester.AccountID, CampaignID, string(bodyStringify), override)
+			_, err := config.CampaignTargetingDirectory(httprequest.CampaignTargetingRequester.WorkingDir, httprequest.CampaignTargetingRequester.AccountID, strconv.Itoa(CampaignID), string(bodyStringify), override)
 			if err != nil {
 				log.Fatalf("error occurred: %v", err)
 			}
@@ -49,7 +50,7 @@ var getCmd = &cobra.Command{
 }
 
 func init() {
-	getCmd.Flags().StringVarP(&CampaignID, "id", "i", "", "id of the campaign you want to display")
+	getCmd.Flags().IntVarP(&CampaignID, "id", "i", 0, "id of the campaign you want to display")
 
 	if err := getCmd.MarkFlagRequired("id"); err != nil {
 		log.Fatalf("error occurred: %v", err)

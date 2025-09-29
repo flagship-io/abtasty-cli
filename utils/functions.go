@@ -2,6 +2,7 @@ package utils
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -55,6 +56,15 @@ func CheckSingleFlag(bool1, bool2 bool) bool {
 	}
 
 	return count == 1
+}
+
+func DeepCopyMap(src, dst any) error {
+	bytes, err := json.Marshal(src)
+	if err != nil {
+		return err
+	}
+
+	return json.Unmarshal(bytes, dst)
 }
 
 func GetFeatureExperimentationHost() string {

@@ -1,7 +1,6 @@
 package web_experimentation
 
 import (
-	"strconv"
 	"testing"
 
 	"github.com/flagship-io/abtasty-cli/utils/http_request/common"
@@ -14,29 +13,29 @@ func TestHTTPCreateCampaign(t *testing.T) {
 
 	data := "{\"name\":\"testCampaignName\",\"type\":\"ab\",\"url\":\"https://abtasty.com\",\"description\":\"testCampaignDescription\",\"global_code\":\"console.log(\"Hello World!\")\"}"
 
-	respBody, err := campaignRequester.HTTPCreateCampaign(data)
+	respBody, err := campaignRequester.HTTPCreateCampaign([]byte(data))
 
 	assert.NotNil(t, respBody)
 	assert.Nil(t, err)
 
-	assert.Equal(t, "{\"id\":100000,\"name\":\"testCampaignName\",\"url\":\"https://abtasty.com\",\"description\":\"testCampaignDescription\",\"type\":\"ab\",\"sub_type\":\"\",\"master\":null,\"state\":\"\",\"traffic\":null,\"variations\":null,\"sub_tests\":null,\"created_at\":{\"readable_date\":\"\",\"timestamp\":0,\"pattern\":\"\"},\"labels\":null,\"last_play\":{\"readable_date\":\"\",\"timestamp\":0,\"pattern\":\"\"},\"last_pause\":{\"readable_date\":\"\",\"timestamp\":0,\"pattern\":\"\"},\"global_code\":\"console.log(\\\"Hello World!\\\")\",\"source_code\":\"\",\"audiences\":null,\"selector_scopes\":null,\"code_scopes\":null,\"favorite_url_scopes\":null,\"url_scopes\":[{\"condition\":40,\"include\":true,\"value\":\"https://abtasty.com\"},{\"condition\":40,\"include\":false,\"value\":\"https://abtasty.com\"}],\"mutation_observer\":false,\"display_frequency\":{\"type\":\"\",\"unit\":\"\",\"value\":0},\"report\":{\"token\":\"\",\"comment\":\"\"}}", string(respBody))
+	assert.Equal(t, "{\"id\":100000,\"name\":\"testCampaignName\",\"url\":\"https://abtasty.com\",\"description\":\"testCampaignDescription\",\"type\":\"ab\",\"global_code\":\"console.log(\\\"Hello World!\\\")\",\"url_scopes\":[{\"condition\":40,\"include\":true,\"value\":\"https://abtasty.com\"},{\"condition\":40,\"include\":false,\"value\":\"https://abtasty.com\"}],\"display_frequency\":{\"type\":\"\",\"unit\":\"\",\"value\":0}}", string(respBody))
 }
 
 func TestHTTPEditCampaign(t *testing.T) {
 
 	data := "{\"name\":\"testCampaignName\",\"type\":\"ab\",\"url\":\"https://abtasty.com\",\"description\":\"testCampaignDescription\",\"global_code\":\"console.log(\"Hello World!\")\"}"
 
-	respBody, err := campaignRequester.HTTPEditCampaign(strconv.Itoa(100000), data)
+	respBody, err := campaignRequester.HTTPEditCampaign(100000, []byte(data))
 
 	assert.NotNil(t, respBody)
 	assert.Nil(t, err)
 
-	assert.Equal(t, "{\"id\":100000,\"name\":\"testCampaignName\",\"url\":\"https://abtasty.com\",\"description\":\"testCampaignDescription\",\"type\":\"ab\",\"sub_type\":\"\",\"master\":null,\"state\":\"\",\"traffic\":null,\"variations\":null,\"sub_tests\":null,\"created_at\":{\"readable_date\":\"\",\"timestamp\":0,\"pattern\":\"\"},\"labels\":null,\"last_play\":{\"readable_date\":\"\",\"timestamp\":0,\"pattern\":\"\"},\"last_pause\":{\"readable_date\":\"\",\"timestamp\":0,\"pattern\":\"\"},\"global_code\":\"console.log(\\\"Hello World!\\\")\",\"source_code\":\"\",\"audiences\":null,\"selector_scopes\":null,\"code_scopes\":null,\"favorite_url_scopes\":null,\"url_scopes\":[{\"condition\":40,\"include\":true,\"value\":\"https://abtasty.com\"},{\"condition\":40,\"include\":false,\"value\":\"https://abtasty.com\"}],\"mutation_observer\":false,\"display_frequency\":{\"type\":\"\",\"unit\":\"\",\"value\":0},\"report\":{\"token\":\"\",\"comment\":\"\"}}", string(respBody))
+	assert.Equal(t, "{\"id\":100000,\"name\":\"testCampaignName\",\"url\":\"https://abtasty.com\",\"description\":\"testCampaignDescription\",\"type\":\"ab\",\"global_code\":\"console.log(\\\"Hello World!\\\")\",\"url_scopes\":[{\"condition\":40,\"include\":true,\"value\":\"https://abtasty.com\"},{\"condition\":40,\"include\":false,\"value\":\"https://abtasty.com\"}],\"display_frequency\":{\"type\":\"\",\"unit\":\"\",\"value\":0}}", string(respBody))
 }
 
 func TestHTTPGetCampaign(t *testing.T) {
 
-	respBody, err := campaignRequester.HTTPGetCampaign("100000")
+	respBody, err := campaignRequester.HTTPGetCampaign(100000)
 
 	assert.NotNil(t, respBody)
 	assert.Nil(t, err)
@@ -72,14 +71,14 @@ func TestHTTPListCampaign(t *testing.T) {
 
 func TestHTTPDeleteCampaign(t *testing.T) {
 
-	err := campaignRequester.HTTPDeleteCampaign("100000")
-
+	resp, err := campaignRequester.HTTPDeleteCampaign(100000)
 	assert.Nil(t, err)
+	assert.NotNil(t, resp)
 }
 
 func TestHTTPSwitchCampaign(t *testing.T) {
 
-	err := campaignRequester.HTTPSwitchStateCampaign("100000", "active")
+	err := campaignRequester.HTTPSwitchStateCampaign(100000, "active")
 
 	assert.Nil(t, err)
 }
