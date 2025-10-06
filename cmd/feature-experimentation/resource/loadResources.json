@@ -1,0 +1,60 @@
+{
+    "version": 1,
+    "resources": [
+        {
+            "type": "project",
+            "$_ref": "p1",
+            "action": "create",
+            "payload": {
+                "name": "Resource loader Project"
+            }
+        },
+        {
+            "type": "campaign",
+            "$_ref": "c1",
+            "action": "create",
+            "payload": {
+                "project_id": "$p1.id",
+                "name": "Resource loader Campaign - with targeting & existing flag",
+                "description": "Loaded from resource loader",
+                "type": "ab",
+                "variation_groups": [
+                    {
+                        "name": "variation group name",
+                        "variations": [
+                            {
+                                "name": "Original",
+                                "reference": true,
+                                "allocation": 50
+                            },
+                            {
+                                "name": "Variation 1",
+                                "reference": false,
+                                "allocation": 50,
+                                "modifications": {
+                                    "type": "FLAG",
+                                    "value": {
+                                        "eai-flag": "blue"
+                                    }
+                                }
+                            }
+                        ],
+                        "targeting": {
+                            "targeting_groups": [
+                                {
+                                    "targetings": [
+                                        {
+                                            "operator": "EQUALS",
+                                            "key": "release",
+                                            "value": "v1.0.0"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
