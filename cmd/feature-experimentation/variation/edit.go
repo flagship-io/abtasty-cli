@@ -17,7 +17,7 @@ var editCmd = &cobra.Command{
 	Short: "Edit a variation",
 	Long:  `Edit a variation`,
 	Run: func(cmd *cobra.Command, args []string) {
-		body, err := httprequest.VariationFERequester.HTTPEditVariation(CampaignID, VariationGroupID, VariationID, DataRaw)
+		body, err := httprequest.VariationFERequester.HTTPEditVariation(CampaignID, VariationGroupID, VariationID, []byte(DataRaw))
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}

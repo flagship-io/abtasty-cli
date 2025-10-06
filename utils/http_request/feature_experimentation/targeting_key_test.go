@@ -38,7 +38,7 @@ func TestHTTPCreateTargetingKey(t *testing.T) {
 
 	data := "{\"name\":\"testTargetingKeyName\", \"type\":\"string\", \"description\":\"testTargetingKeyDescription\"}"
 
-	respBody, err := targetingKeyRequester.HTTPCreateTargetingKey(data)
+	respBody, err := targetingKeyRequester.HTTPCreateTargetingKey([]byte(data))
 
 	assert.NotNil(t, respBody)
 	assert.Nil(t, err)
@@ -48,7 +48,7 @@ func TestHTTPCreateTargetingKey(t *testing.T) {
 
 func TestHTTPEditTargetingKey(t *testing.T) {
 
-	respBody, err := targetingKeyRequester.HTTPEditTargetingKey("testTargetingKeyID", "testTargetingKeyName")
+	respBody, err := targetingKeyRequester.HTTPEditTargetingKey("testTargetingKeyID", []byte("{\"name\":\"testTargetingKeyName\"}"))
 
 	assert.NotNil(t, respBody)
 	assert.Nil(t, err)

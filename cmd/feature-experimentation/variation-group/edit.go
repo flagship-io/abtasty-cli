@@ -17,7 +17,7 @@ var editCmd = &cobra.Command{
 	Short: "Edit a variation group",
 	Long:  `Edit a variation group`,
 	Run: func(cmd *cobra.Command, args []string) {
-		body, err := httprequest.VariationGroupRequester.HTTPEditVariationGroup(CampaignID, VariationGroupID, DataRaw)
+		body, err := httprequest.VariationGroupRequester.HTTPEditVariationGroup(CampaignID, VariationGroupID, []byte(DataRaw))
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}

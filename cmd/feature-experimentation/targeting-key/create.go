@@ -11,13 +11,22 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func CreateTargetingKey(dataRaw []byte) ([]byte, error) {
+	body, err := httprequest.TargetingKeyRequester.HTTPCreateTargetingKey(dataRaw)
+	if err != nil {
+		return nil, err
+	}
+
+	return body, nil
+}
+
 // createCmd represents the create command
 var createCmd = &cobra.Command{
 	Use:   "create [-d <data-raw> | --data-raw <data-raw>]",
 	Short: "Create a targeting key",
 	Long:  `Create a targeting key`,
 	Run: func(cmd *cobra.Command, args []string) {
-		body, err := httprequest.TargetingKeyRequester.HTTPCreateTargetingKey(DataRaw)
+		body, err := CreateTargetingKey([]byte(DataRaw))
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}

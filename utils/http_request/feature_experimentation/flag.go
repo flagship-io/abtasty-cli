@@ -20,12 +20,12 @@ func (f *FlagRequester) HTTPGetFlag(id string) (models.Flag, error) {
 	return common.HTTPGetItem[models.Flag](utils.GetFeatureExperimentationHost() + "/v1/accounts/" + f.AccountID + "/flags/" + id)
 }
 
-func (f *FlagRequester) HTTPCreateFlag(data string) ([]byte, error) {
-	return common.HTTPRequest[models.Flag](http.MethodPost, utils.GetFeatureExperimentationHost()+"/v1/accounts/"+f.AccountID+"/flags", []byte(data))
+func (f *FlagRequester) HTTPCreateFlag(data []byte) ([]byte, error) {
+	return common.HTTPRequest[models.Flag](http.MethodPost, utils.GetFeatureExperimentationHost()+"/v1/accounts/"+f.AccountID+"/flags", data)
 }
 
-func (f *FlagRequester) HTTPEditFlag(id, data string) ([]byte, error) {
-	return common.HTTPRequest[models.Flag](http.MethodPatch, utils.GetFeatureExperimentationHost()+"/v1/accounts/"+f.AccountID+"/flags/"+id, []byte(data))
+func (f *FlagRequester) HTTPEditFlag(id string, data []byte) ([]byte, error) {
+	return common.HTTPRequest[models.Flag](http.MethodPatch, utils.GetFeatureExperimentationHost()+"/v1/accounts/"+f.AccountID+"/flags/"+id, data)
 }
 
 func (f *FlagRequester) HTTPDeleteFlag(id string) error {

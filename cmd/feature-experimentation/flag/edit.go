@@ -17,7 +17,7 @@ var editCmd = &cobra.Command{
 	Short: "Edit a flag",
 	Long:  `Edit a flag`,
 	Run: func(cmd *cobra.Command, args []string) {
-		body, err := httprequest.FlagRequester.HTTPEditFlag(FlagID, DataRaw)
+		body, err := httprequest.FlagRequester.HTTPEditFlag(FlagID, []byte(DataRaw))
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}

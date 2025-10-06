@@ -17,7 +17,7 @@ var editCmd = &cobra.Command{
 	Short: "Edit a targeting key",
 	Long:  `Edit a targeting key`,
 	Run: func(cmd *cobra.Command, args []string) {
-		body, err := httprequest.TargetingKeyRequester.HTTPEditTargetingKey(TargetingKeyID, DataRaw)
+		body, err := httprequest.TargetingKeyRequester.HTTPEditTargetingKey(TargetingKeyID, []byte(DataRaw))
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}

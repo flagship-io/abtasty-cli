@@ -38,7 +38,7 @@ func TestHTTPCreateFlag(t *testing.T) {
 
 	data := "{\"name\":\"testFlagName\", \"type\":\"string\", \"description\":\"testFlagDescription\", \"source\":\"cli\"}"
 
-	respBody, err := flagRequester.HTTPCreateFlag(data)
+	respBody, err := flagRequester.HTTPCreateFlag([]byte(data))
 
 	assert.NotNil(t, respBody)
 	assert.Nil(t, err)
@@ -50,7 +50,7 @@ func TestHTTPEditFlag(t *testing.T) {
 
 	data := "{\"name\":\"testFlagName1\",\"type\":\"string\",\"description\":\"testFlagDescription1\",\"source\":\"cli\"}"
 
-	respBody, err := flagRequester.HTTPEditFlag("testFlagID", data)
+	respBody, err := flagRequester.HTTPEditFlag("testFlagID", []byte(data))
 
 	assert.NotNil(t, respBody)
 	assert.Nil(t, err)

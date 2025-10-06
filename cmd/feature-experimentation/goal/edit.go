@@ -17,7 +17,7 @@ var editCmd = &cobra.Command{
 	Short: "Edit a goal",
 	Long:  `Edit a goal`,
 	Run: func(cmd *cobra.Command, args []string) {
-		body, err := httprequest.GoalRequester.HTTPEditGoal(GoalID, DataRaw)
+		body, err := httprequest.GoalRequester.HTTPEditGoal(GoalID, []byte(DataRaw))
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
