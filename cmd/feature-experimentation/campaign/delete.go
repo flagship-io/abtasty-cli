@@ -11,13 +11,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func DeleteCampaign(id string) error {
+	return httprequest.CampaignFERequester.HTTPDeleteCampaign(id)
+}
+
 // deleteCmd represents the delete command
 var deleteCmd = &cobra.Command{
 	Use:   "delete [-i <campaign-id> | --id=<campaign-id>]",
 	Short: "Delete a campaign",
 	Long:  `Delete a campaign`,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := httprequest.CampaignFERequester.HTTPDeleteCampaign(CampaignID)
+		err := DeleteCampaign(CampaignID)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
