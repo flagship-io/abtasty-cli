@@ -766,7 +766,7 @@ func ValidateResources(loadFile *LoadResFile, refCtx *RefContext) error {
 		}
 
 		if res.Type != Campaign && res.Type != Variation && res.Type != Modification && res.Type != Folder && res.Type != Audience {
-			return fmt.Errorf("resource with $_ref: %s has unknown type: %s, only %s, %s, %s, %s are allowed", res.Ref, res.Type, Folder, Campaign, Variation, Modification)
+			return fmt.Errorf("resource with $_ref: %s has unknown type: %s, only %s, %s, %s, %s, %s are allowed", res.Ref, res.Type, Folder, Campaign, Variation, Modification, Audience)
 		}
 
 		if res.Action == "" {
@@ -924,7 +924,6 @@ var loadCmd = &cobra.Command{
 }
 
 func init() {
-
 	loadCmd.Flags().StringVarP(&resourceFile, "file", "", "", "resource file that contains your resource")
 
 	if err := loadCmd.MarkFlagRequired("file"); err != nil {
