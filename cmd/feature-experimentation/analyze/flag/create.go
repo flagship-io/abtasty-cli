@@ -118,7 +118,7 @@ func flagCreatedTable(cmd *cobra.Command, listedFlags []models.Flag) error {
 			return err_
 		}
 
-		createdFlags, errCreatedFlags := httprequest.FlagRequester.HTTPCreateFlag(string(multipleflagRequestJSON))
+		createdFlags, errCreatedFlags := httprequest.FlagRequester.HTTPCreateFlag(multipleflagRequestJSON)
 
 		if errCreatedFlags != nil {
 			return errCreatedFlags
