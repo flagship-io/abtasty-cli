@@ -11,13 +11,22 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func EditFlag(flagID string, dataRaw []byte) ([]byte, error) {
+	body, err := httprequest.FlagRequester.HTTPEditFlag(flagID, dataRaw)
+	if err != nil {
+		return nil, err
+	}
+
+	return body, nil
+}
+
 // editCmd represents the edit command
 var editCmd = &cobra.Command{
 	Use:   "edit [-i <flag-id> | --id=<flag-id>] [-d <data-raw> | --data-raw <data-raw>]",
 	Short: "Edit a flag",
 	Long:  `Edit a flag`,
 	Run: func(cmd *cobra.Command, args []string) {
-		body, err := httprequest.FlagRequester.HTTPEditFlag(FlagID, []byte(DataRaw))
+		body, err := EditFlag(FlagID, []byte(DataRaw))
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}

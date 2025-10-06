@@ -11,13 +11,22 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func EditGoal(id string, dataRaw []byte) ([]byte, error) {
+	body, err := httprequest.GoalRequester.HTTPEditGoal(id, dataRaw)
+	if err != nil {
+		return nil, err
+	}
+
+	return body, nil
+}
+
 // editCmd represents the edit command
 var editCmd = &cobra.Command{
 	Use:   "edit [-i <goal-id> | --id=<goal-id>] [-d <data-raw> | --data-raw <data-raw>]",
 	Short: "Edit a goal",
 	Long:  `Edit a goal`,
 	Run: func(cmd *cobra.Command, args []string) {
-		body, err := httprequest.GoalRequester.HTTPEditGoal(GoalID, []byte(DataRaw))
+		body, err := EditGoal(GoalID, []byte(DataRaw))
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
