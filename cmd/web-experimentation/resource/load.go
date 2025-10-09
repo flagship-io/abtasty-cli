@@ -9,6 +9,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"strconv"
@@ -36,7 +37,7 @@ const (
 
 type funcModifType func(int, []byte) ([]byte, error)
 
-func LoadResources(cmd *cobra.Command, filePath, inputRefFile, inputRefRaw, outputFile string) error {
+func LoadResources(out io.Writer, filePath, inputRefFile, inputRefRaw, outputFile string) error {
 
 	var results []common.ResourceResult
 
@@ -50,8 +51,8 @@ func LoadResources(cmd *cobra.Command, filePath, inputRefFile, inputRefRaw, outp
 		}
 	}
 
-	processAndRecord := func(cmd *cobra.Command, res common.Resource, rc *common.RefContext) {
-		resp, err := processResourceWithResponse(cmd, res, rc)
+	processAndRecord := func(out io.Writer, res common.Resource, rc *common.RefContext) {
+		resp, err := processResourceWithResponse(out, res, rc)
 		status := "success"
 		if err != nil {
 			status = "error"
@@ -100,7 +101,7 @@ func LoadResources(cmd *cobra.Command, filePath, inputRefFile, inputRefRaw, outp
 	}
 
 	if common.DryRun {
-		fmt.Fprintf(cmd.OutOrStdout(), "Dry-run mode: resources validated, no changes applied.\n")
+		fmt.Fprintf(out, "Dry-run mode: resources validated, no changes applied.\n")
 		return nil
 	}
 
@@ -133,31 +134,31 @@ func LoadResources(cmd *cobra.Command, filePath, inputRefFile, inputRefRaw, outp
 	}
 
 	for _, res := range folders {
-		processAndRecord(cmd, res, refCtx)
+		processAndRecord(out, res, refCtx)
 	}
 
 	for _, res := range audiences {
-		processAndRecord(cmd, res, refCtx)
+		processAndRecord(out, res, refCtx)
 	}
 
 	for _, res := range campaigns {
-		processAndRecord(cmd, res, refCtx)
+		processAndRecord(out, res, refCtx)
 	}
 
 	for _, res := range variations {
-		processAndRecord(cmd, res, refCtx)
+		processAndRecord(out, res, refCtx)
 	}
 
 	for _, res := range modifications {
-		processAndRecord(cmd, res, refCtx)
+		processAndRecord(out, res, refCtx)
 	}
 
 	for _, res := range others {
-		processAndRecord(cmd, res, refCtx)
+		processAndRecord(out, res, refCtx)
 	}
 
 	for _, res := range read {
-		processAndRecord(cmd, res, refCtx)
+		processAndRecord(out, res, refCtx)
 	}
 
 	loaderResults := common.LoaderResults{Results: results}
@@ -172,19 +173,19 @@ func LoadResources(cmd *cobra.Command, filePath, inputRefFile, inputRefRaw, outp
 			return err
 		}
 
-		fmt.Fprintf(cmd.OutOrStdout(), "Results written to %s\n", outputFile)
+		fmt.Fprintf(out, "Results written to %s\n", outputFile)
 	} else {
-		fmt.Fprintf(cmd.OutOrStdout(), "%-10s %-10s %s\n", "$_ref", "status", "response")
+		fmt.Fprintf(out, "%-10s %-10s %s\n", "$_ref", "status", "response")
 		for _, r := range results {
 			respStr, _ := json.Marshal(r.Response)
-			fmt.Fprintf(cmd.OutOrStdout(), "%-10s %-10s %s\n", r.Ref, r.Status, string(respStr))
+			fmt.Fprintf(out, "%-10s %-10s %s\n", r.Ref, r.Status, string(respStr))
 		}
 	}
 
 	return nil
 }
 
-func processResourceWithResponse(cmd *cobra.Command, res common.Resource, rc *common.RefContext) (interface{}, error) {
+func processResourceWithResponse(out io.Writer, res common.Resource, rc *common.RefContext) (interface{}, error) {
 	if res.ParentID != "" && strings.HasPrefix(res.ParentID, "$") {
 		parts := strings.Split(strings.TrimPrefix(res.ParentID, "$"), ".")
 		if len(parts) > 1 {
@@ -243,7 +244,7 @@ func processResourceWithResponse(cmd *cobra.Command, res common.Resource, rc *co
 				}
 			}
 
-			_, err = processResourceWithResponse(cmd, child, rc)
+			_, err = processResourceWithResponse(out, child, rc)
 			if err != nil {
 				return nil, err
 			}
@@ -791,7 +792,7 @@ var loadCmd = &cobra.Command{
 	Use:   "load [--file=<file>]",
 	Short: "Load your resources",
 	Run: func(cmd *cobra.Command, args []string) {
-		err := LoadResources(cmd, common.ResourceFile, common.InputRefFile, common.InputRefRaw, common.OutputFile)
+		err := LoadResources(cmd.OutOrStdout(), common.ResourceFile, common.InputRefFile, common.InputRefRaw, common.OutputFile)
 		if err != nil {
 			log.Fatalf("%v", err)
 		}
