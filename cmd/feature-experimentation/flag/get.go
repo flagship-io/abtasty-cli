@@ -6,11 +6,21 @@ package flag
 import (
 	"log"
 
+	"github.com/flagship-io/abtasty-cli/models/feature_experimentation"
 	"github.com/flagship-io/abtasty-cli/utils"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
+
+func GetFlag(id string) (feature_experimentation.Flag, error) {
+	body, err := httprequest.FlagRequester.HTTPGetFlag(id)
+	if err != nil {
+		return feature_experimentation.Flag{}, err
+	}
+
+	return body, nil
+}
 
 // getCmd represents get command
 var getCmd = &cobra.Command{
@@ -18,7 +28,7 @@ var getCmd = &cobra.Command{
 	Short: "Get a flag",
 	Long:  `Get a flag`,
 	Run: func(cmd *cobra.Command, args []string) {
-		body, err := httprequest.FlagRequester.HTTPGetFlag(FlagID)
+		body, err := GetFlag(FlagID)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
