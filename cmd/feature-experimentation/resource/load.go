@@ -23,25 +23,8 @@ import (
 
 	"github.com/flagship-io/abtasty-cli/models/feature_experimentation"
 	"github.com/flagship-io/abtasty-cli/utils"
+	"github.com/flagship-io/abtasty-cli/utils/common"
 	"github.com/spf13/cobra"
-)
-
-var (
-	resourceFile string
-	outputFile   string
-	inputRefRaw  string
-	inputRefFile string
-	dryRun       bool
-)
-
-type ResourceAction string
-
-const (
-	ActionCreate ResourceAction = "create"
-	ActionEdit   ResourceAction = "edit"
-	ActionList   ResourceAction = "list"
-	ActionGet    ResourceAction = "get"
-	ActionDelete ResourceAction = "delete"
 )
 
 const (
@@ -54,94 +37,13 @@ const (
 	TargetingKey   string = "targeting-key"
 )
 
-type Resource struct {
-	Type           string         `json:"type"`
-	Ref            string         `json:"$_ref"`
-	ParentID       string         `json:"$_parent_id"`
-	Action         ResourceAction `json:"action"`
-	Payload        map[string]any `json:"payload"`
-	Resources      []Resource     `json:"resources"`
-	ParentResource *Resource
-}
-type LoadResFile struct {
-	Version   int        `json:"version"`
-	Resources []Resource `json:"resources"`
-}
-
-type RefContext struct {
-	refs map[string]any
-}
-
-type ResourceData struct {
-	Id string `json:"id"`
-}
-
-type ResourceResult struct {
-	Ref      string      `json:"$_ref,omitempty"`
-	Status   string      `json:"status"`
-	Response interface{} `json:"response,omitempty"`
-}
-
-type LoaderResults struct {
-	Results []ResourceResult `json:"results"`
-}
-
-func NewRefContext() *RefContext {
-	return &RefContext{refs: make(map[string]any)}
-}
-
-func (rc *RefContext) Set(ref string, val any) {
-	if ref != "" {
-		rc.refs[ref] = val
-	}
-}
-
-func (rc *RefContext) Get(ref string) (any, bool) {
-	val, ok := rc.refs[ref]
-	return val, ok
-}
-
-func resolveRefs(val any, rc *RefContext) any {
-	switch v := val.(type) {
-	case string:
-		if strings.HasPrefix(v, "$") {
-			parts := strings.Split(strings.TrimPrefix(v, "$"), ".")
-			if len(parts) > 1 {
-				if refVal, ok := rc.Get(parts[0]); ok {
-					if m, ok := refVal.(map[string]interface{}); ok {
-						if field, ok := m[parts[1]]; ok {
-							return field
-						}
-					}
-				}
-			}
-		}
-		return v
-
-	case []interface{}:
-		for i, item := range v {
-			v[i] = resolveRefs(item, rc)
-		}
-		return v
-
-	case map[string]interface{}:
-		for k, mapVal := range v {
-			v[k] = resolveRefs(mapVal, rc)
-		}
-		return v
-
-	default:
-		return val
-	}
-}
-
 func LoadResources(cmd *cobra.Command, filePath, inputRefFile, inputRefRaw, outputFile string) error {
 
-	var results []ResourceResult
+	var results []common.ResourceResult
 
 	recordResult := func(ref string, status string, resp interface{}) {
 		if ref != "" {
-			results = append(results, ResourceResult{
+			results = append(results, common.ResourceResult{
 				Ref:      ref,
 				Status:   status,
 				Response: resp,
@@ -149,7 +51,7 @@ func LoadResources(cmd *cobra.Command, filePath, inputRefFile, inputRefRaw, outp
 		}
 	}
 
-	processAndRecord := func(cmd *cobra.Command, res Resource, rc *RefContext) {
+	processAndRecord := func(cmd *cobra.Command, res common.Resource, rc *common.RefContext) {
 		resp, err := processResourceWithResponse(cmd, res, rc)
 		status := "success"
 		if err != nil {
@@ -165,12 +67,12 @@ func LoadResources(cmd *cobra.Command, filePath, inputRefFile, inputRefRaw, outp
 		return fmt.Errorf("failed to read resource file: %w", err)
 	}
 
-	var loadFile LoadResFile
+	var loadFile common.LoadResFile
 	if err := json.Unmarshal(data, &loadFile); err != nil {
 		return fmt.Errorf("failed to parse resource file: %w", err)
 	}
 
-	refCtx := NewRefContext()
+	refCtx := common.NewRefContext()
 
 	var inputRef map[string]any
 	if inputRefFile != "" {
@@ -198,22 +100,22 @@ func LoadResources(cmd *cobra.Command, filePath, inputRefFile, inputRefRaw, outp
 		return fmt.Errorf("Validation failed: %v\n", err)
 	}
 
-	if dryRun {
+	if common.DryRun {
 		fmt.Fprintf(cmd.OutOrStdout(), "Dry-run mode: resources validated, no changes applied.\n")
 		return nil
 	}
 
-	var mutating, read []Resource
+	var mutating, read []common.Resource
 	for _, res := range loadFile.Resources {
 		switch res.Action {
-		case ActionGet, ActionList:
+		case common.ActionGet, common.ActionList:
 			read = append(read, res)
 		default:
 			mutating = append(mutating, res)
 		}
 	}
 
-	var projects, campaigns, variationGroups, variations, goals, targetingKeys, flags, others []Resource
+	var projects, campaigns, variationGroups, variations, goals, targetingKeys, flags, others []common.Resource
 	for _, res := range mutating {
 		switch res.Type {
 		case Project:
@@ -271,7 +173,7 @@ func LoadResources(cmd *cobra.Command, filePath, inputRefFile, inputRefRaw, outp
 		processAndRecord(cmd, res, refCtx)
 	}
 
-	loaderResults := LoaderResults{Results: results}
+	loaderResults := common.LoaderResults{Results: results}
 	if outputFile != "" {
 		b, err := json.MarshalIndent(loaderResults, "", "  ")
 		if err != nil {
@@ -295,7 +197,7 @@ func LoadResources(cmd *cobra.Command, filePath, inputRefFile, inputRefRaw, outp
 	return nil
 }
 
-func processResourceWithResponse(cmd *cobra.Command, res Resource, rc *RefContext) (interface{}, error) {
+func processResourceWithResponse(cmd *cobra.Command, res common.Resource, rc *common.RefContext) (interface{}, error) {
 	if res.ParentID != "" && strings.HasPrefix(res.ParentID, "$") {
 		parts := strings.Split(strings.TrimPrefix(res.ParentID, "$"), ".")
 		if len(parts) > 1 {
@@ -312,20 +214,20 @@ func processResourceWithResponse(cmd *cobra.Command, res Resource, rc *RefContex
 			}
 		}
 	}
-	res.Payload = resolveRefs(res.Payload, rc).(map[string]any)
+	res.Payload = common.ResolveRefs(res.Payload, rc).(map[string]any)
 
 	var resp any
 	var err error
 	switch res.Action {
-	case ActionCreate:
+	case common.ActionCreate:
 		resp, err = handleCreate(res)
-	case ActionEdit:
+	case common.ActionEdit:
 		resp, err = handleEdit(res)
-	case ActionList:
+	case common.ActionList:
 		resp, err = handleList(res)
-	case ActionGet:
+	case common.ActionGet:
 		resp, err = handleGet(res)
-	case ActionDelete:
+	case common.ActionDelete:
 		resp, err = handleDelete(res)
 	default:
 		err = fmt.Errorf("unsupported action: %s", res.Action)
@@ -339,7 +241,7 @@ func processResourceWithResponse(cmd *cobra.Command, res Resource, rc *RefContex
 		rc.Set(res.Ref, resp)
 	}
 
-	if res.Action == ActionCreate || res.Action == ActionEdit {
+	if res.Action == common.ActionCreate || res.Action == common.ActionEdit {
 		for _, child := range res.Resources {
 			if child.ParentID == "" && res.Ref != "" && resp != nil {
 				if id, ok := resp.(map[string]any)["id"].(float64); ok {
@@ -364,7 +266,7 @@ func processResourceWithResponse(cmd *cobra.Command, res Resource, rc *RefContex
 	return resp, nil
 }
 
-func handleCreate(res Resource) (resp map[string]any, err error) {
+func handleCreate(res common.Resource) (resp map[string]any, err error) {
 	payloadBytes, err := json.Marshal(res.Payload)
 	if err != nil {
 		return nil, err
@@ -427,7 +329,7 @@ func handleCreate(res Resource) (resp map[string]any, err error) {
 	return resp, nil
 }
 
-func handleEdit(res Resource) (resp map[string]any, err error) {
+func handleEdit(res common.Resource) (resp map[string]any, err error) {
 	var respBytes []byte
 
 	payloadBytes, err := json.Marshal(res.Payload)
@@ -496,7 +398,7 @@ func handleEdit(res Resource) (resp map[string]any, err error) {
 	return resp, nil
 }
 
-func handleList(res Resource) (any, error) {
+func handleList(res common.Resource) (any, error) {
 	var respBytes []byte
 	var err error
 
@@ -591,7 +493,7 @@ func handleList(res Resource) (any, error) {
 	return resp, nil
 }
 
-func handleGet(res Resource) (resp map[string]any, err error) {
+func handleGet(res common.Resource) (resp map[string]any, err error) {
 	var respBytes []byte
 
 	var id = res.Payload["id"].(string)
@@ -690,7 +592,7 @@ func handleGet(res Resource) (resp map[string]any, err error) {
 	return resp, nil
 }
 
-func handleDelete(res Resource) (any, error) {
+func handleDelete(res common.Resource) (any, error) {
 	var respBytes []byte
 	var id = res.Payload["id"].(string)
 
@@ -789,7 +691,7 @@ func handleDelete(res Resource) (any, error) {
 	return resp, nil
 }
 
-func ValidateResources(loadFile *LoadResFile, refCtx *RefContext) error {
+func ValidateResources(loadFile *common.LoadResFile, refCtx *common.RefContext) error {
 	for _, res := range loadFile.Resources {
 		if res.Ref == "" && res.Type == "" {
 			b, err := json.Marshal(res)
@@ -816,8 +718,8 @@ func ValidateResources(loadFile *LoadResFile, refCtx *RefContext) error {
 			return fmt.Errorf("resource with $_ref: %s is missing 'action'", res.Ref)
 		}
 
-		if res.Action != ActionCreate && res.Action != ActionEdit && res.Action != ActionGet && res.Action != ActionList && res.Action != ActionDelete {
-			return fmt.Errorf("resource with $_ref: %s has unknown action: %s, only %s, %s, %s, %s and %s are allowed ", res.Ref, res.Action, ActionCreate, ActionEdit, ActionGet, ActionList, ActionDelete)
+		if res.Action != common.ActionCreate && res.Action != common.ActionEdit && res.Action != common.ActionGet && res.Action != common.ActionList && res.Action != common.ActionDelete {
+			return fmt.Errorf("resource with $_ref: %s has unknown action: %s, only %s, %s, %s, %s and %s are allowed ", res.Ref, res.Action, common.ActionCreate, common.ActionEdit, common.ActionGet, common.ActionList, common.ActionDelete)
 		}
 
 		/* 		if len(res.Resources) != 0 {
@@ -895,7 +797,7 @@ func ValidateResources(loadFile *LoadResFile, refCtx *RefContext) error {
 			return fmt.Errorf("unknown resource type: %s", res.Type)
 		}
 
-		if res.Action == ActionDelete || res.Action == ActionEdit || res.Action == ActionGet {
+		if res.Action == common.ActionDelete || res.Action == common.ActionEdit || res.Action == common.ActionGet {
 			var id = res.Payload["id"].(string)
 
 			if id == "" {
@@ -918,13 +820,13 @@ func ValidateResources(loadFile *LoadResFile, refCtx *RefContext) error {
 
 		for k, v := range res.Payload {
 			path := k
-			if err := validateReferences(v, refCtx, path, res.Ref); err != nil {
+			if err := common.ValidateReferences(v, refCtx, path, res.Ref); err != nil {
 				return err
 			}
 		}
 
 		if len(res.Resources) > 0 {
-			childFile := LoadResFile{Resources: res.Resources}
+			childFile := common.LoadResFile{Resources: res.Resources}
 			if err := ValidateResources(&childFile, refCtx); err != nil {
 				return err
 			}
@@ -977,7 +879,7 @@ var loadCmd = &cobra.Command{
 	Short: "Load your resources",
 	Long:  `Load your resources`,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := LoadResources(cmd, resourceFile, inputRefFile, inputRefRaw, outputFile)
+		err := LoadResources(cmd, common.ResourceFile, common.InputRefFile, common.InputRefRaw, common.OutputFile)
 		if err != nil {
 			log.Fatalf("%v", err)
 		}
@@ -985,50 +887,16 @@ var loadCmd = &cobra.Command{
 }
 
 func init() {
-	loadCmd.Flags().StringVarP(&resourceFile, "file", "", "", "resource file that contains your resource")
+	loadCmd.Flags().StringVarP(&common.ResourceFile, "file", "", "", "resource file that contains your resource")
 
 	if err := loadCmd.MarkFlagRequired("file"); err != nil {
 		log.Fatalf("error occurred: %v", err)
 	}
 
-	loadCmd.Flags().StringVarP(&outputFile, "output-file", "", "", "result of the command that contains all resource information")
-	loadCmd.Flags().StringVarP(&inputRefRaw, "input-ref", "", "", "params to replace resource loader file")
-	loadCmd.Flags().StringVarP(&inputRefFile, "input-ref-file", "", "", "file that contains params to replace resource loader file")
-	loadCmd.Flags().BoolVarP(&dryRun, "dry-run", "", false, "perform dry run to validate resources without load resource to the API")
+	loadCmd.Flags().StringVarP(&common.OutputFile, "output-file", "", "", "result of the command that contains all resource information")
+	loadCmd.Flags().StringVarP(&common.InputRefRaw, "input-ref", "", "", "params to replace resource loader file")
+	loadCmd.Flags().StringVarP(&common.InputRefFile, "input-ref-file", "", "", "file that contains params to replace resource loader file")
+	loadCmd.Flags().BoolVarP(&common.DryRun, "dry-run", "", false, "perform dry run to validate resources without load resource to the API")
 
 	ResourceCmd.AddCommand(loadCmd)
-}
-
-func validateReferences(value interface{}, refCtx *RefContext, path string, resRef string) error {
-	switch v := value.(type) {
-	case string:
-		if strings.HasPrefix(v, "$") {
-			parts := strings.Split(strings.TrimPrefix(v, "$"), ".")
-			if len(parts) < 2 {
-				return fmt.Errorf("invalid $ reference format at %s in $_ref=%s", path, resRef)
-			}
-
-			if _, ok := refCtx.Get(parts[0]); !ok {
-				return fmt.Errorf("reference %s not found at %s in $_ref=%s", parts[0], path, resRef)
-			}
-		}
-
-	case []interface{}:
-		for i, item := range v {
-			itemPath := fmt.Sprintf("%s[%d]", path, i)
-			if err := validateReferences(item, refCtx, itemPath, resRef); err != nil {
-				return err
-			}
-		}
-
-	case map[string]interface{}:
-		for k, val := range v {
-			nestedPath := fmt.Sprintf("%s.%s", path, k)
-			if err := validateReferences(val, refCtx, nestedPath, resRef); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
 }
