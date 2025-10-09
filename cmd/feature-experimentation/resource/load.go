@@ -430,18 +430,59 @@ func handleCreate(res Resource) (resp map[string]any, err error) {
 func handleEdit(res Resource) (resp map[string]any, err error) {
 	var respBytes []byte
 
-	//payloadBytes, err := json.Marshal(res.Payload)
+	payloadBytes, err := json.Marshal(res.Payload)
 	if err != nil {
 		return nil, err
 	}
 
-	var id = res.Payload["id"].(float64)
+	var id = res.Payload["id"].(string)
 
-	if id == 0 {
+	if id == "" {
 		return nil, fmt.Errorf("error occurred: missing property %s", "id")
 	}
 
 	switch res.Type {
+	case Project:
+		respBytes, err = project.EditProject(id, payloadBytes)
+		if err != nil {
+			return nil, err
+		}
+
+	case Campaign:
+		respBytes, err = campaign.EditCampaign(id, payloadBytes)
+		if err != nil {
+			return nil, err
+		}
+
+	case VariationGroup:
+		respBytes, err = variation_group.EditVariationGroup(res.ParentID, id, payloadBytes)
+		if err != nil {
+			return nil, err
+		}
+
+	case Variation:
+		respBytes, err = variation.EditVariation(res.ParentResource.ParentID, res.ParentID, id, payloadBytes)
+		if err != nil {
+			return nil, err
+		}
+
+	case Goal:
+		respBytes, err = goal.EditGoal(id, payloadBytes)
+		if err != nil {
+			return nil, err
+		}
+
+	case TargetingKey:
+		respBytes, err = targeting_key.EditTargetingKey(id, payloadBytes)
+		if err != nil {
+			return nil, err
+		}
+
+	case Flag:
+		respBytes, err = flag.EditFlag(id, payloadBytes)
+		if err != nil {
+			return nil, err
+		}
 
 	default:
 		return nil, fmt.Errorf("unknown resource type: %s", res.Type)
@@ -460,6 +501,82 @@ func handleList(res Resource) (any, error) {
 	var err error
 
 	switch res.Type {
+	case Project:
+		projects, err := project.ListProjects()
+		if err != nil {
+			return nil, err
+		}
+
+		respBytes, err = json.Marshal(projects)
+		if err != nil {
+			return nil, err
+		}
+
+	case Campaign:
+		campaigns, err := campaign.ListCampaigns()
+		if err != nil {
+			return nil, err
+		}
+
+		respBytes, err = json.Marshal(campaigns)
+		if err != nil {
+			return nil, err
+		}
+
+	case VariationGroup:
+		variationGroups, err := variation_group.ListVariationGroups(res.ParentID)
+		if err != nil {
+			return nil, err
+		}
+
+		respBytes, err = json.Marshal(variationGroups)
+		if err != nil {
+			return nil, err
+		}
+
+	case Variation:
+		variations, err := variation.ListVariations(res.ParentResource.ParentID, res.ParentID)
+		if err != nil {
+			return nil, err
+		}
+
+		respBytes, err = json.Marshal(variations)
+		if err != nil {
+			return nil, err
+		}
+
+	case Goal:
+		goals, err := goal.ListGoals()
+		if err != nil {
+			return nil, err
+		}
+
+		respBytes, err = json.Marshal(goals)
+		if err != nil {
+			return nil, err
+		}
+
+	case TargetingKey:
+		targetingKeys, err := targeting_key.ListTargetingKeys()
+		if err != nil {
+			return nil, err
+		}
+
+		respBytes, err = json.Marshal(targetingKeys)
+		if err != nil {
+			return nil, err
+		}
+
+	case Flag:
+		flags, err := flag.ListFlags()
+		if err != nil {
+			return nil, err
+		}
+
+		respBytes, err = json.Marshal(flags)
+		if err != nil {
+			return nil, err
+		}
 
 	default:
 		return nil, fmt.Errorf("unknown resource type: %s", res.Type)
@@ -477,13 +594,89 @@ func handleList(res Resource) (any, error) {
 func handleGet(res Resource) (resp map[string]any, err error) {
 	var respBytes []byte
 
-	var id = res.Payload["id"].(float64)
+	var id = res.Payload["id"].(string)
 
-	if id == 0 {
+	if id == "" {
 		return nil, fmt.Errorf("error occurred: missing property %s", "id")
 	}
 
 	switch res.Type {
+	case Project:
+		project, err := project.GetProject(id)
+		if err != nil {
+			return nil, err
+		}
+
+		respBytes, err = json.Marshal(project)
+		if err != nil {
+			return nil, err
+		}
+
+	case Campaign:
+		campaign, err := campaign.GetCampaign(id)
+		if err != nil {
+			return nil, err
+		}
+
+		respBytes, err = json.Marshal(campaign)
+		if err != nil {
+			return nil, err
+		}
+
+	case VariationGroup:
+		variationGroup, err := variation_group.GetVariationGroup(res.ParentID, id)
+		if err != nil {
+			return nil, err
+		}
+
+		respBytes, err = json.Marshal(variationGroup)
+		if err != nil {
+			return nil, err
+		}
+
+	case Variation:
+		variations, err := variation.GetVariation(res.ParentResource.ParentID, res.ParentID, id)
+		if err != nil {
+			return nil, err
+		}
+
+		respBytes, err = json.Marshal(variations)
+		if err != nil {
+			return nil, err
+		}
+
+	case Goal:
+		goal, err := goal.GetGoal(id)
+		if err != nil {
+			return nil, err
+		}
+
+		respBytes, err = json.Marshal(goal)
+		if err != nil {
+			return nil, err
+		}
+
+	case TargetingKey:
+		targetingKey, err := targeting_key.GetTargetingKey(id)
+		if err != nil {
+			return nil, err
+		}
+
+		respBytes, err = json.Marshal(targetingKey)
+		if err != nil {
+			return nil, err
+		}
+
+	case Flag:
+		flag, err := flag.GetFlag(id)
+		if err != nil {
+			return nil, err
+		}
+
+		respBytes, err = json.Marshal(flag)
+		if err != nil {
+			return nil, err
+		}
 
 	default:
 		return nil, fmt.Errorf("unknown resource type: %s", res.Type)
@@ -499,19 +692,89 @@ func handleGet(res Resource) (resp map[string]any, err error) {
 
 func handleDelete(res Resource) (any, error) {
 	var respBytes []byte
+	var id = res.Payload["id"].(string)
 
-	/* payloadBytes, err := json.Marshal(res.Payload)
-	if err != nil {
-		return nil, err
-	} */
-
-	var id = res.Payload["id"].(float64)
-
-	if id == 0 {
+	if id == "" {
 		return nil, fmt.Errorf("error occurred: missing property %s", "id")
 	}
 
 	switch res.Type {
+	case Project:
+		resp, err := project.DeleteProject(id)
+		if err != nil {
+			return nil, err
+		}
+
+		respBytes, err = json.Marshal(resp)
+		if err != nil {
+			return nil, err
+		}
+
+	case Campaign:
+		resp, err := campaign.DeleteCampaign(id)
+		if err != nil {
+			return nil, err
+		}
+
+		respBytes, err = json.Marshal(resp)
+		if err != nil {
+			return nil, err
+		}
+
+	case VariationGroup:
+		resp, err := variation_group.DeleteVariationGroup(res.ParentID, id)
+		if err != nil {
+			return nil, err
+		}
+
+		respBytes, err = json.Marshal(resp)
+		if err != nil {
+			return nil, err
+		}
+
+	case Variation:
+		resp, err := variation.DeleteVariation(res.ParentResource.ParentID, res.ParentID, id)
+		if err != nil {
+			return nil, err
+		}
+
+		respBytes, err = json.Marshal(resp)
+		if err != nil {
+			return nil, err
+		}
+
+	case Goal:
+		resp, err := goal.DeleteGoal(id)
+		if err != nil {
+			return nil, err
+		}
+
+		respBytes, err = json.Marshal(resp)
+		if err != nil {
+			return nil, err
+		}
+
+	case TargetingKey:
+		resp, err := targeting_key.DeleteTargetingKey(id)
+		if err != nil {
+			return nil, err
+		}
+
+		respBytes, err = json.Marshal(resp)
+		if err != nil {
+			return nil, err
+		}
+
+	case Flag:
+		resp, err := flag.DeleteFlag(id)
+		if err != nil {
+			return nil, err
+		}
+
+		respBytes, err = json.Marshal(resp)
+		if err != nil {
+			return nil, err
+		}
 
 	default:
 		return nil, fmt.Errorf("unknown resource type: %s", res.Type)
