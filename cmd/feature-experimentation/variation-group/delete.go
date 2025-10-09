@@ -11,8 +11,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func DeleteVariationGroup(campaignId, id string) error {
-	return httprequest.VariationGroupRequester.HTTPDeleteVariationGroup(campaignId, id)
+func DeleteVariationGroup(campaignId, id string) (string, error) {
+	err := httprequest.VariationGroupRequester.HTTPDeleteVariationGroup(campaignId, id)
+	if err != nil {
+		return "", err
+	}
+	return "Variation group deleted", nil
 }
 
 // deleteCmd represents the delete command
@@ -21,11 +25,11 @@ var deleteCmd = &cobra.Command{
 	Short: "Delete a variation group",
 	Long:  `Delete a variation group`,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := DeleteVariationGroup(CampaignID, VariationGroupID)
+		resp, err := DeleteVariationGroup(CampaignID, VariationGroupID)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
-		fmt.Fprintln(cmd.OutOrStdout(), "Variation group deleted")
+		fmt.Fprintln(cmd.OutOrStdout(), resp)
 	},
 }
 

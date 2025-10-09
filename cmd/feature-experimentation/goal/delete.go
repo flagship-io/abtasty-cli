@@ -11,8 +11,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func DeleteGoal(id string) error {
-	return httprequest.GoalRequester.HTTPDeleteGoal(id)
+func DeleteGoal(id string) (string, error) {
+	err := httprequest.GoalRequester.HTTPDeleteGoal(id)
+	if err != nil {
+		return "", err
+	}
+	return "Goal deleted", nil
 }
 
 // deleteCmd represents delete command
@@ -21,11 +25,11 @@ var deleteCmd = &cobra.Command{
 	Short: "Delete a goal",
 	Long:  `Delete a goal`,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := DeleteGoal(GoalID)
+		resp, err := DeleteGoal(GoalID)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
-		fmt.Fprintln(cmd.OutOrStdout(), "Goal deleted")
+		fmt.Fprintln(cmd.OutOrStdout(), resp)
 
 	},
 }
