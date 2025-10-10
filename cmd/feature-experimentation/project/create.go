@@ -13,6 +13,15 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func CreateProject(dataRaw []byte) ([]byte, error) {
+	body, err := httprequest.ProjectRequester.HTTPCreateProject(dataRaw)
+	if err != nil {
+		return nil, err
+	}
+
+	return body, nil
+}
+
 // createCmd represents the create command
 var createCmd = &cobra.Command{
 	Use:   "create [-n <name> | --name=<name>]",
@@ -28,10 +37,11 @@ var createCmd = &cobra.Command{
 			log.Fatalf("error occurred: %s", err)
 		}
 
-		body, err := httprequest.ProjectRequester.HTTPCreateProject(projectRequestJSON)
+		body, err := CreateProject(projectRequestJSON)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
+
 		fmt.Fprintf(cmd.OutOrStdout(), "%s\n", body)
 	},
 }

@@ -11,17 +11,25 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func DeleteTargetingKey(id string) (string, error) {
+	err := httprequest.TargetingKeyRequester.HTTPDeleteTargetingKey(id)
+	if err != nil {
+		return "", err
+	}
+	return "Targeting key deleted", nil
+}
+
 // deleteCmd represents delete command
 var deleteCmd = &cobra.Command{
 	Use:   "delete [-i <targeting-key-id> | --id=<targeting-key-id>]",
 	Short: "Delete a targeting key",
 	Long:  `Delete a targeting key`,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := httprequest.TargetingKeyRequester.HTTPDeleteTargetingKey(TargetingKeyID)
+		resp, err := DeleteTargetingKey(TargetingKeyID)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
-		fmt.Fprintln(cmd.OutOrStdout(), "Targeting key deleted")
+		fmt.Fprintln(cmd.OutOrStdout(), resp)
 
 	},
 }

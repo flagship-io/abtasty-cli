@@ -85,7 +85,6 @@ func initConfig() {
 
 	v.Unmarshal(&requestConfig)
 	common.Init(requestConfig)
-	resource.Init(requestConfig)
 	viper.MergeConfigMap(v.AllSettings())
 
 	r := &http_request.ResourceRequester

@@ -11,13 +11,22 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func EditVariation(campaignID, variationGroupID, id string, dataRaw []byte) ([]byte, error) {
+	body, err := httprequest.VariationFERequester.HTTPEditVariation(campaignID, variationGroupID, id, dataRaw)
+	if err != nil {
+		return nil, err
+	}
+
+	return body, nil
+}
+
 // editCmd represents the edit command
 var editCmd = &cobra.Command{
 	Use:   "edit [--campaign-id=<campaign-id>] [--variation-group-id=<variation-group-id>] [-i <variation-id> | --id=<variation-id>] [-d <data-raw> | --data-raw=<data-raw>]",
 	Short: "Edit a variation",
 	Long:  `Edit a variation`,
 	Run: func(cmd *cobra.Command, args []string) {
-		body, err := httprequest.VariationFERequester.HTTPEditVariation(CampaignID, VariationGroupID, VariationID, DataRaw)
+		body, err := EditVariation(CampaignID, VariationGroupID, VariationID, []byte(DataRaw))
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}

@@ -6,11 +6,20 @@ package goal
 import (
 	"log"
 
+	"github.com/flagship-io/abtasty-cli/models/feature_experimentation"
 	"github.com/flagship-io/abtasty-cli/utils"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
+
+func GetGoal(id string) (feature_experimentation.Goal, error) {
+	body, err := httprequest.GoalRequester.HTTPGetGoal(id)
+	if err != nil {
+		return feature_experimentation.Goal{}, err
+	}
+	return body, nil
+}
 
 // getCmd represents get command
 var getCmd = &cobra.Command{
@@ -18,7 +27,7 @@ var getCmd = &cobra.Command{
 	Short: "Get a goal",
 	Long:  `Get a goal`,
 	Run: func(cmd *cobra.Command, args []string) {
-		body, err := httprequest.GoalRequester.HTTPGetGoal(GoalID)
+		body, err := GetGoal(GoalID)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}

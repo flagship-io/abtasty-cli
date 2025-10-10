@@ -11,13 +11,22 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func EditCampaign(campaignID string, dataRaw []byte) ([]byte, error) {
+	body, err := httprequest.CampaignFERequester.HTTPEditCampaign(campaignID, dataRaw)
+	if err != nil {
+		return nil, err
+	}
+
+	return body, nil
+}
+
 // editCmd represents the edit command
 var editCmd = &cobra.Command{
 	Use:   "edit [-i <campaign-id> | --id=<campaign-id>] [ -d <data-raw> | --data-raw=<data-raw>]",
 	Short: "Edit a campaign",
 	Long:  `Edit a campaign`,
 	Run: func(cmd *cobra.Command, args []string) {
-		body, err := httprequest.CampaignFERequester.HTTPEditCampaign(CampaignID, DataRaw)
+		body, err := EditCampaign(CampaignID, []byte(DataRaw))
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}

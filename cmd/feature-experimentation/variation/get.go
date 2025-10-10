@@ -6,11 +6,20 @@ package variation
 import (
 	"log"
 
+	"github.com/flagship-io/abtasty-cli/models/feature_experimentation"
 	"github.com/flagship-io/abtasty-cli/utils"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
+
+func GetVariation(campaignID, variationGroupID, variationID string) (feature_experimentation.VariationFE, error) {
+	body, err := httprequest.VariationFERequester.HTTPGetVariation(campaignID, variationGroupID, variationID)
+	if err != nil {
+		return feature_experimentation.VariationFE{}, err
+	}
+	return body, nil
+}
 
 // getCmd represents get command
 var getCmd = &cobra.Command{
@@ -18,7 +27,7 @@ var getCmd = &cobra.Command{
 	Short: "Get a variation",
 	Long:  `Get a variation`,
 	Run: func(cmd *cobra.Command, args []string) {
-		body, err := httprequest.VariationFERequester.HTTPGetVariation(CampaignID, VariationGroupID, VariationID)
+		body, err := GetVariation(CampaignID, VariationGroupID, VariationID)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}

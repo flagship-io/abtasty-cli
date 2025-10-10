@@ -44,7 +44,7 @@ func TestHTTPListCampaign(t *testing.T) {
 func TestHTTPCreateCampaign(t *testing.T) {
 
 	dataCampaign := "{\"project_id\":\"testProjectID\",\"name\":\"testCampaignName\",\"description\":\"testCampaignDescription\",\"type\":\"toggle\",\"variation_groups\":[{\"name\":\"variationGroupName\",\"variations\":[{\"name\":\"My variation 1\",\"allocation\":50,\"reference\":true,\"modifications\":{\"value\":{\"color\":\"blue\"}}},{\"name\":\"My variation 2\",\"allocation\":50,\"reference\":false,\"modifications\":{\"value\":{\"color\":\"red\"}}}],\"targeting\":{\"targeting_groups\":[{\"targetings\":[{\"operator\":\"CONTAINS\",\"key\":\"isVIP\",\"value\":\"true\"}]}]}}],\"scheduler\":{\"start_date\":\"2022-02-01 10:00:00\",\"stop_date\":\"2022-02-02 08:00:00\",\"timezone\":\"Europe/Paris\"}}"
-	respBody, err := campaignRequester.HTTPCreateCampaign(dataCampaign)
+	respBody, err := campaignRequester.HTTPCreateCampaign([]byte(dataCampaign))
 
 	assert.NotNil(t, respBody)
 	assert.Nil(t, err)
@@ -56,7 +56,7 @@ func TestHTTPEditCampaign(t *testing.T) {
 
 	dataCampaign := "{\"project_id\":\"testProjectID1\",\"name\":\"testCampaignName1\",\"description\":\"testCampaignDescription1\",\"type\":\"toggle\",\"variation_groups\":[{\"name\":\"variationGroupName\",\"variations\":[{\"name\":\"My variation 1\",\"allocation\":50,\"reference\":true,\"modifications\":{\"value\":{\"color\":\"blue\"}}},{\"name\":\"My variation 2\",\"allocation\":50,\"reference\":false,\"modifications\":{\"value\":{\"color\":\"red\"}}}],\"targeting\":{\"targeting_groups\":[{\"targetings\":[{\"operator\":\"CONTAINS\",\"key\":\"isVIP\",\"value\":\"true\"}]}]}}],\"scheduler\":{\"start_date\":\"2022-02-01 10:00:00\",\"stop_date\":\"2022-02-02 08:00:00\",\"timezone\":\"Europe/Paris\"}}"
 
-	respBody, err := campaignRequester.HTTPEditCampaign("testCampaignID", dataCampaign)
+	respBody, err := campaignRequester.HTTPEditCampaign("testCampaignID", []byte(dataCampaign))
 
 	assert.NotNil(t, respBody)
 	assert.Nil(t, err)

@@ -6,11 +6,20 @@ package targeting_key
 import (
 	"log"
 
+	"github.com/flagship-io/abtasty-cli/models/feature_experimentation"
 	"github.com/flagship-io/abtasty-cli/utils"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
+
+func GetTargetingKey(id string) (feature_experimentation.TargetingKey, error) {
+	body, err := httprequest.TargetingKeyRequester.HTTPGetTargetingKey(id)
+	if err != nil {
+		return feature_experimentation.TargetingKey{}, err
+	}
+	return body, nil
+}
 
 // getCmd represents get command
 var getCmd = &cobra.Command{
@@ -18,7 +27,7 @@ var getCmd = &cobra.Command{
 	Short: "Get a targeting key",
 	Long:  `Get a targeting key`,
 	Run: func(cmd *cobra.Command, args []string) {
-		body, err := httprequest.TargetingKeyRequester.HTTPGetTargetingKey(TargetingKeyID)
+		body, err := GetTargetingKey(TargetingKeyID)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}

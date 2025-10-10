@@ -43,7 +43,7 @@ func TestHTTPCreateVariation(t *testing.T) {
 
 	data := "{\"name\":\"testVariationName\",\"reference\":true,\"allocation\":50,\"modifications\":{\"type\":\"string\",\"value\":\"isVIP\"}}"
 
-	respBody, err := variationRequester.HTTPCreateVariation(CampaignID, variationGroupID, data)
+	respBody, err := variationRequester.HTTPCreateVariation(CampaignID, variationGroupID, []byte(data))
 
 	assert.NotNil(t, respBody)
 	assert.Nil(t, err)
@@ -55,7 +55,7 @@ func TestHTTPEditVariation(t *testing.T) {
 
 	data := "{\"name\":\"testVariationName1\",\"reference\":false,\"allocation\":80,\"modifications\":{\"type\":\"string\",\"value\":\"isVIP1\"}}"
 
-	respBody, err := variationRequester.HTTPEditVariation(CampaignID, variationGroupID, "testVariationID", data)
+	respBody, err := variationRequester.HTTPEditVariation(CampaignID, variationGroupID, "testVariationID", []byte(data))
 
 	assert.NotNil(t, respBody)
 	assert.Nil(t, err)

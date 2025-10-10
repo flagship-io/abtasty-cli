@@ -13,6 +13,15 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func EditProject(id string, dataRaw []byte) ([]byte, error) {
+	body, err := httprequest.ProjectRequester.HTTPEditProject(id, dataRaw)
+	if err != nil {
+		return nil, err
+	}
+
+	return body, nil
+}
+
 // editCmd represents the edit command
 var editCmd = &cobra.Command{
 	Use:   "edit [-i <project-id> | --id=<project-id>] [-n <name> | --name=<name>]",
@@ -28,7 +37,7 @@ var editCmd = &cobra.Command{
 			log.Fatalf("error occurred: %s", err)
 		}
 
-		body, err := httprequest.ProjectRequester.HTTPEditProject(ProjectId, projectRequestJSON)
+		body, err := EditProject(ProjectId, projectRequestJSON)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
