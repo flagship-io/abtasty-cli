@@ -21,7 +21,9 @@ import (
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/modification"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/variation"
 	"github.com/flagship-io/abtasty-cli/models/web_experimentation"
+	"github.com/flagship-io/abtasty-cli/pkg/types"
 	"github.com/flagship-io/abtasty-cli/utils"
+
 	"github.com/flagship-io/abtasty-cli/utils/common"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
@@ -39,11 +41,11 @@ type funcModifType func(int, []byte) ([]byte, error)
 
 func LoadResources(out io.Writer, filePath, inputRefFile, inputRefRaw, outputFile string, dryRun bool) error {
 
-	var results []common.ResourceResult
+	var results []types.ResourceResult
 
 	recordResult := func(ref string, status string, resp interface{}) {
 		if ref != "" {
-			results = append(results, common.ResourceResult{
+			results = append(results, types.ResourceResult{
 				Ref:      ref,
 				Status:   status,
 				Response: resp,
@@ -51,7 +53,7 @@ func LoadResources(out io.Writer, filePath, inputRefFile, inputRefRaw, outputFil
 		}
 	}
 
-	processAndRecord := func(out io.Writer, res common.Resource, rc *common.RefContext) {
+	processAndRecord := func(out io.Writer, res types.Resource, rc *common.RefContext) {
 		resp, err := processResourceWithResponse(out, res, rc)
 		status := "success"
 		if err != nil {
@@ -67,7 +69,7 @@ func LoadResources(out io.Writer, filePath, inputRefFile, inputRefRaw, outputFil
 		return fmt.Errorf("failed to read resource file: %w", err)
 	}
 
-	var loadFile common.LoadResFile
+	var loadFile types.LoadResFile
 	if err := json.Unmarshal(data, &loadFile); err != nil {
 		return fmt.Errorf("failed to parse resource file: %w", err)
 	}
@@ -105,7 +107,7 @@ func LoadResources(out io.Writer, filePath, inputRefFile, inputRefRaw, outputFil
 		return nil
 	}
 
-	var mutating, read []common.Resource
+	var mutating, read []types.Resource
 	for _, res := range loadFile.Resources {
 		switch res.Action {
 		case common.ActionGet, common.ActionList:
@@ -115,7 +117,7 @@ func LoadResources(out io.Writer, filePath, inputRefFile, inputRefRaw, outputFil
 		}
 	}
 
-	var audiences, folders, campaigns, variations, modifications, others []common.Resource
+	var audiences, folders, campaigns, variations, modifications, others []types.Resource
 	for _, res := range mutating {
 		switch res.Type {
 		case Audience:
@@ -161,7 +163,7 @@ func LoadResources(out io.Writer, filePath, inputRefFile, inputRefRaw, outputFil
 		processAndRecord(out, res, refCtx)
 	}
 
-	loaderResults := common.LoaderResults{Results: results}
+	loaderResults := types.LoaderResults{Results: results}
 	if outputFile != "" {
 		b, err := json.MarshalIndent(loaderResults, "", "  ")
 		if err != nil {
@@ -185,7 +187,7 @@ func LoadResources(out io.Writer, filePath, inputRefFile, inputRefRaw, outputFil
 	return nil
 }
 
-func processResourceWithResponse(out io.Writer, res common.Resource, rc *common.RefContext) (interface{}, error) {
+func processResourceWithResponse(out io.Writer, res types.Resource, rc *common.RefContext) (interface{}, error) {
 	if res.ParentID != "" && strings.HasPrefix(res.ParentID, "$") {
 		parts := strings.Split(strings.TrimPrefix(res.ParentID, "$"), ".")
 		if len(parts) > 1 {
@@ -254,7 +256,7 @@ func processResourceWithResponse(out io.Writer, res common.Resource, rc *common.
 	return resp, nil
 }
 
-func handleCreate(res common.Resource) (resp map[string]any, err error) {
+func handleCreate(res types.Resource) (resp map[string]any, err error) {
 	payloadBytes, err := json.Marshal(res.Payload)
 	if err != nil {
 		return nil, err
@@ -311,7 +313,7 @@ func handleCreate(res common.Resource) (resp map[string]any, err error) {
 	return resp, nil
 }
 
-func handleEdit(res common.Resource) (resp map[string]any, err error) {
+func handleEdit(res types.Resource) (resp map[string]any, err error) {
 	var respBytes []byte
 
 	payloadBytes, err := json.Marshal(res.Payload)
@@ -363,7 +365,7 @@ func handleEdit(res common.Resource) (resp map[string]any, err error) {
 	return resp, nil
 }
 
-func handleList(res common.Resource) (any, error) {
+func handleList(res types.Resource) (any, error) {
 	var respBytes []byte
 	var err error
 
@@ -452,7 +454,7 @@ func handleList(res common.Resource) (any, error) {
 	return resp, nil
 }
 
-func handleGet(res common.Resource) (resp map[string]any, err error) {
+func handleGet(res types.Resource) (resp map[string]any, err error) {
 	var respBytes []byte
 
 	var id = res.Payload["id"].(float64)
@@ -539,7 +541,7 @@ func handleGet(res common.Resource) (resp map[string]any, err error) {
 	return resp, nil
 }
 
-func handleDelete(res common.Resource) (any, error) {
+func handleDelete(res types.Resource) (any, error) {
 	var respBytes []byte
 
 	payloadBytes, err := json.Marshal(res.Payload)
@@ -622,7 +624,7 @@ func handleDelete(res common.Resource) (any, error) {
 	return resp, nil
 }
 
-func ValidateResources(loadFile *common.LoadResFile, refCtx *common.RefContext) error {
+func ValidateResources(loadFile *types.LoadResFile, refCtx *common.RefContext) error {
 	for _, res := range loadFile.Resources {
 		if res.Ref == "" && res.Type == "" {
 			b, err := json.Marshal(res)
@@ -740,7 +742,7 @@ func ValidateResources(loadFile *common.LoadResFile, refCtx *common.RefContext) 
 		}
 
 		if len(res.Resources) > 0 {
-			childFile := common.LoadResFile{Resources: res.Resources}
+			childFile := types.LoadResFile{Resources: res.Resources}
 			if err := ValidateResources(&childFile, refCtx); err != nil {
 				return err
 			}
@@ -814,7 +816,7 @@ func init() {
 	ResourceCmd.AddCommand(loadCmd)
 }
 
-func createOrEditModification(id int, res common.Resource, payloadBytes []byte, createOrEditModif funcModifType) ([]byte, error) {
+func createOrEditModification(id int, res types.Resource, payloadBytes []byte, createOrEditModif funcModifType) ([]byte, error) {
 	var modificationResourceLoader web_experimentation.ModificationResourceLoader
 	err := json.Unmarshal(payloadBytes, &modificationResourceLoader)
 	if err != nil {
