@@ -54,7 +54,7 @@
             "payload": {
                 "name": "Holiday Promo",
                 "description": "Winter discounts",
-                "url": "URL",
+                "url": "http://example.com",
                 "type": "ab",
                 "status": "pause",
                 "labels": [
@@ -72,12 +72,6 @@
                         {
                             "condition": "IS",
                             "value": "https://abtasty.com"
-                        }
-                    ],
-                    "favorite_url_scopes": [
-                        {
-                            "include": true,
-                            "favorite_url_id": "ID"
                         }
                     ],
                     "selector_scopes": [
@@ -98,10 +92,6 @@
                         "value": "console.log(\"hello world\");"
                     },
                     "element_appears_after_page_load": false,
-                    "triggers_ids": [
-                        "ID",
-                        "ID-1"
-                    ],
                     "targeting_frequency": {
                         "type": "regular",
                         "unit": "day",
