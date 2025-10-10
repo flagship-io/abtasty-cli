@@ -38,7 +38,7 @@ const (
 	TargetingKey   string = "targeting-key"
 )
 
-func LoadResources(out io.Writer, filePath, inputRefFile, inputRefRaw, outputFile string) error {
+func LoadResources(out io.Writer, filePath, inputRefFile, inputRefRaw, outputFile string, dryRun bool) error {
 
 	var results []common.ResourceResult
 
@@ -101,7 +101,7 @@ func LoadResources(out io.Writer, filePath, inputRefFile, inputRefRaw, outputFil
 		return fmt.Errorf("Validation failed: %v\n", err)
 	}
 
-	if common.DryRun {
+	if dryRun {
 		fmt.Fprintf(out, "Dry-run mode: resources validated, no changes applied.\n")
 		return nil
 	}
@@ -880,7 +880,7 @@ var loadCmd = &cobra.Command{
 	Short: "Load your resources",
 	Long:  `Load your resources`,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := LoadResources(cmd.OutOrStdout(), common.ResourceFile, common.InputRefFile, common.InputRefRaw, common.OutputFile)
+		err := LoadResources(cmd.OutOrStdout(), common.ResourceFile, common.InputRefFile, common.InputRefRaw, common.OutputFile, common.DryRun)
 		if err != nil {
 			log.Fatalf("%v", err)
 		}
