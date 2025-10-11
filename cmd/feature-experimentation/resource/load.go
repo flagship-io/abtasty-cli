@@ -39,7 +39,7 @@ const (
 	TargetingKey   string = "targeting-key"
 )
 
-func LoadResources(out io.Writer, filePath, inputRefFile, inputRefRaw, outputFile string, dryRun bool) error {
+func LoadResources(out io.Writer, resourceLoaderContent, refContent string, dryRun bool) (responseContent string, err error) {
 
 	var results []types.ResourceResult
 
@@ -64,33 +64,18 @@ func LoadResources(out io.Writer, filePath, inputRefFile, inputRefRaw, outputFil
 
 	}
 
-	data, err := os.ReadFile(filePath)
-	if err != nil {
-		return fmt.Errorf("failed to read resource file: %w", err)
-	}
-
 	var loadFile types.LoadResFile
-	if err := json.Unmarshal(data, &loadFile); err != nil {
-		return fmt.Errorf("failed to parse resource file: %w", err)
+	if err := json.Unmarshal([]byte(resourceLoaderContent), &loadFile); err != nil {
+		return "", fmt.Errorf("failed to parse resource file: %w", err)
 	}
 
 	refCtx := common.NewRefContext()
 
 	var inputRef map[string]any
-	if inputRefFile != "" {
-		b, err := os.ReadFile(inputRefFile)
+	if refContent != "" {
+		err = json.Unmarshal([]byte(refContent), &inputRef)
 		if err != nil {
-			return fmt.Errorf("failed to read input ref file: %w", err)
-		}
-
-		err = json.Unmarshal(b, &inputRef)
-		if err != nil {
-			return fmt.Errorf("failed to read input ref file: %w", err)
-		}
-	} else if inputRefRaw != "" {
-		err = json.Unmarshal([]byte(inputRefRaw), &inputRef)
-		if err != nil {
-			return fmt.Errorf("failed to read input ref file: %w", err)
+			return "", fmt.Errorf("failed to read input ref file: %w", err)
 		}
 	}
 
@@ -99,12 +84,12 @@ func LoadResources(out io.Writer, filePath, inputRefFile, inputRefRaw, outputFil
 	}
 
 	if err := ValidateResources(&loadFile, refCtx); err != nil {
-		return fmt.Errorf("Validation failed: %v\n", err)
+		return "", fmt.Errorf("Validation failed: %v\n", err)
 	}
 
 	if dryRun {
 		fmt.Fprintf(out, "Dry-run mode: resources validated, no changes applied.\n")
-		return nil
+		return "", nil
 	}
 
 	var mutating, read []types.Resource
@@ -176,27 +161,12 @@ func LoadResources(out io.Writer, filePath, inputRefFile, inputRefRaw, outputFil
 	}
 
 	loaderResults := types.LoaderResults{Results: results}
-	if outputFile != "" {
-		b, err := json.MarshalIndent(loaderResults, "", "  ")
-		if err != nil {
-			return err
-		}
-
-		err = os.WriteFile(outputFile, b, 0644)
-		if err != nil {
-			return err
-		}
-
-		fmt.Fprintf(out, "Results written to %s\n", outputFile)
-	} else {
-		fmt.Fprintf(out, "%-10s %-10s %s\n", "$_ref", "status", "response")
-		for _, r := range results {
-			respStr, _ := json.Marshal(r.Response)
-			fmt.Fprintf(out, "%-10s %-10s %s\n", r.Ref, r.Status, string(respStr))
-		}
+	loaderResultsBytes, err := json.Marshal(loaderResults)
+	if err != nil {
+		return "", fmt.Errorf("failed to marshal loader results: %w", err)
 	}
 
-	return nil
+	return string(loaderResultsBytes), nil
 }
 
 func processResourceWithResponse(out io.Writer, res types.Resource, rc *common.RefContext) (interface{}, error) {
@@ -205,8 +175,8 @@ func processResourceWithResponse(out io.Writer, res types.Resource, rc *common.R
 		if len(parts) > 1 {
 			if refVal, ok := rc.Get(parts[0]); ok {
 				if m, ok := refVal.(map[string]any); ok {
-					if field, ok := m[parts[1]].(float64); ok {
-						res.ParentID = fmt.Sprintf("%v", int(field))
+					if field, ok := m[parts[1]].(string); ok {
+						res.ParentID = fmt.Sprintf("%v", field)
 					}
 
 					if field, ok := m[parts[1]].(string); ok {
@@ -246,8 +216,8 @@ func processResourceWithResponse(out io.Writer, res types.Resource, rc *common.R
 	if res.Action == common.ActionCreate || res.Action == common.ActionEdit {
 		for _, child := range res.Resources {
 			if child.ParentID == "" && res.Ref != "" && resp != nil {
-				if id, ok := resp.(map[string]any)["id"].(float64); ok {
-					child.ParentID = fmt.Sprintf("%v", int(id))
+				if id, ok := resp.(map[string]any)["id"].(string); ok {
+					child.ParentID = fmt.Sprintf("%v", id)
 					child.ParentResource = &res
 				}
 
@@ -881,9 +851,36 @@ var loadCmd = &cobra.Command{
 	Short: "Load your resources",
 	Long:  `Load your resources`,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := LoadResources(cmd.OutOrStdout(), common.ResourceFile, common.InputRefFile, common.InputRefRaw, common.OutputFile, common.DryRun)
+		data, err := os.ReadFile(common.ResourceFile)
+		if err != nil {
+			log.Fatalf("failed to read resource file: %w", err)
+		}
+
+		var refContent string
+		if common.InputRefFile != "" {
+			refData, err := os.ReadFile(common.InputRefFile)
+			if err != nil {
+				log.Fatalf("failed to read input ref file: %v", err)
+			}
+
+			refContent = string(refData)
+		} else if common.InputRefRaw != "" {
+			refContent = common.InputRefRaw
+		}
+
+		loaderResults, err := LoadResources(cmd.OutOrStdout(), string(data), refContent, common.DryRun)
 		if err != nil {
 			log.Fatalf("%v", err)
+		}
+
+		if common.OutputFile != "" {
+			err := os.WriteFile(common.OutputFile, []byte(loaderResults), 0644)
+			if err != nil {
+				log.Fatalf("failed to write output file: %v", err)
+			}
+			fmt.Fprintf(cmd.OutOrStdout(), "Results written to %s\n", common.OutputFile)
+		} else {
+			fmt.Fprintln(cmd.OutOrStdout(), loaderResults)
 		}
 	},
 }

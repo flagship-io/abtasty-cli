@@ -13,7 +13,7 @@ import (
 )
 
 // LoadResources loads resources from a resource loader JSON content, processes them, and returns the results.
-func LoadWebExperimentationResources(resourceFilePath, accountID, token, inputRefFile, outputFile string, dryRun bool) (string, error) {
+func LoadWebExperimentationResources(resourceLoaderContent, accountID, token string, dryRun bool) (string, error) {
 	v := viper.New()
 	var requestConfig = common.RequestConfig{Product: utils.WEB_EXPERIMENTATION}
 
@@ -27,15 +27,15 @@ func LoadWebExperimentationResources(resourceFilePath, accountID, token, inputRe
 	r := &http_request.ResourceRequester
 	r.Init(&requestConfig)
 
-	err := webResource.LoadResources(os.Stdout, resourceFilePath, inputRefFile, "", outputFile, dryRun)
+	results, err := webResource.LoadResources(os.Stdout, resourceLoaderContent, "", dryRun)
 	if err != nil {
 		return "", fmt.Errorf("%v", err)
 	}
 
-	return "Resources loaded successfully", nil
+	return results, nil
 }
 
-func LoadFeatureExperimentationResources(resourceFilePath, accountID, accountEnvID, token, inputRefFile, outputFile string, dryRun bool) (string, error) {
+func LoadFeatureExperimentationResources(resourceLoaderContent, accountID, accountEnvID, token string, dryRun bool) (string, error) {
 	v := viper.New()
 	var requestConfig = common.RequestConfig{Product: utils.FEATURE_EXPERIMENTATION}
 
@@ -50,10 +50,10 @@ func LoadFeatureExperimentationResources(resourceFilePath, accountID, accountEnv
 	r := &http_request.ResourceRequester
 	r.Init(&requestConfig)
 
-	err := featureResource.LoadResources(os.Stdout, resourceFilePath, inputRefFile, "", outputFile, dryRun)
+	results, err := featureResource.LoadResources(os.Stdout, resourceLoaderContent, "", dryRun)
 	if err != nil {
 		return "", fmt.Errorf("%v", err)
 	}
 
-	return "Resources loaded successfully", nil
+	return results, nil
 }
