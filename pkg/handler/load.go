@@ -35,6 +35,7 @@ func LoadWebExperimentationResources(resourceLoaderContent, accountID, token str
 	return results, nil
 }
 
+// LoadResources loads resources from a resource loader JSON content, processes them, and returns the results.
 func LoadFeatureExperimentationResources(resourceLoaderContent, accountID, accountEnvID, token string, dryRun bool) (string, error) {
 	v := viper.New()
 	var requestConfig = common.RequestConfig{Product: utils.FEATURE_EXPERIMENTATION}
