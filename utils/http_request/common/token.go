@@ -125,7 +125,7 @@ func HTTPGetIdentifierWE() (models.UserMe, error) {
 
 func InitiateBrowserAuth(username, clientID, clientSecret string) (models.TokenResponse, error) {
 	if clientID == "" || clientSecret == "" {
-		log.Fatal("Error while login, required fields (username, client ID, client secret)")
+		return models.TokenResponse{}, errors.New("missing required fields (username, client ID, client secret)")
 	}
 
 	server := &http.Server{
@@ -136,7 +136,7 @@ func InitiateBrowserAuth(username, clientID, clientSecret string) (models.TokenR
 	var url = utils.GetWebExperimentationBrowserAuth(clientID, clientSecret)
 
 	if err := OpenLink(url); err != nil {
-		log.Fatalf("Error opening link: %s", err)
+		return models.TokenResponse{}, errors.New("failed to open browser")
 	}
 
 	go func() {
