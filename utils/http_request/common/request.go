@@ -103,33 +103,34 @@ func Init(credL RequestConfig) {
 	cred = credL
 }
 
-func regenerateToken(product, configName string) {
+func regenerateToken(product, configName string) error {
 	var authenticationResponse models.TokenResponse
 	var err error
 
 	if product == utils.FEATURE_EXPERIMENTATION {
 		authenticationResponse, err = HTTPCreateTokenFE(cred.ClientID, cred.ClientSecret, cred.AccountID)
 		if err != nil {
-			log.Fatalf("error occurred: %v", err)
+			return fmt.Errorf("error occurred: %v", err)
 		}
 	} else {
 		authenticationResponse, err = HTTPRefreshTokenWE(cred)
 		if err != nil {
-			log.Fatalf("error occurred: %v", err)
+			return fmt.Errorf("error occurred: %v", err)
 		}
 	}
 
 	if authenticationResponse.AccessToken == "" {
-		log.Fatal("client_id or client_secret not valid")
+		return fmt.Errorf("client_id or client_secret not valid")
 	}
 
 	cred.RefreshToken = authenticationResponse.RefreshToken
 	cred.Token = authenticationResponse.AccessToken
 	err = config.RewriteToken(product, configName, authenticationResponse)
 	if err != nil {
-		log.Fatalf("error occurred: %v", err)
+		return fmt.Errorf("error occurred: %v", err)
 	}
 
+	return nil
 }
 
 func HTTPRequest[T any](method string, url string, body []byte) ([]byte, error) {
@@ -178,7 +179,10 @@ func HTTPRequest[T any](method string, url string, body []byte) ([]byte, error) 
 	}
 
 	if !strings.Contains(url, "token") && cred.Token == "" {
-		regenerateToken(cred.Product, cred.CurrentUsedCredential)
+		err := regenerateToken(cred.Product, cred.CurrentUsedCredential)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	req.Header.Add("Accept", `*/*`)
