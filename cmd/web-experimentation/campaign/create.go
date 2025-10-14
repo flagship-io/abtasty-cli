@@ -80,7 +80,10 @@ func CreateCampaign(rawData []byte) ([]byte, error) {
 	}
 
 	if campaignModel.CampaignTargeting != nil {
-		model := we.JsonModelToModel(*campaignModel.CampaignTargeting)
+		model, err := we.JsonModelToModel(*campaignModel.CampaignTargeting)
+		if err != nil {
+			return nil, fmt.Errorf("error occurred: %v", err)
+		}
 
 		parsedModel, err := json.Marshal(model)
 		if err != nil {
@@ -114,7 +117,8 @@ var createCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		resp, err := CreateCampaign([]byte(DataRaw))
 		if err != nil {
-			log.Fatalf("%v", err)
+			fmt.Fprintf(cmd.ErrOrStderr(), "%v\n", err)
+			return
 		}
 
 		fmt.Fprintln(cmd.OutOrStdout(), string(resp))

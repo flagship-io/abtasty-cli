@@ -2,7 +2,6 @@ package web_experimentation
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -44,7 +43,7 @@ func (c *CampaignTargetingRequester) HTTPGetCampaignTargeting(id int) (models.Ta
 	for _, urlScope := range resp.UrlScopes {
 		condition, err := urlScopeConditionTransformer(urlScope.Condition, urlScope.Include)
 		if err != nil {
-			log.Fatalf("error occurred: %v", err)
+			return models.TargetingCampaignModelJSON{}, fmt.Errorf("error occurred: %v", err)
 		}
 
 		urlScopes = append(urlScopes, models.UrlScopesCampaignModelJSON{
@@ -56,7 +55,7 @@ func (c *CampaignTargetingRequester) HTTPGetCampaignTargeting(id int) (models.Ta
 	for _, selectorScope := range resp.SelectorScopes {
 		condition, err := selectorScopeConditionTransformer(selectorScope.Condition, selectorScope.Include)
 		if err != nil {
-			log.Fatalf("error occurred: %v", err)
+			return models.TargetingCampaignModelJSON{}, fmt.Errorf("error occurred: %v", err)
 		}
 
 		selectorScopes = append(selectorScopes, models.SelectorScopesCampaignModelJSON{
@@ -90,7 +89,7 @@ func (c *CampaignTargetingRequester) HTTPGetCampaignTargeting(id int) (models.Ta
 	return targetingCampaign, err
 }
 
-func JsonModelToModel(campaignTargetingJSON models.TargetingCampaignModelJSON) models.TargetingCampaign {
+func JsonModelToModel(campaignTargetingJSON models.TargetingCampaignModelJSON) (models.TargetingCampaign, error) {
 	var audienceIds []string = []string{}
 	var urlScopes []models.UrlScopesCampaign = []models.UrlScopesCampaign{}
 	var selectorScopes []models.SelectorScopesCampaign = []models.SelectorScopesCampaign{}
@@ -110,12 +109,12 @@ func JsonModelToModel(campaignTargetingJSON models.TargetingCampaignModelJSON) m
 	for _, urlScope := range campaignTargetingJSON.UrlScopes {
 		include, err := getIncludeFromUrlScope(urlScope)
 		if err != nil {
-			log.Fatalf("error occurred: %v", err)
+			return models.TargetingCampaign{}, fmt.Errorf("error occurred: %v", err)
 		}
 
 		condition, err := getConditionFromUrlScope(urlScope)
 		if err != nil {
-			log.Fatalf("error occurred: %v", err)
+			return models.TargetingCampaign{}, fmt.Errorf("error occurred: %v", err)
 		}
 
 		urlScopes = append(urlScopes, models.UrlScopesCampaign{
@@ -128,12 +127,12 @@ func JsonModelToModel(campaignTargetingJSON models.TargetingCampaignModelJSON) m
 	for _, selectorScope := range campaignTargetingJSON.SelectorScopes {
 		include, err := getIncludeFromSelectorScope(selectorScope)
 		if err != nil {
-			log.Fatalf("error occurred: %v", err)
+			return models.TargetingCampaign{}, fmt.Errorf("error occurred: %v", err)
 		}
 
 		condition, err := getConditionFromSelectorScope(selectorScope)
 		if err != nil {
-			log.Fatalf("error occurred: %v", err)
+			return models.TargetingCampaign{}, fmt.Errorf("error occurred: %v", err)
 		}
 
 		selectorScopes = append(selectorScopes, models.SelectorScopesCampaign{
@@ -168,7 +167,7 @@ func JsonModelToModel(campaignTargetingJSON models.TargetingCampaignModelJSON) m
 		MutationObserver:      elementAppearsAfterPageLoad,
 	}
 
-	return targetingCampaign
+	return targetingCampaign, nil
 }
 
 func urlScopeConditionTransformer(condition int, include bool) (string, error) {
