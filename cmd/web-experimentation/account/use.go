@@ -30,7 +30,12 @@ var useCmd = &cobra.Command{
 			log.Fatalf("error occurred: %s", err)
 		}
 
-		err = config.SetWorkingDir(utils.WEB_EXPERIMENTATION, utils.DefaultGlobalCodeWorkingDir())
+		dir, derr := utils.DefaultGlobalCodeWorkingDir()
+		if derr != nil {
+			log.Fatalf("error occurred: %s", derr)
+		}
+
+		err = config.SetWorkingDir(utils.WEB_EXPERIMENTATION, dir)
 		if err != nil {
 			log.Fatalf("error occurred: %s", err)
 		}

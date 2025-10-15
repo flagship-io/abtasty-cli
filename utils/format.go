@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"reflect"
 	"strings"
 	"text/tabwriter"
@@ -19,23 +18,23 @@ func FormatItemTable[T any](columns []string, item T, w *tabwriter.Writer) {
 	fmt.Fprintf(w, "%s\n", strings.Join(values, "\t"))
 }
 
-func FormatItem[T any](columns []string, item T, outputFormat string, w io.Writer) {
+func FormatItem[T any](columns []string, item T, outputFormat string, w io.Writer) error {
 	if outputFormat == "json" {
 		projectJSON, err := json.Marshal(item)
 		if err != nil {
-			log.Fatalf("error occurred: %s", err)
+			return err
 		}
 		fmt.Fprintln(w, string(projectJSON))
-		return
+		return nil
 	}
 
 	if outputFormat == "json-pretty" {
 		projectJSON, err := json.MarshalIndent(item, "", "  ")
 		if err != nil {
-			log.Fatalf("error occurred: %s", err)
+			return err
 		}
 		fmt.Fprintln(w, string(projectJSON))
-		return
+		return nil
 	}
 
 	if outputFormat == "table" {
@@ -52,8 +51,8 @@ func FormatItem[T any](columns []string, item T, outputFormat string, w io.Write
 			FormatItemTable(columns, item, w_t)
 		}
 		w_t.Flush()
-		return
+		return nil
 	}
 
-	log.Fatalf("output format not handled: %s", outputFormat)
+	return fmt.Errorf("output format not handled: %s", outputFormat)
 }

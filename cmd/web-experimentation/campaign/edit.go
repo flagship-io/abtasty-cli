@@ -23,7 +23,10 @@ func EditCampaign(campaignID int, rawData []byte) ([]byte, error) {
 	}
 
 	if campaignModel.CampaignTargeting != nil {
-		model := we.JsonModelToModel(*campaignModel.CampaignTargeting)
+		model, err := we.JsonModelToModel(*campaignModel.CampaignTargeting)
+		if err != nil {
+			return nil, fmt.Errorf("error occurred: %v", err)
+		}
 
 		parsedModel, err := json.Marshal(model)
 		if err != nil {
@@ -76,7 +79,8 @@ var editCmd = &cobra.Command{
 
 		body, err := EditCampaign(CampaignID, []byte(DataRaw))
 		if err != nil {
-			log.Fatalf("error occurred: %v", err)
+			fmt.Fprintf(cmd.ErrOrStderr(), "error occurred: %v\n", err)
+			return
 		}
 		fmt.Fprintf(cmd.OutOrStdout(), "%s\n", body)
 	},
