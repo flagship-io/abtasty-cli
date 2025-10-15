@@ -43,7 +43,11 @@ var getCmd = &cobra.Command{
 
 		if CreateFile {
 			if !Override {
-				jsFilePath := config.ModificationCodeFilePath(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, strconv.Itoa(body.VariationID), ModificationID)
+				jsFilePath, err := config.ModificationCodeFilePath(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, CampaignID, strconv.Itoa(body.VariationID), ModificationID)
+				if err != nil {
+					log.Fatalf("error occurred: %v", err)
+				}
+
 				if _, err := os.Stat(jsFilePath); err == nil {
 					fileHash, err := config.HashFile(jsFilePath)
 					if err != nil {

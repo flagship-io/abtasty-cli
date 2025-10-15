@@ -32,7 +32,11 @@ var getCSSCmd = &cobra.Command{
 
 		if CreateFile && len(cssCode) > 0 {
 			if !Override {
-				cssFilePath := config.VariationGlobalCodeCSSFilePath(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, strconv.Itoa(CampaignID), strconv.Itoa(VariationID))
+				cssFilePath, err := config.VariationGlobalCodeCSSFilePath(httprequest.CampaignGlobalCodeRequester.WorkingDir, httprequest.CampaignGlobalCodeRequester.AccountID, strconv.Itoa(CampaignID), strconv.Itoa(VariationID))
+				if err != nil {
+					log.Fatalf("error occurred: %v", err)
+				}
+
 				if _, err := os.Stat(cssFilePath); err == nil {
 					fileHash, err := config.HashFile(cssFilePath)
 					if err != nil {

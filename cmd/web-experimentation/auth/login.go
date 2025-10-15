@@ -105,7 +105,12 @@ var loginCmd = &cobra.Command{
 					}
 				}
 
-				err = config.SetWorkingDir(utils.WEB_EXPERIMENTATION, utils.DefaultGlobalCodeWorkingDir())
+				dir, err := utils.DefaultGlobalCodeWorkingDir()
+				if err != nil {
+					log.Fatalf("error occurred: %s", err)
+				}
+
+				err = config.SetWorkingDir(utils.WEB_EXPERIMENTATION, dir)
 				if err != nil {
 					log.Fatalf("error occurred: %s", err)
 				}
@@ -153,7 +158,12 @@ var loginCmd = &cobra.Command{
 				}
 			}
 
-			err = config.SetWorkingDir(utils.WEB_EXPERIMENTATION, utils.DefaultGlobalCodeWorkingDir())
+			dir, err := utils.DefaultGlobalCodeWorkingDir()
+			if err != nil {
+				log.Fatalf("error occurred: %s", err)
+			}
+
+			err = config.SetWorkingDir(utils.WEB_EXPERIMENTATION, dir)
 			if err != nil {
 				log.Fatalf("error occurred: %s", err)
 			}
