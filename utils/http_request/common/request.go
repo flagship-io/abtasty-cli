@@ -166,10 +166,6 @@ func HTTPRequest[T any](method string, url string, body []byte) ([]byte, error) 
 		if resourceType.String() == "resource.ResourceData" && !strings.Contains(url, "token") && (cred.AccountID == "" || cred.AccountEnvironmentID == "") {
 			return nil, fmt.Errorf("account_id or account_environment_id required, Please authenticate your CLI")
 		}
-
-		/* 		if strings.Contains(url, "token") && cred.ClientID == "" && cred.ClientSecret == "" {
-			log.Fatalf("client_id or client_secret required, Please authenticate your CLI")
-		} */
 	}
 
 	if cred.Product == utils.WEB_EXPERIMENTATION {

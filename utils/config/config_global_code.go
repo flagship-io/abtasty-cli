@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"regexp"
 )
@@ -37,26 +36,29 @@ func CheckGlobalCodeDirectory(workingDir string) (string, error) {
 	return gcWorkingDir, nil
 }
 
-func AccountGlobalCodeFilePath(workingDir, accountID string) string {
+func AccountGlobalCodeFilePath(workingDir, accountID string) (string, error) {
 	gcWorkingDir, err := CheckGlobalCodeDirectory(workingDir)
 	if err != nil {
-		log.Fatalf("error occurred: %v", err)
+		return "", err
 	}
 
 	accountCodeDir := gcWorkingDir + "/" + accountID
 
 	err = os.MkdirAll(accountCodeDir, os.ModePerm)
 	if err != nil {
-		log.Fatalf("error occurred: %v", err)
+		return "", err
 	}
 
 	jsFilePath := accountCodeDir + "/accountGlobalCode.js"
-	return jsFilePath
+	return jsFilePath, nil
 }
 
 func WriteAccountGlobalCode(workingDir, accountID, code string) (string, error) {
-	jsFilePath := AccountGlobalCodeFilePath(workingDir, accountID)
-	err := os.WriteFile(jsFilePath, []byte(code), os.ModePerm)
+	jsFilePath, err := AccountGlobalCodeFilePath(workingDir, accountID)
+	if err != nil {
+		return "", err
+	}
+	err = os.WriteFile(jsFilePath, []byte(code), os.ModePerm)
 	if err != nil {
 		return "", err
 	}
@@ -65,10 +67,10 @@ func WriteAccountGlobalCode(workingDir, accountID, code string) (string, error) 
 	return jsFilePath, nil
 }
 
-func CampaignGlobalCodeFilePath(workingDir, accountID, campaignID string) string {
+func CampaignGlobalCodeFilePath(workingDir, accountID, campaignID string) (string, error) {
 	gcWorkingDir, err := CheckGlobalCodeDirectory(workingDir)
 	if err != nil {
-		log.Fatalf("error occurred: %v", err)
+		return "", err
 	}
 
 	accountCodeDir := gcWorkingDir + "/" + accountID
@@ -76,16 +78,20 @@ func CampaignGlobalCodeFilePath(workingDir, accountID, campaignID string) string
 
 	err = os.MkdirAll(campaignCodeDir, os.ModePerm)
 	if err != nil {
-		log.Fatalf("error occurred: %v", err)
+		return "", err
 	}
 
 	jsFilePath := campaignCodeDir + "/campaignGlobalCode.js"
-	return jsFilePath
+	return jsFilePath, nil
 }
 
 func WriteCampaignGlobalCode(workingDir, accountID, campaignID, code string) (string, error) {
-	jsFilePath := CampaignGlobalCodeFilePath(workingDir, accountID, campaignID)
-	err := os.WriteFile(jsFilePath, []byte(code), os.ModePerm)
+	jsFilePath, err := CampaignGlobalCodeFilePath(workingDir, accountID, campaignID)
+	if err != nil {
+		return "", err
+	}
+
+	err = os.WriteFile(jsFilePath, []byte(code), os.ModePerm)
 	if err != nil {
 		return "", err
 	}
@@ -114,10 +120,10 @@ func DeleteCampaignGlobalCodeDirectory(workingDir, accountID, campaignID string)
 	return "campaign directory for " + campaignID + " deleted", nil
 }
 
-func VariationGlobalCodeJSFilePath(workingDir, accountID, campaignID, variationID string) string {
+func VariationGlobalCodeJSFilePath(workingDir, accountID, campaignID, variationID string) (string, error) {
 	gcWorkingDir, err := CheckGlobalCodeDirectory(workingDir)
 	if err != nil {
-		log.Fatalf("error occurred: %v", err)
+		return "", err
 	}
 
 	accountCodeDir := gcWorkingDir + "/" + accountID
@@ -126,16 +132,20 @@ func VariationGlobalCodeJSFilePath(workingDir, accountID, campaignID, variationI
 
 	err = os.MkdirAll(variationCodeDir, os.ModePerm)
 	if err != nil {
-		log.Fatalf("error occurred: %v", err)
+		return "", err
 	}
 
 	jsFilePath := variationCodeDir + "/variationGlobalCode.js"
-	return jsFilePath
+	return jsFilePath, nil
 }
 
 func WriteVariationGlobalCodeJS(workingDir, accountID, campaignID, variationID, code string) (string, error) {
-	jsFilePath := VariationGlobalCodeJSFilePath(workingDir, accountID, campaignID, variationID)
-	err := os.WriteFile(jsFilePath, []byte(code), os.ModePerm)
+	jsFilePath, err := VariationGlobalCodeJSFilePath(workingDir, accountID, campaignID, variationID)
+	if err != nil {
+		return "", err
+	}
+
+	err = os.WriteFile(jsFilePath, []byte(code), os.ModePerm)
 	if err != nil {
 		return "", err
 	}
@@ -144,10 +154,10 @@ func WriteVariationGlobalCodeJS(workingDir, accountID, campaignID, variationID, 
 	return jsFilePath, nil
 }
 
-func VariationGlobalCodeCSSFilePath(workingDir, accountID, campaignID, variationID string) string {
+func VariationGlobalCodeCSSFilePath(workingDir, accountID, campaignID, variationID string) (string, error) {
 	gcWorkingDir, err := CheckGlobalCodeDirectory(workingDir)
 	if err != nil {
-		log.Fatalf("error occurred: %v", err)
+		return "", err
 	}
 
 	accountCodeDir := gcWorkingDir + "/" + accountID
@@ -156,16 +166,20 @@ func VariationGlobalCodeCSSFilePath(workingDir, accountID, campaignID, variation
 
 	err = os.MkdirAll(variationCodeDir, os.ModePerm)
 	if err != nil {
-		log.Fatalf("error occurred: %v", err)
+		return "", err
 	}
 
 	filePath := variationCodeDir + "/variationGlobalCode.css"
-	return filePath
+	return filePath, nil
 }
 
 func WriteVariationGlobalCodeCSS(workingDir, accountID, campaignID, variationID, code string) (string, error) {
-	cssFilePath := VariationGlobalCodeCSSFilePath(workingDir, accountID, campaignID, variationID)
-	err := os.WriteFile(cssFilePath, []byte(code), os.ModePerm)
+	cssFilePath, err := VariationGlobalCodeCSSFilePath(workingDir, accountID, campaignID, variationID)
+	if err != nil {
+		return "", err
+	}
+
+	err = os.WriteFile(cssFilePath, []byte(code), os.ModePerm)
 	if err != nil {
 		return "", err
 	}
@@ -174,10 +188,10 @@ func WriteVariationGlobalCodeCSS(workingDir, accountID, campaignID, variationID,
 	return cssFilePath, nil
 }
 
-func ModificationCodeFilePath(workingDir, accountID, campaignID, variationID, modificationID string) string {
+func ModificationCodeFilePath(workingDir, accountID, campaignID, variationID, modificationID string) (string, error) {
 	gcWorkingDir, err := CheckGlobalCodeDirectory(workingDir)
 	if err != nil {
-		log.Fatalf("error occurred: %v", err)
+		return "", err
 	}
 
 	accountCodeDir := gcWorkingDir + "/" + accountID
@@ -187,16 +201,20 @@ func ModificationCodeFilePath(workingDir, accountID, campaignID, variationID, mo
 
 	err = os.MkdirAll(elementCodeDir, os.ModePerm)
 	if err != nil {
-		log.Fatalf("error occurred: %v", err)
+		return "", err
 	}
 
 	jsFilePath := elementCodeDir + "/element.js"
-	return jsFilePath
+	return jsFilePath, nil
 }
 
 func WriteModificationCode(workingDir, accountID, campaignID, variationID, modificationID string, code []byte) (string, error) {
-	cssFilePath := ModificationCodeFilePath(workingDir, accountID, campaignID, variationID, modificationID)
-	err := os.WriteFile(cssFilePath, []byte(code), os.ModePerm)
+	cssFilePath, err := ModificationCodeFilePath(workingDir, accountID, campaignID, variationID, modificationID)
+	if err != nil {
+		return "", err
+	}
+
+	err = os.WriteFile(cssFilePath, []byte(code), os.ModePerm)
 	if err != nil {
 		return "", err
 	}

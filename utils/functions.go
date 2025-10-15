@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -123,11 +122,11 @@ func GetWebExperimentationBrowserAuthSuccess() string {
 	return "https://auth.abtasty.com/authorization-granted"
 }
 
-func DefaultGlobalCodeWorkingDir() string {
+func DefaultGlobalCodeWorkingDir() (string, error) {
 	wdDir, err := os.Getwd()
 	if err != nil {
-		log.Fatalf("error occurred: %s", err)
+		return "", fmt.Errorf("%v", err)
 	}
 
-	return wdDir
+	return wdDir, nil
 }
