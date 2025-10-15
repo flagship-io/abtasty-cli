@@ -766,7 +766,7 @@ var loadCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		data, err := os.ReadFile(common.ResourceFile)
 		if err != nil {
-			log.Fatalf("failed to read resource file: %w", err)
+			log.Fatalf("failed to read resource file: %v", err)
 		}
 
 		var refContent string
