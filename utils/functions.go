@@ -125,7 +125,7 @@ func GetWebExperimentationBrowserAuthSuccess() string {
 func DefaultGlobalCodeWorkingDir() (string, error) {
 	wdDir, err := os.Getwd()
 	if err != nil {
-		return "", fmt.Errorf("%v", err)
+		return "", err
 	}
 
 	return wdDir, nil

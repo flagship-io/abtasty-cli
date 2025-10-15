@@ -39,112 +39,112 @@ func CreateAudience(dataRaw []byte) ([]byte, error) {
 				case COOKIE:
 					var cookieModel []models.Cookie
 					if err := dec.Decode(&cookieModel); err != nil {
-						return nil, fmt.Errorf("%v", err)
+						return nil, err
 					}
 				case ACTION_TRACKING:
 					var actionTrackingModel []models.ActionTracking
 					if err := dec.Decode(&actionTrackingModel); err != nil {
-						return nil, fmt.Errorf("%v", err)
+						return nil, err
 					}
 				case SESSION_NUMBER:
 					var sessionNumberModel []models.SessionNumber
 					if err := dec.Decode(&sessionNumberModel); err != nil {
-						return nil, fmt.Errorf("%v", err)
+						return nil, err
 					}
 				case RETURNING_VISITOR:
 					var returningVisitorModel []models.NewOrReturningVisitorPayload
 					if err := dec.Decode(&returningVisitorModel); err != nil {
-						return nil, fmt.Errorf("%v", err)
+						return nil, err
 					}
 				case PROVIDERS:
 					var providerModel []models.Provider
 					if err := dec.Decode(&providerModel); err != nil {
-						return nil, fmt.Errorf("%v", err)
+						return nil, err
 					}
 				case PAGES_INTEREST:
 					var pagesInterestModel []models.PageInterest
 					if err := dec.Decode(&pagesInterestModel); err != nil {
-						return nil, fmt.Errorf("%v", err)
+						return nil, err
 					}
 				case CAMPAIGN_EXPOSITION:
 					var campaignExpositionModel []models.CampaignExposure
 					if err := dec.Decode(&campaignExpositionModel); err != nil {
-						return nil, fmt.Errorf("%v", err)
+						return nil, err
 					}
 				case CUSTOM_VARIABLE:
 					var customVariableModel []models.CustomVariable
 					if err := dec.Decode(&customVariableModel); err != nil {
-						return nil, fmt.Errorf("%v", err)
+						return nil, err
 					}
 				case PAGE_VIEW:
 					var pageViewModel []models.PageViewPayload
 					if err := dec.Decode(&pageViewModel); err != nil {
-						return nil, fmt.Errorf("%v", err)
+						return nil, err
 					}
 				case DEVICE:
 					var deviceModel []models.Device
 					if err := dec.Decode(&deviceModel); err != nil {
-						return nil, fmt.Errorf("%v", err)
+						return nil, err
 					}
 				case IP:
 					var ipModel []models.IPRange
 					if err := dec.Decode(&ipModel); err != nil {
-						return nil, fmt.Errorf("%v", err)
+						return nil, err
 					}
 				case DATALAYER:
 					var dataLayerModel []models.DataLayer
 					if err := dec.Decode(&dataLayerModel); err != nil {
-						return nil, fmt.Errorf("%v", err)
+						return nil, err
 					}
 				case CODE:
 					var codeModel []models.Code
 					if err := dec.Decode(&codeModel); err != nil {
-						return nil, fmt.Errorf("%v", err)
+						return nil, err
 					}
 				case GEOLOCALISATION:
 					var geolocalisationModel []models.GeoLocation
 					if err := dec.Decode(&geolocalisationModel); err != nil {
-						return nil, fmt.Errorf("%v", err)
+						return nil, err
 					}
 				case URL_PARAMETER:
 					var urlParameterModel []models.UrlParameter
 					if err := dec.Decode(&urlParameterModel); err != nil {
-						return nil, fmt.Errorf("%v", err)
+						return nil, err
 					}
 				case SELECTOR:
 					var selectorModel []models.Selector
 					if err := dec.Decode(&selectorModel); err != nil {
-						return nil, fmt.Errorf("%v", err)
+						return nil, err
 					}
 				case LANDING_PAGE:
 					var landingPageModel []models.LandingPage
 					if err := dec.Decode(&landingPageModel); err != nil {
-						return nil, fmt.Errorf("%v", err)
+						return nil, err
 					}
 				case NUMBER_PAGE_VIEWED:
 					var numberPageViewedModel []models.NumberPageView
 					if err := dec.Decode(&numberPageViewedModel); err != nil {
-						return nil, fmt.Errorf("%v", err)
+						return nil, err
 					}
 				case JS_VARIABLE:
 					var jsVariableModel []models.JSVariable
 					if err := dec.Decode(&jsVariableModel); err != nil {
-						return nil, fmt.Errorf("%v", err)
+						return nil, err
 					}
 				case BROWSER:
 					var browserModel []models.Browser
 					if err := dec.Decode(&browserModel); err != nil {
-						return nil, fmt.Errorf("%v", err)
+						return nil, err
 					}
 				case SCREEN_SIZE:
 					var screenSizeModel []models.ScreenSize
 					if err := dec.Decode(&screenSizeModel); err != nil {
-						return nil, fmt.Errorf("%v", err)
+						return nil, err
 					}
 				case PREVIOUS_PAGE:
 					var previousPageModel []models.PreviousPage
 					if err := dec.Decode(&previousPageModel); err != nil {
-						return nil, fmt.Errorf("%v", err)
+						return nil, err
 					}
 				default:
 					return nil, fmt.Errorf("Type not supported")

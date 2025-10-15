@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"os"
 
 	featureResource "github.com/flagship-io/abtasty-cli/cmd/feature-experimentation/resource"
@@ -29,7 +28,7 @@ func LoadWebExperimentationResources(resourceLoaderContent, accountID, token str
 
 	results, err := webResource.LoadResources(os.Stdout, resourceLoaderContent, "", dryRun)
 	if err != nil {
-		return "", fmt.Errorf("%v", err)
+		return "", err
 	}
 
 	return results, nil
@@ -53,7 +52,7 @@ func LoadFeatureExperimentationResources(resourceLoaderContent, accountID, accou
 
 	results, err := featureResource.LoadResources(os.Stdout, resourceLoaderContent, "", dryRun)
 	if err != nil {
-		return "", fmt.Errorf("%v", err)
+		return "", err
 	}
 
 	return results, nil

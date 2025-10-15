@@ -22,7 +22,7 @@ func FormatItem[T any](columns []string, item T, outputFormat string, w io.Write
 	if outputFormat == "json" {
 		projectJSON, err := json.Marshal(item)
 		if err != nil {
-			return fmt.Errorf("%v", err)
+			return err
 		}
 		fmt.Fprintln(w, string(projectJSON))
 		return nil
@@ -31,7 +31,7 @@ func FormatItem[T any](columns []string, item T, outputFormat string, w io.Write
 	if outputFormat == "json-pretty" {
 		projectJSON, err := json.MarshalIndent(item, "", "  ")
 		if err != nil {
-			return fmt.Errorf("%v", err)
+			return err
 		}
 		fmt.Fprintln(w, string(projectJSON))
 		return nil
