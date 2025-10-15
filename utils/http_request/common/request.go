@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"reflect"
 	"regexp"
@@ -155,7 +154,7 @@ func HTTPRequest[T any](method string, url string, body []byte) ([]byte, error) 
 
 	req, err := http.NewRequest(method, url, bodyIO)
 	if err != nil {
-		log.Panicf("error occurred on request creation: %v", err)
+		return nil, fmt.Errorf("error occurred on request creation: %v", err)
 	}
 
 	if cred.Product == utils.FEATURE_EXPERIMENTATION {
@@ -346,7 +345,7 @@ func sendAnalyticHit(method string, url string) (int, error) {
 
 	req, err := http.NewRequest(http.MethodPost, utils.HIT_ANALYTICS_URL, bodyIO)
 	if err != nil {
-		log.Panicf("error occurred on request creation: %v", err)
+		return 0, fmt.Errorf("error occurred on request creation: %v", err)
 	}
 
 	req.Header.Add("Accept", `*/*`)

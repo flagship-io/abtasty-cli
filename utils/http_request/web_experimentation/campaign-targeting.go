@@ -142,7 +142,7 @@ func JsonModelToModel(campaignTargetingJSON models.TargetingCampaignModelJSON) (
 		})
 	}
 
-	if campaignTargetingJSON.CodeScope != (&models.CodeScopesCampaign{}) {
+	if campaignTargetingJSON.CodeScope != nil && campaignTargetingJSON.CodeScope.Value != "" {
 		codeScopes = append(codeScopes, models.CodeScopesCampaign{
 			Value: campaignTargetingJSON.CodeScope.Value,
 		})
