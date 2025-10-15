@@ -288,7 +288,7 @@ func getConditionFromSelectorScope(selectorScope models.SelectorScopesCampaignMo
 
 func getIncludeFromSelectorScope(selectorScope models.SelectorScopesCampaignModelJSON) (bool, error) {
 	if selectorScope.Condition == IS_SELECTOR_ID || selectorScope.Condition == IS_SELECTOR_CLASS ||
-		selectorScope.Condition == IS_NOT_SELECTOR_CUSTOM {
+		selectorScope.Condition == IS_SELECTOR_CUSTOM {
 		return true, nil
 	}
 
