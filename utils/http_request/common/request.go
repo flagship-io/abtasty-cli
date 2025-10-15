@@ -149,7 +149,7 @@ func HTTPRequest[T any](method string, url string, body []byte) ([]byte, error) 
 
 	if resourceType == reflect.TypeOf(feature_experimentation.Goal{}) || resourceType == reflect.TypeOf(feature_experimentation.CampaignFE{}) {
 		if cred.AccountID == "" || cred.AccountEnvironmentID == "" {
-			log.Fatalf("account_id or account_environment_id required, Please authenticate your CLI")
+			return nil, fmt.Errorf("account_id or account_environment_id required, Please authenticate your CLI")
 		}
 	}
 
@@ -160,11 +160,11 @@ func HTTPRequest[T any](method string, url string, body []byte) ([]byte, error) 
 
 	if cred.Product == utils.FEATURE_EXPERIMENTATION {
 		if (cred.Username == "" || cred.AccountID == "") && resourceType != reflect.TypeOf(models.Token{}) {
-			log.Fatalf("username and account_id required, Please authenticate your CLI")
+			return nil, fmt.Errorf("username and account_id required, Please authenticate your CLI")
 		}
 		// for resource loader
 		if resourceType.String() == "resource.ResourceData" && !strings.Contains(url, "token") && (cred.AccountID == "" || cred.AccountEnvironmentID == "") {
-			log.Fatalf("account_id or account_environment_id required, Please authenticate your CLI")
+			return nil, fmt.Errorf("account_id or account_environment_id required, Please authenticate your CLI")
 		}
 
 		/* 		if strings.Contains(url, "token") && cred.ClientID == "" && cred.ClientSecret == "" {
@@ -174,7 +174,7 @@ func HTTPRequest[T any](method string, url string, body []byte) ([]byte, error) 
 
 	if cred.Product == utils.WEB_EXPERIMENTATION {
 		if resourceType != reflect.TypeOf(web_experimentation.AccountWE{}) && resourceType != reflect.TypeOf(web_experimentation.CurrentAccountWE{}) && !strings.Contains(url, "token") && !strings.Contains(url, "/users/me") && cred.AccountID == "" {
-			log.Fatalf("username, account_id required, Please use the account command to select your account")
+			return nil, fmt.Errorf("username, account_id required, Please use the account command to select your account")
 		}
 	}
 
@@ -341,7 +341,7 @@ func sendAnalyticHit(method string, url string) (int, error) {
 
 	body, err := json.Marshal(hit)
 	if err != nil {
-		log.Fatalf("error occurred: %v", err)
+		return 0, fmt.Errorf("error occurred: %v", err)
 	}
 
 	if body != nil {
