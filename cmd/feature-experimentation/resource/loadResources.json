@@ -61,7 +61,7 @@
             "action": "create",
             "$_ref": "g1",
             "payload": {
-                "name": "flag_created_with_resource_loader_nov_2025",
+                "name": "flag_created_with_resource_loader",
                 "type": "string",
                 "description": "Loaded from resource loader",
                 "source": "manual"
@@ -73,7 +73,7 @@
             "$_ref": "g1",
             "payload": {
                 "type": "screenview",
-                "label": "goal_created_with_resource_loader_nov_2025",
+                "label": "goal_created_with_resource_loader",
                 "operator": "contains",
                 "value": "Performance"
             }
