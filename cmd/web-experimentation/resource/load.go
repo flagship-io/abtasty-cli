@@ -595,7 +595,12 @@ func handleDelete(res types.Resource) (any, error) {
 }
 
 func ValidateResources(loadFile *types.LoadResFile, refCtx *common.RefContext) error {
+	var duplicateRefs []string
 	for _, res := range loadFile.Resources {
+		if _, exists := refCtx.Get(res.Ref); exists {
+			duplicateRefs = append(duplicateRefs, res.Ref)
+		}
+
 		if res.Ref == "" && res.Type == "" {
 			b, err := json.Marshal(res)
 			if err != nil {
@@ -717,6 +722,10 @@ func ValidateResources(loadFile *types.LoadResFile, refCtx *common.RefContext) e
 				return err
 			}
 		}
+	}
+
+	if len(duplicateRefs) > 0 {
+		return fmt.Errorf("duplicate references found in input refs: %v", duplicateRefs)
 	}
 
 	return nil
