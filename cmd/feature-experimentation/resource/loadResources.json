@@ -59,7 +59,7 @@
         {
             "type": "flag",
             "action": "create",
-            "$_ref": "g1",
+            "$_ref": "f1",
             "payload": {
                 "name": "flag_created_with_resource_loader",
                 "type": "string",
