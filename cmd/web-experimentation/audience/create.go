@@ -10,8 +10,8 @@ import (
 	"log"
 	"strings"
 
-	models "github.com/flagship-io/abtasty-cli/models/web_experimentation"
-	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
+	models "github.com/flagship-io/abtasty-cli/internal/models/web_experimentation"
+	httprequest "github.com/flagship-io/abtasty-cli/internal/utils/http_request"
 	"github.com/spf13/cobra"
 )
 

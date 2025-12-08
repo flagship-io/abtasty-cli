@@ -20,12 +20,12 @@ import (
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/folder"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/modification"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/variation"
-	"github.com/flagship-io/abtasty-cli/models/web_experimentation"
+	"github.com/flagship-io/abtasty-cli/internal/models/web_experimentation"
+	"github.com/flagship-io/abtasty-cli/internal/utils"
 	"github.com/flagship-io/abtasty-cli/pkg/types"
-	"github.com/flagship-io/abtasty-cli/utils"
 
-	"github.com/flagship-io/abtasty-cli/utils/common"
-	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
+	"github.com/flagship-io/abtasty-cli/internal/utils/common"
+	httprequest "github.com/flagship-io/abtasty-cli/internal/utils/http_request"
 	"github.com/spf13/cobra"
 )
 

@@ -28,12 +28,11 @@ import (
 	variation_global_code "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/variation-global-code"
 	web_preview "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/web-preview"
 	working_directory "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/working-directory"
-	"github.com/flagship-io/abtasty-cli/utils"
-	"github.com/flagship-io/abtasty-cli/utils/config"
-	"github.com/flagship-io/abtasty-cli/utils/http_request"
-	"github.com/flagship-io/abtasty-cli/utils/http_request/common"
-	mockfunction_ "github.com/flagship-io/abtasty-cli/utils/mock_function"
-
+	"github.com/flagship-io/abtasty-cli/internal/utils"
+	"github.com/flagship-io/abtasty-cli/internal/utils/config"
+	"github.com/flagship-io/abtasty-cli/internal/utils/http_request"
+	"github.com/flagship-io/abtasty-cli/internal/utils/http_request/common"
+	mockfunction_ "github.com/flagship-io/abtasty-cli/internal/utils/mock_function"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )

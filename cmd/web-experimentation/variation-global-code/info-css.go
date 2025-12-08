@@ -6,7 +6,7 @@ package variation_global_code
 import (
 	"log"
 
-	"github.com/flagship-io/abtasty-cli/utils"
+	"github.com/flagship-io/abtasty-cli/internal/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )

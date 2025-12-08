@@ -7,9 +7,9 @@ import (
 	"log"
 
 	variation_global_code "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/variation-global-code"
-	"github.com/flagship-io/abtasty-cli/models/web_experimentation"
-	"github.com/flagship-io/abtasty-cli/utils"
-	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
+	"github.com/flagship-io/abtasty-cli/internal/models/web_experimentation"
+	"github.com/flagship-io/abtasty-cli/internal/utils"
+	httprequest "github.com/flagship-io/abtasty-cli/internal/utils/http_request"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )

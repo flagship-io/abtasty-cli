@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"strconv"
 
-	models "github.com/flagship-io/abtasty-cli/models/web_experimentation"
-	"github.com/flagship-io/abtasty-cli/utils"
-	mockfunction "github.com/flagship-io/abtasty-cli/utils/mock_function"
+	models "github.com/flagship-io/abtasty-cli/internal/models/web_experimentation"
+	"github.com/flagship-io/abtasty-cli/internal/utils"
+	mockfunction "github.com/flagship-io/abtasty-cli/internal/utils/mock_function"
 	"github.com/jarcoal/httpmock"
 )
 

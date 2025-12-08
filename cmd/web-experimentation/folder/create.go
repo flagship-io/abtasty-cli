@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"strings"
 
-	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
+	httprequest "github.com/flagship-io/abtasty-cli/internal/utils/http_request"
 	"github.com/spf13/cobra"
 )
 

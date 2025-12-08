@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
-	models "github.com/flagship-io/abtasty-cli/models/web_experimentation"
-	"github.com/flagship-io/abtasty-cli/utils"
-	"github.com/flagship-io/abtasty-cli/utils/http_request/common"
+	models "github.com/flagship-io/abtasty-cli/internal/models/web_experimentation"
+	"github.com/flagship-io/abtasty-cli/internal/utils"
+	"github.com/flagship-io/abtasty-cli/internal/utils/http_request/common"
 )
 
 type AudienceRequester struct {

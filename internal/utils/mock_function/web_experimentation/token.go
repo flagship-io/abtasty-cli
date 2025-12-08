@@ -3,8 +3,8 @@ package web_experimentation
 import (
 	"net/http"
 
-	"github.com/flagship-io/abtasty-cli/models"
-	"github.com/flagship-io/abtasty-cli/utils"
+	"github.com/flagship-io/abtasty-cli/internal/models"
+	"github.com/flagship-io/abtasty-cli/internal/utils"
 	"github.com/jarcoal/httpmock"
 )
 
