@@ -3,11 +3,11 @@ package account
 import (
 	"testing"
 
-	"github.com/flagship-io/abtasty-cli/models"
-	"github.com/flagship-io/abtasty-cli/utils"
-	"github.com/flagship-io/abtasty-cli/utils/http_request"
-	mockfunction "github.com/flagship-io/abtasty-cli/utils/mock_function"
-	mockfunction_fe "github.com/flagship-io/abtasty-cli/utils/mock_function/feature_experimentation"
+	"github.com/flagship-io/abtasty-cli/internal/models"
+	"github.com/flagship-io/abtasty-cli/internal/utils"
+	"github.com/flagship-io/abtasty-cli/internal/utils/http_request"
+	mockfunction "github.com/flagship-io/abtasty-cli/internal/utils/mock_function"
+	mockfunction_fe "github.com/flagship-io/abtasty-cli/internal/utils/mock_function/feature_experimentation"
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
 )
