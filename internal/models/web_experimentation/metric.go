@@ -1,7 +1,7 @@
 package web_experimentation
 
 type Metric struct {
-	Id           string `json:"id,omitempty"`
+	Id           int    `json:"id,omitempty"`
 	Name         string `json:"name"`
 	Type         string `json:"type"`
 	TestID       int    `json:"test_id"`

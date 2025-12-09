@@ -4,12 +4,12 @@ Copyright © 2022 Flagship Team flagship@abtasty.com
 package metric
 
 import (
+	"encoding/json"
+	"fmt"
 	"log"
 
-	"github.com/flagship-io/abtasty-cli/internal/utils"
 	httprequest "github.com/flagship-io/abtasty-cli/internal/utils/http_request"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 // listCmd represents the list command
@@ -22,7 +22,12 @@ var listCmd = &cobra.Command{
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
-		utils.FormatItem([]string{"Transactions", "ActionTrackings", "WidgetTrackings", "CustomTrackings", "PageViews", "Indicators"}, body, viper.GetString("output_format"), cmd.OutOrStdout())
+
+		projectJSON, err := json.Marshal(body)
+		if err != nil {
+			return
+		}
+		fmt.Fprintln(cmd.OutOrStdout(), string(projectJSON))
 	},
 }
 
