@@ -16,6 +16,8 @@ import (
 	campaign_targeting "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/campaign-targeting"
 	favorite_url "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/favorite-url"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/folder"
+	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/metric"
+
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/modification"
 	modification_code "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/modification-code"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/resource"
@@ -74,6 +76,7 @@ func addSubCommandPalettes() {
 	WebExperimentationCmd.AddCommand(web_preview.WebPreviewCmd)
 	WebExperimentationCmd.AddCommand(resource.ResourceCmd)
 	WebExperimentationCmd.AddCommand(folder.FolderCmd)
+	WebExperimentationCmd.AddCommand(metric.MetricCmd)
 }
 
 func init() {

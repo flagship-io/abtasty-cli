@@ -44,6 +44,7 @@ var TriggerRequester web_experimentation.TriggerRequester = web_experimentation.
 var FavoriteUrlRequester web_experimentation.FavoriteUrlRequester = web_experimentation.FavoriteUrlRequester{ResourceRequest: &ResourceRequester}
 var CampaignTargetingRequester web_experimentation.CampaignTargetingRequester = web_experimentation.CampaignTargetingRequester{ResourceRequest: &ResourceRequester}
 var FolderRequester web_experimentation.FolderRequester = web_experimentation.FolderRequester{ResourceRequest: &ResourceRequester}
+var MetricRequester web_experimentation.MetricRequester = web_experimentation.MetricRequester{ResourceRequest: &ResourceRequester}
 
 func init() {
 	if os.Getenv("ABT_ENV") == "MOCK" {
