@@ -3,7 +3,6 @@ package web_experimentation
 import (
 	"fmt"
 	"net/http"
-	"strconv"
 
 	models "github.com/flagship-io/abtasty-cli/internal/models/web_experimentation"
 	"github.com/flagship-io/abtasty-cli/internal/utils"
@@ -28,8 +27,8 @@ func (a *MetricRequester) HTTPCreateMetric(data []byte) ([]byte, error) {
 	return common.HTTPRequest[models.MetricsData](http.MethodPost, utils.GetWebExperimentationHost()+"/v1/accounts/"+a.AccountID+"/metrics", data)
 }
 
-func (t *MetricRequester) HTTPEditMetric(id int, data []byte) ([]byte, error) {
-	return common.HTTPRequest[models.MetricsData](http.MethodPatch, utils.GetWebExperimentationHost()+"/v1/accounts/"+t.AccountID+"/metrics/"+strconv.Itoa(id), data)
+func (t *MetricRequester) HTTPEditMetric(id string, data []byte) ([]byte, error) {
+	return common.HTTPRequest[models.MetricsData](http.MethodPatch, utils.GetWebExperimentationHost()+"/v1/accounts/"+t.AccountID+"/metrics/"+id, data)
 }
 
 func (f *MetricRequester) HTTPDeleteMetric(id string) (string, error) {
