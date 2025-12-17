@@ -300,33 +300,41 @@ func HTTPGetAllPagesWE[T any](resource string) ([]T, error) {
 	return results, nil
 }
 
-func HTTPGetAllPagesWEMetric(resource string) ([]web_experimentation.MetricsData, error) {
+func HTTPGetAllPagesWEMetric(resource string) (web_experimentation.MetricsData, error) {
 	currentPage := 1
-	results := []web_experimentation.MetricsData{}
+	consolidatedResult := web_experimentation.MetricsData{}
+
 	for {
 		respBody, err := HTTPRequest[web_experimentation.MetricsData](http.MethodGet, fmt.Sprintf("%s_page=%d&_max_per_page=100", resource, currentPage), nil)
 		if err != nil {
-			return nil, err
+			return web_experimentation.MetricsData{}, err
 		}
 		pageResult := &PageResultWE{}
 		err = json.Unmarshal(respBody, pageResult)
 		if err != nil {
-			return nil, err
+			return web_experimentation.MetricsData{}, err
 		}
 
 		typedItems := web_experimentation.MetricsData{}
 		err = json.Unmarshal(pageResult.Data, &typedItems)
 		if err != nil {
-			return nil, err
+			return web_experimentation.MetricsData{}, err
 		}
-		results = append(results, typedItems)
 
-		if len(results) >= pageResult.Pagination.Total || len(pageResult.Data) == 0 {
+		// Concatenate all metrics from this page into the consolidated result
+		consolidatedResult.Transactions = append(consolidatedResult.Transactions, typedItems.Transactions...)
+		consolidatedResult.ActionTrackings = append(consolidatedResult.ActionTrackings, typedItems.ActionTrackings...)
+		consolidatedResult.WidgetTrackings = append(consolidatedResult.WidgetTrackings, typedItems.WidgetTrackings...)
+		consolidatedResult.CustomTrackings = append(consolidatedResult.CustomTrackings, typedItems.CustomTrackings...)
+		consolidatedResult.PageViews = append(consolidatedResult.PageViews, typedItems.PageViews...)
+		consolidatedResult.Indicators = append(consolidatedResult.Indicators, typedItems.Indicators...)
+
+		if pageResult.Pagination.Total <= currentPage*100 || len(pageResult.Data) == 0 {
 			break
 		}
 		currentPage++
 	}
-	return results, nil
+	return consolidatedResult, nil
 }
 
 func sendAnalyticHit(method string, url string) (int, error) {

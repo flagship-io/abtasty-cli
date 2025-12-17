@@ -14,8 +14,14 @@ type MetricRequester struct {
 	*common.ResourceRequest
 }
 
-func (a *MetricRequester) HTTPListMetrics() ([]models.MetricsData, error) {
-	return common.HTTPGetAllPagesWEMetric(utils.GetWebExperimentationHost() + "/v1/accounts/" + a.AccountID + "/metrics?")
+func (a *MetricRequester) HTTPListMetrics() (models.MetricsData, error) {
+
+	b, err := common.HTTPGetAllPagesWEMetric(utils.GetWebExperimentationHost() + "/v1/accounts/" + a.AccountID + "/metrics?")
+	if err != nil {
+		return models.MetricsData{}, err
+	}
+
+	return b, nil
 }
 
 func (a *MetricRequester) HTTPCreateMetric(data []byte) ([]byte, error) {
