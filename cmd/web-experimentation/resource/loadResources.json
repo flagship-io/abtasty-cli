@@ -6,7 +6,7 @@
             "$_ref": "f1",
             "action": "create",
             "payload": {
-                "name": "Summer 2025"
+                "name": "Summer 2026"
             }
         },
         {
@@ -165,6 +165,21 @@
                 "selector": "#main",
                 "type": "js",
                 "code": "console.log('hello people!')"
+            }
+        },
+        {
+            "type": "metric",
+            "$_ref": "me1",
+            "action": "create",
+            "payload": {
+                "name": "CTA Clicks",
+                "test_id": "$c1.id",
+                "account_level": false,
+                "hidden": false,
+                "context": "user_interaction",
+                "type": "custom_tracking",
+                "value": "{\"event\":\"mousedown\",\"selector\":\"#cta\"}",
+                "created_from": "custom_code"
             }
         }
     ]

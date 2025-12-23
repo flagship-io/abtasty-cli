@@ -8,7 +8,7 @@ package working_directory
 import (
 	"log"
 
-	"github.com/flagship-io/abtasty-cli/utils"
+	"github.com/flagship-io/abtasty-cli/internal/utils"
 	"github.com/spf13/cobra"
 )
 

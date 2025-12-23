@@ -6,8 +6,8 @@ package token
 import (
 	"log"
 
-	"github.com/flagship-io/abtasty-cli/utils"
-	"github.com/flagship-io/abtasty-cli/utils/http_request/common"
+	"github.com/flagship-io/abtasty-cli/internal/utils"
+	"github.com/flagship-io/abtasty-cli/internal/utils/http_request/common"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )

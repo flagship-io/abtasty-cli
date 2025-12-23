@@ -9,10 +9,10 @@ import (
 	"log"
 	"os"
 
-	"github.com/flagship-io/abtasty-cli/models/web_experimentation"
-	"github.com/flagship-io/abtasty-cli/utils"
-	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
-	we "github.com/flagship-io/abtasty-cli/utils/http_request/web_experimentation"
+	"github.com/flagship-io/abtasty-cli/internal/models/web_experimentation"
+	"github.com/flagship-io/abtasty-cli/internal/utils"
+	httprequest "github.com/flagship-io/abtasty-cli/internal/utils/http_request"
+	we "github.com/flagship-io/abtasty-cli/internal/utils/http_request/web_experimentation"
 	"github.com/spf13/cobra"
 )
 

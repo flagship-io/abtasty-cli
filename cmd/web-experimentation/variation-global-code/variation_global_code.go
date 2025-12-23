@@ -4,8 +4,8 @@ Copyright © 2022 Flagship Team flagship@abtasty.com
 package variation_global_code
 
 import (
-	"github.com/flagship-io/abtasty-cli/models/web_experimentation"
-	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
+	"github.com/flagship-io/abtasty-cli/internal/models/web_experimentation"
+	httprequest "github.com/flagship-io/abtasty-cli/internal/utils/http_request"
 	"github.com/spf13/cobra"
 )
 

@@ -23,9 +23,9 @@ import (
 	variation_group "github.com/flagship-io/abtasty-cli/cmd/feature-experimentation/variation-group"
 	"github.com/flagship-io/abtasty-cli/pkg/types"
 
-	"github.com/flagship-io/abtasty-cli/models/feature_experimentation"
-	"github.com/flagship-io/abtasty-cli/utils"
-	"github.com/flagship-io/abtasty-cli/utils/common"
+	"github.com/flagship-io/abtasty-cli/internal/models/feature_experimentation"
+	"github.com/flagship-io/abtasty-cli/internal/utils"
+	"github.com/flagship-io/abtasty-cli/internal/utils/common"
 	"github.com/spf13/cobra"
 )
 

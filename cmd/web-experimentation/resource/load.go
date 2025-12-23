@@ -18,14 +18,15 @@ import (
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/audience"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/campaign"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/folder"
+	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/metric"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/modification"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/variation"
-	"github.com/flagship-io/abtasty-cli/models/web_experimentation"
+	"github.com/flagship-io/abtasty-cli/internal/models/web_experimentation"
+	"github.com/flagship-io/abtasty-cli/internal/utils"
 	"github.com/flagship-io/abtasty-cli/pkg/types"
-	"github.com/flagship-io/abtasty-cli/utils"
 
-	"github.com/flagship-io/abtasty-cli/utils/common"
-	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
+	"github.com/flagship-io/abtasty-cli/internal/utils/common"
+	httprequest "github.com/flagship-io/abtasty-cli/internal/utils/http_request"
 	"github.com/spf13/cobra"
 )
 
@@ -35,6 +36,7 @@ const (
 	Variation    string = "variation"
 	Modification string = "modification"
 	Audience     string = "audience"
+	Metric       string = "metric"
 )
 
 type funcModifType func(int, []byte) ([]byte, error)
@@ -102,9 +104,11 @@ func LoadResources(out io.Writer, resourceLoaderContent, refContent string, dryR
 		}
 	}
 
-	var audiences, folders, campaigns, variations, modifications, others []types.Resource
+	var metrics, audiences, folders, campaigns, variations, modifications, others []types.Resource
 	for _, res := range mutating {
 		switch res.Type {
+		case Metric:
+			metrics = append(metrics, res)
 		case Audience:
 			audiences = append(audiences, res)
 		case Folder:
@@ -137,6 +141,10 @@ func LoadResources(out io.Writer, resourceLoaderContent, refContent string, dryR
 	}
 
 	for _, res := range modifications {
+		processAndRecord(out, res, refCtx)
+	}
+
+	for _, res := range metrics {
 		processAndRecord(out, res, refCtx)
 	}
 
@@ -242,6 +250,11 @@ func handleCreate(res types.Resource) (resp map[string]any, err error) {
 		}
 	case Campaign:
 		respBytes, err = campaign.CreateCampaign(payloadBytes)
+		if err != nil {
+			return nil, err
+		}
+	case Metric:
+		respBytes, err = metric.CreateMetric(payloadBytes)
 		if err != nil {
 			return nil, err
 		}
@@ -411,6 +424,26 @@ func handleList(res types.Resource) (any, error) {
 		if err != nil {
 			return nil, err
 		}
+	case Audience:
+		audienceList, err := httprequest.AudienceRequester.HTTPListAudiences()
+		if err != nil {
+			return nil, err
+		}
+
+		respBytes, err = json.Marshal(audienceList)
+		if err != nil {
+			return nil, err
+		}
+	case Metric:
+		metricList, err := httprequest.MetricRequester.HTTPListMetrics()
+		if err != nil {
+			return nil, err
+		}
+
+		respBytes, err = json.Marshal(metricList)
+		if err != nil {
+			return nil, err
+		}
 	default:
 		return nil, fmt.Errorf("unknown resource type: %s", res.Type)
 	}
@@ -499,6 +532,16 @@ func handleGet(res types.Resource) (resp map[string]any, err error) {
 		if err != nil {
 			return nil, err
 		}
+	case Metric:
+		metric, err := httprequest.MetricRequester.HTTPGetMetric(int(id))
+		if err != nil {
+			return nil, err
+		}
+
+		respBytes, err = json.Marshal(metric)
+		if err != nil {
+			return nil, err
+		}
 	default:
 		return nil, fmt.Errorf("unknown resource type: %s", res.Type)
 	}
@@ -538,6 +581,16 @@ func handleDelete(res types.Resource) (any, error) {
 		}
 	case Campaign:
 		resp, err := httprequest.CampaignWERequester.HTTPDeleteCampaign(int(id))
+		if err != nil {
+			return nil, err
+		}
+
+		respBytes, err = json.Marshal(resp)
+		if err != nil {
+			return nil, err
+		}
+	case Metric:
+		resp, err := httprequest.MetricRequester.HTTPDeleteMetric(int(id))
 		if err != nil {
 			return nil, err
 		}
@@ -618,8 +671,8 @@ func ValidateResources(loadFile *types.LoadResFile, refCtx *common.RefContext) e
 			return fmt.Errorf("resource with $_ref: %s is missing 'type'", res.Ref)
 		}
 
-		if res.Type != Campaign && res.Type != Variation && res.Type != Modification && res.Type != Folder && res.Type != Audience {
-			return fmt.Errorf("resource with $_ref: %s has unknown type: %s, only %s, %s, %s, %s, %s are allowed", res.Ref, res.Type, Folder, Campaign, Variation, Modification, Audience)
+		if res.Type != Campaign && res.Type != Variation && res.Type != Modification && res.Type != Folder && res.Type != Audience && res.Type != Metric {
+			return fmt.Errorf("resource with $_ref: %s has unknown type: %s, only %s, %s, %s, %s, %s, %s are allowed", res.Ref, res.Type, Folder, Campaign, Variation, Modification, Audience, Metric)
 		}
 
 		if res.Action == "" {
@@ -656,9 +709,19 @@ func ValidateResources(loadFile *types.LoadResFile, refCtx *common.RefContext) e
 		}
 
 		dec := json.NewDecoder(bytes.NewReader(payloadToValidateBytes))
-		dec.DisallowUnknownFields()
+
+		// Metrics have different payload structures based on their type, so we skip strict validation
+		if res.Type != Metric {
+			dec.DisallowUnknownFields()
+		}
 
 		switch res.Type {
+		case Metric:
+			// Validate basic metric structure only
+			var metricModel web_experimentation.Metric
+			if err := dec.Decode(&metricModel); err != nil {
+				return fmt.Errorf("%v in %s", err, res.Type)
+			}
 		case Audience:
 			var audienceModel web_experimentation.AudiencePayload
 			if err := dec.Decode(&audienceModel); err != nil {
@@ -743,6 +806,10 @@ func preprocessPayloadForValidation(payload map[string]any, structType string) m
 					}
 				case Campaign:
 					if k == "folder_id" {
+						payload[k] = 0
+					}
+				case Metric:
+					if k == "test_id" {
 						payload[k] = 0
 					}
 				case Variation:

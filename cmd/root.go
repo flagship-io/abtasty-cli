@@ -10,8 +10,8 @@ import (
 	web_experimentation "github.com/flagship-io/abtasty-cli/cmd/web-experimentation"
 
 	"github.com/flagship-io/abtasty-cli/cmd/version"
-	"github.com/flagship-io/abtasty-cli/utils/config"
-	"github.com/flagship-io/abtasty-cli/utils/http_request/common"
+	"github.com/flagship-io/abtasty-cli/internal/utils/config"
+	"github.com/flagship-io/abtasty-cli/internal/utils/http_request/common"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"

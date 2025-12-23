@@ -9,9 +9,9 @@ import (
 	"log"
 
 	vgc "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/variation-global-code"
-	"github.com/flagship-io/abtasty-cli/models/web_experimentation"
-	models "github.com/flagship-io/abtasty-cli/models/web_experimentation"
-	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
+	"github.com/flagship-io/abtasty-cli/internal/models/web_experimentation"
+	models "github.com/flagship-io/abtasty-cli/internal/models/web_experimentation"
+	httprequest "github.com/flagship-io/abtasty-cli/internal/utils/http_request"
 	"github.com/spf13/cobra"
 )
 

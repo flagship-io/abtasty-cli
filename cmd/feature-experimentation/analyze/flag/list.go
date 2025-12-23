@@ -10,8 +10,8 @@ import (
 	"strings"
 
 	"github.com/fatih/color"
-	models "github.com/flagship-io/abtasty-cli/models/feature_experimentation"
-	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
+	models "github.com/flagship-io/abtasty-cli/internal/models/feature_experimentation"
+	httprequest "github.com/flagship-io/abtasty-cli/internal/utils/http_request"
 	"github.com/flagship-io/codebase-analyzer/pkg/handler"
 	"github.com/kyokomi/emoji/v2"
 	"github.com/rodaine/table"
