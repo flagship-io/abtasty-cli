@@ -144,6 +144,10 @@ func LoadResources(out io.Writer, resourceLoaderContent, refContent string, dryR
 		processAndRecord(out, res, refCtx)
 	}
 
+	for _, res := range metrics {
+		processAndRecord(out, res, refCtx)
+	}
+
 	for _, res := range others {
 		processAndRecord(out, res, refCtx)
 	}
@@ -585,6 +589,16 @@ func handleDelete(res types.Resource) (any, error) {
 		if err != nil {
 			return nil, err
 		}
+	case Metric:
+		resp, err := httprequest.MetricRequester.HTTPDeleteMetric(int(id))
+		if err != nil {
+			return nil, err
+		}
+
+		respBytes, err = json.Marshal(resp)
+		if err != nil {
+			return nil, err
+		}
 	case Variation:
 		parentID, err := strconv.Atoi(res.ParentID)
 		if err != nil {
@@ -695,9 +709,19 @@ func ValidateResources(loadFile *types.LoadResFile, refCtx *common.RefContext) e
 		}
 
 		dec := json.NewDecoder(bytes.NewReader(payloadToValidateBytes))
-		dec.DisallowUnknownFields()
+
+		// Metrics have different payload structures based on their type, so we skip strict validation
+		if res.Type != Metric {
+			dec.DisallowUnknownFields()
+		}
 
 		switch res.Type {
+		case Metric:
+			// Validate basic metric structure only
+			var metricModel web_experimentation.Metric
+			if err := dec.Decode(&metricModel); err != nil {
+				return fmt.Errorf("%v in %s", err, res.Type)
+			}
 		case Audience:
 			var audienceModel web_experimentation.AudiencePayload
 			if err := dec.Decode(&audienceModel); err != nil {
@@ -782,6 +806,10 @@ func preprocessPayloadForValidation(payload map[string]any, structType string) m
 					}
 				case Campaign:
 					if k == "folder_id" {
+						payload[k] = 0
+					}
+				case Metric:
+					if k == "test_id" {
 						payload[k] = 0
 					}
 				case Variation:
