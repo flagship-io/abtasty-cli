@@ -82,10 +82,3 @@ func TestHTTPSwitchCampaign(t *testing.T) {
 
 	assert.Nil(t, err)
 }
-
-func TestHTTPSwitchCampaign(t *testing.T) {
-
-	err := campaignRequester.HTTPSwitchStateCampaign("100000", "active")
-
-	assert.Nil(t, err)
-}
