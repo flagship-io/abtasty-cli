@@ -1,6 +1,8 @@
 package web_experimentation
 
 import (
+	"net/http"
+
 	models "github.com/flagship-io/abtasty-cli/models/web_experimentation"
 	"github.com/flagship-io/abtasty-cli/utils"
 	"github.com/flagship-io/abtasty-cli/utils/http_request/common"
@@ -16,4 +18,8 @@ func (f *FavoriteUrlRequester) HTTPListFavoriteUrl() ([]models.FavoriteURL, erro
 
 func (f *FavoriteUrlRequester) HTTPGetFavoriteUrl(id string) (models.FavoriteURL, error) {
 	return common.HTTPGetItem[models.FavoriteURL](utils.GetWebExperimentationHost() + "/v1/accounts/" + f.AccountID + "/favorite-urls/" + id)
+}
+
+func (a *FavoriteUrlRequester) HTTPCreateFavoriteUrl(data []byte) ([]byte, error) {
+	return common.HTTPRequest[models.FavoriteURL](http.MethodPost, utils.GetWebExperimentationHost()+"/v1/accounts/"+a.AccountID+"/favorite-urls", data)
 }

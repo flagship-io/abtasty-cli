@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var CampaignID string
+var CampaignID int
 var Override bool
 
 // CampaignGlobalCodeCmd represents the campaign global code command

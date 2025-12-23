@@ -106,16 +106,10 @@ var pushCmd = &cobra.Command{
 			log.Fatalf("error occurred: %v", err)
 		}
 
-		modificationList, err := httprequest.ModificationRequester.HTTPGetModification(campaignID, modificationID)
+		modification, err := httprequest.ModificationRequester.HTTPGetModification(campaignID, modificationID)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
-
-		if len(modificationList) == 0 {
-			log.Fatalf("error occurred: Modification not found.")
-		}
-
-		modification := modificationList[0]
 
 		selector_ := modification.Selector
 		if selector != "" {

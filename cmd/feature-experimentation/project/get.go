@@ -6,11 +6,20 @@ package project
 import (
 	"log"
 
+	"github.com/flagship-io/abtasty-cli/models/feature_experimentation"
 	"github.com/flagship-io/abtasty-cli/utils"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
+
+func GetProject(id string) (feature_experimentation.Project, error) {
+	body, err := httprequest.ProjectRequester.HTTPGetProject(id)
+	if err != nil {
+		return feature_experimentation.Project{}, err
+	}
+	return body, nil
+}
 
 // getCmd represents the get command
 var getCmd = &cobra.Command{
@@ -18,7 +27,7 @@ var getCmd = &cobra.Command{
 	Short: "Get a project",
 	Long:  `Get a project`,
 	Run: func(cmd *cobra.Command, args []string) {
-		body, err := httprequest.ProjectRequester.HTTPGetProject(ProjectId)
+		body, err := GetProject(ProjectId)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}

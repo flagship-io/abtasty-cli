@@ -15,11 +15,14 @@ import (
 	campaign_global_code "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/campaign-global-code"
 	campaign_targeting "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/campaign-targeting"
 	favorite_url "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/favorite-url"
+	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/folder"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/modification"
 	modification_code "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/modification-code"
+	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/resource"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/segment"
 	tag_rebuild "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/tag-rebuild"
-	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/token"
+	t "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/token"
+
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/trigger"
 	"github.com/flagship-io/abtasty-cli/cmd/web-experimentation/variation"
 	variation_global_code "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/variation-global-code"
@@ -34,6 +37,8 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
+
+var accountID, token string
 
 // WebExperimentationCmd represents the web experimentation command
 var WebExperimentationCmd = &cobra.Command{
@@ -58,7 +63,7 @@ func addSubCommandPalettes() {
 	WebExperimentationCmd.AddCommand(account_global_code.AccountGlobalCodeCmd)
 	WebExperimentationCmd.AddCommand(variation_global_code.VariationGlobalCodeCmd)
 	WebExperimentationCmd.AddCommand(modification_code.ModificationCodeCmd)
-	WebExperimentationCmd.AddCommand(token.TokenCmd)
+	WebExperimentationCmd.AddCommand(t.TokenCmd)
 	WebExperimentationCmd.AddCommand(modification.ModificationCmd)
 	WebExperimentationCmd.AddCommand(working_directory.WorkingDirectoryCmd)
 	WebExperimentationCmd.AddCommand(tag_rebuild.RebuildTagCmd)
@@ -68,10 +73,16 @@ func addSubCommandPalettes() {
 	WebExperimentationCmd.AddCommand(favorite_url.FavoriteUrlCmd)
 	WebExperimentationCmd.AddCommand(campaign_targeting.CampaignTargetingCmd)
 	WebExperimentationCmd.AddCommand(web_preview.WebPreviewCmd)
+	WebExperimentationCmd.AddCommand(resource.ResourceCmd)
+	WebExperimentationCmd.AddCommand(folder.FolderCmd)
 }
 
 func init() {
 	addSubCommandPalettes()
+
+	WebExperimentationCmd.PersistentFlags().StringVarP(&accountID, "account-id", "", "", "override account ID in command")
+	WebExperimentationCmd.PersistentFlags().StringVarP(&token, "token", "", "", "override token in command")
+
 }
 
 func initConfig() {
@@ -90,6 +101,16 @@ func initConfig() {
 		v.MergeConfigMap(vL.AllSettings())
 	}
 
+	if accountID != "" {
+		v.Set("username", "no-username")
+		v.Set("account_id", accountID)
+	}
+
+	if token != "" {
+		v.Set("username", "no-username")
+		v.Set("token", token)
+	}
+
 	v.Unmarshal(&requestConfig)
 	common.Init(requestConfig)
 
@@ -101,5 +122,4 @@ func initConfig() {
 	}
 
 	r.Init(&requestConfig)
-	return
 }

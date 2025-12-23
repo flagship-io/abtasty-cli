@@ -6,11 +6,16 @@ package campaign
 import (
 	"log"
 
+	"github.com/flagship-io/abtasty-cli/models/feature_experimentation"
 	"github.com/flagship-io/abtasty-cli/utils"
 	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
+
+func ListCampaigns() ([]feature_experimentation.CampaignFE, error) {
+	return httprequest.CampaignFERequester.HTTPListCampaign()
+}
 
 // listCmd represents the list command
 var listCmd = &cobra.Command{
@@ -18,7 +23,7 @@ var listCmd = &cobra.Command{
 	Short: "List all campaigns",
 	Long:  `List all campaigns`,
 	Run: func(cmd *cobra.Command, args []string) {
-		body, err := httprequest.CampaignFERequester.HTTPListCampaign()
+		body, err := ListCampaigns()
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}

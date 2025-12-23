@@ -2,8 +2,8 @@ package web_experimentation
 
 import (
 	"fmt"
-	"log"
 	"net/http"
+	"strconv"
 
 	models "github.com/flagship-io/abtasty-cli/models/web_experimentation"
 	"github.com/flagship-io/abtasty-cli/utils"
@@ -14,12 +14,12 @@ type CampaignTargetingRequester struct {
 	*common.ResourceRequest
 }
 
-func (c *CampaignTargetingRequester) HTTPPushCampaignTargeting(id string, code []byte) ([]byte, error) {
-	return common.HTTPRequest[models.CampaignWE](http.MethodPatch, utils.GetWebExperimentationHost()+"/v1/accounts/"+c.AccountID+"/tests/"+id, []byte(code))
+func (c *CampaignTargetingRequester) HTTPPushCampaignTargeting(id int, code []byte) ([]byte, error) {
+	return common.HTTPRequest[models.CampaignWE](http.MethodPatch, utils.GetWebExperimentationHost()+"/v1/accounts/"+c.AccountID+"/tests/"+strconv.Itoa(id), []byte(code))
 }
 
-func (c *CampaignTargetingRequester) HTTPGetCampaignTargeting(id string) (models.TargetingCampaignModelJSON, error) {
-	resp, err := common.HTTPGetItem[models.CampaignWE](utils.GetWebExperimentationHost() + "/v1/accounts/" + c.AccountID + "/tests/" + id)
+func (c *CampaignTargetingRequester) HTTPGetCampaignTargeting(id int) (models.TargetingCampaignModelJSON, error) {
+	resp, err := common.HTTPGetItem[models.CampaignWE](utils.GetWebExperimentationHost() + "/v1/accounts/" + c.AccountID + "/tests/" + strconv.Itoa(id))
 
 	var segmentIds []string = []string{}
 	var triggerIds []string = []string{}
@@ -43,7 +43,7 @@ func (c *CampaignTargetingRequester) HTTPGetCampaignTargeting(id string) (models
 	for _, urlScope := range resp.UrlScopes {
 		condition, err := urlScopeConditionTransformer(urlScope.Condition, urlScope.Include)
 		if err != nil {
-			log.Fatalf("error occurred: %v", err)
+			return models.TargetingCampaignModelJSON{}, fmt.Errorf("error occurred: %v", err)
 		}
 
 		urlScopes = append(urlScopes, models.UrlScopesCampaignModelJSON{
@@ -55,7 +55,7 @@ func (c *CampaignTargetingRequester) HTTPGetCampaignTargeting(id string) (models
 	for _, selectorScope := range resp.SelectorScopes {
 		condition, err := selectorScopeConditionTransformer(selectorScope.Condition, selectorScope.Include)
 		if err != nil {
-			log.Fatalf("error occurred: %v", err)
+			return models.TargetingCampaignModelJSON{}, fmt.Errorf("error occurred: %v", err)
 		}
 
 		selectorScopes = append(selectorScopes, models.SelectorScopesCampaignModelJSON{
@@ -80,16 +80,16 @@ func (c *CampaignTargetingRequester) HTTPGetCampaignTargeting(id string) (models
 		UrlScopes:                   urlScopes,
 		FavoriteUrlScopes:           favoriteUrlScopes,
 		SelectorScopes:              selectorScopes,
-		CodeScope:                   codeScope,
+		CodeScope:                   &codeScope,
 		ElementAppearsAfterPageLoad: elementAppearsAfterPageLoad,
 		TriggerIDs:                  triggerIds,
-		TargetingFrequency:          models.TargetingFrequency{Type: displayFrequencyType, Unit: displayFrequencyUnit, Value: displayFrequencyValue},
+		TargetingFrequency:          &models.TargetingFrequency{Type: displayFrequencyType, Unit: displayFrequencyUnit, Value: displayFrequencyValue},
 	}
 
 	return targetingCampaign, err
 }
 
-func JsonModelToModel(campaignTargetingJSON models.TargetingCampaignModelJSON) models.TargetingCampaign {
+func JsonModelToModel(campaignTargetingJSON models.TargetingCampaignModelJSON) (models.TargetingCampaign, error) {
 	var audienceIds []string = []string{}
 	var urlScopes []models.UrlScopesCampaign = []models.UrlScopesCampaign{}
 	var selectorScopes []models.SelectorScopesCampaign = []models.SelectorScopesCampaign{}
@@ -109,12 +109,12 @@ func JsonModelToModel(campaignTargetingJSON models.TargetingCampaignModelJSON) m
 	for _, urlScope := range campaignTargetingJSON.UrlScopes {
 		include, err := getIncludeFromUrlScope(urlScope)
 		if err != nil {
-			log.Fatalf("error occurred: %v", err)
+			return models.TargetingCampaign{}, fmt.Errorf("error occurred: %v", err)
 		}
 
 		condition, err := getConditionFromUrlScope(urlScope)
 		if err != nil {
-			log.Fatalf("error occurred: %v", err)
+			return models.TargetingCampaign{}, fmt.Errorf("error occurred: %v", err)
 		}
 
 		urlScopes = append(urlScopes, models.UrlScopesCampaign{
@@ -127,12 +127,12 @@ func JsonModelToModel(campaignTargetingJSON models.TargetingCampaignModelJSON) m
 	for _, selectorScope := range campaignTargetingJSON.SelectorScopes {
 		include, err := getIncludeFromSelectorScope(selectorScope)
 		if err != nil {
-			log.Fatalf("error occurred: %v", err)
+			return models.TargetingCampaign{}, fmt.Errorf("error occurred: %v", err)
 		}
 
 		condition, err := getConditionFromSelectorScope(selectorScope)
 		if err != nil {
-			log.Fatalf("error occurred: %v", err)
+			return models.TargetingCampaign{}, fmt.Errorf("error occurred: %v", err)
 		}
 
 		selectorScopes = append(selectorScopes, models.SelectorScopesCampaign{
@@ -142,7 +142,7 @@ func JsonModelToModel(campaignTargetingJSON models.TargetingCampaignModelJSON) m
 		})
 	}
 
-	if campaignTargetingJSON.CodeScope != (models.CodeScopesCampaign{}) {
+	if campaignTargetingJSON.CodeScope != nil && campaignTargetingJSON.CodeScope.Value != "" {
 		codeScopes = append(codeScopes, models.CodeScopesCampaign{
 			Value: campaignTargetingJSON.CodeScope.Value,
 		})
@@ -167,7 +167,7 @@ func JsonModelToModel(campaignTargetingJSON models.TargetingCampaignModelJSON) m
 		MutationObserver:      elementAppearsAfterPageLoad,
 	}
 
-	return targetingCampaign
+	return targetingCampaign, nil
 }
 
 func urlScopeConditionTransformer(condition int, include bool) (string, error) {
@@ -288,7 +288,7 @@ func getConditionFromSelectorScope(selectorScope models.SelectorScopesCampaignMo
 
 func getIncludeFromSelectorScope(selectorScope models.SelectorScopesCampaignModelJSON) (bool, error) {
 	if selectorScope.Condition == IS_SELECTOR_ID || selectorScope.Condition == IS_SELECTOR_CLASS ||
-		selectorScope.Condition == IS_NOT_SELECTOR_CUSTOM {
+		selectorScope.Condition == IS_SELECTOR_CUSTOM {
 		return true, nil
 	}
 

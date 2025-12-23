@@ -1,0 +1,92 @@
+{
+    "version": 1,
+    "resources": [
+        {
+            "type": "project",
+            "$_ref": "p1",
+            "action": "create",
+            "payload": {
+                "name": "Resource loader Project"
+            }
+        },
+        {
+            "type": "campaign",
+            "$_ref": "c1",
+            "action": "create",
+            "payload": {
+                "project_id": "$p1.id",
+                "name": "Resource loader Campaign - with targeting & existing flag",
+                "description": "Loaded from resource loader",
+                "type": "ab",
+                "variation_groups": [
+                    {
+                        "name": "variation group name",
+                        "variations": [
+                            {
+                                "name": "Original",
+                                "reference": true,
+                                "allocation": 50
+                            },
+                            {
+                                "name": "Variation 1",
+                                "reference": false,
+                                "allocation": 50,
+                                "modifications": {
+                                    "type": "FLAG",
+                                    "value": {
+                                        "eai-flag": "blue"
+                                    }
+                                }
+                            }
+                        ],
+                        "targeting": {
+                            "targeting_groups": [
+                                {
+                                    "targetings": [
+                                        {
+                                            "operator": "EQUALS",
+                                            "key": "release",
+                                            "value": "v1.0.0"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "flag",
+            "action": "create",
+            "$_ref": "f1",
+            "payload": {
+                "name": "flag_created_with_resource_loader",
+                "type": "string",
+                "description": "Loaded from resource loader",
+                "source": "manual"
+            }
+        },
+        {
+            "type": "goal",
+            "action": "create",
+            "$_ref": "g1",
+            "payload": {
+                "type": "screenview",
+                "label": "goal_created_with_resource_loader",
+                "operator": "contains",
+                "value": "Performance"
+            }
+        },
+        {
+            "type": "targeting-key",
+            "action": "create",
+            "$_ref": "t1",
+            "payload": {
+                "type": "string",
+                "name": "targeting_key_created_with_resource_loader",
+                "description": "Loaded from resource loader"
+            }
+        }
+    ]
+}

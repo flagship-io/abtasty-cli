@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var CampaignID string
+var CampaignID int
 var VariationID int
 
 // WebPreviewCmd represents the web preview command

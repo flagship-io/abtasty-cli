@@ -11,17 +11,26 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func DeleteProject(id string) (string, error) {
+	err := httprequest.ProjectRequester.HTTPDeleteProject(id)
+	if err != nil {
+		return "", err
+	}
+
+	return "Project deleted", nil
+}
+
 // deleteCmd represents the delete command
 var deleteCmd = &cobra.Command{
 	Use:   "delete [-i <project-id> | --id=<project-id>]",
 	Short: "Delete a project",
 	Long:  `Delete a project`,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := httprequest.ProjectRequester.HTTPDeleteProject(ProjectId)
+		resp, err := DeleteProject(ProjectId)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
-		fmt.Fprintln(cmd.OutOrStdout(), "Project deleted")
+		fmt.Fprintln(cmd.OutOrStdout(), resp)
 	},
 }
 

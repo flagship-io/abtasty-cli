@@ -39,25 +39,12 @@ func TestCampaignHelpCommand(t *testing.T) {
 	assert.Contains(t, output, "Manage your campaigns")
 }
 
-func TestCampaignCreateCommand(t *testing.T) {
-
-	failOutput, _ := utils.ExecuteCommand(CampaignCmd, "create")
-	assert.Contains(t, failOutput, "Error: required flag(s) \"data-raw\" not set")
-
-	output, _ := utils.ExecuteCommand(CampaignCmd, "create", "--data-raw='{\"name\":\"testCampaignName\",\"type\":\"ab\",\"url\":\"https://abtasty.com\",\"description\":\"testCampaignDescription\",\"global_code\":\"console.log(\"Hello World!\")\"}'")
-	err := json.Unmarshal([]byte(output), &testCampaign)
-
-	assert.Nil(t, err)
-
-	assert.Equal(t, mockfunction_we.TestCampaign, testCampaign)
-}
-
 func TestCampaignEditCommand(t *testing.T) {
 
 	failOutput, _ := utils.ExecuteCommand(CampaignCmd, "edit")
 	assert.Contains(t, failOutput, "Error: required flag(s) \"data-raw\", \"id\" not set")
 
-	output, _ := utils.ExecuteCommand(CampaignCmd, "edit", "--id=100000", "--data-raw='{\"name\":\"testCampaignName1\",\"type\":\"ab\",\"url\":\"https://abtasty1.com\",\"description\":\"testCampaignDescription1\",\"global_code\":\"console.log(\"Hello World!\")\"}'")
+	output, _ := utils.ExecuteCommand(CampaignCmd, "edit", "--id=100000", "--data-raw={\"name\":\"testCampaignName1\",\"type\":\"ab\",\"url\":\"https://abtasty1.com\",\"description\":\"testCampaignDescription1\"}")
 	err := json.Unmarshal([]byte(output), &testCampaign)
 
 	assert.Nil(t, err)
@@ -96,7 +83,19 @@ func TestCampaignDeleteCommand(t *testing.T) {
 	assert.Contains(t, failOutput, "Error: required flag(s) \"id\" not set")
 
 	successOutput, _ := utils.ExecuteCommand(CampaignCmd, "delete", "--id=100000")
-	assert.Equal(t, "Campaign deleted\n", successOutput)
+	assert.Equal(t, "Campaign 100000 deleted\n", successOutput)
+}
+
+func TestCampaignSwitchCommand(t *testing.T) {
+
+	failOutput, _ := utils.ExecuteCommand(CampaignCmd, "switch")
+	assert.Contains(t, failOutput, "Error: required flag(s) \"id\", \"status\" not set")
+
+	failOutput1, _ := utils.ExecuteCommand(CampaignCmd, "switch", "--id=100000", "--status=notKnown")
+	assert.Equal(t, "Status can only have 2 values: active or paused\n", failOutput1)
+
+	successOutput, _ := utils.ExecuteCommand(CampaignCmd, "switch", "--id=100000", "--status=active")
+	assert.Equal(t, "campaign status set to active\n", successOutput)
 }
 
 func TestCampaignSwitchCommand(t *testing.T) {

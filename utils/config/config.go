@@ -258,6 +258,13 @@ func RewriteToken(product, AuthName string, authenticationResponse models.TokenR
 
 	v.SetConfigFile(configFilepath)
 
+	if err := v.ReadInConfig(); err != nil {
+		var notFound viper.ConfigFileNotFoundError
+		if !errors.As(err, &notFound) {
+			return fmt.Errorf("read config %s: %w", configFilepath, err)
+		}
+	}
+
 	v.MergeInConfig()
 	v.Set("token", authenticationResponse.AccessToken)
 	v.Set("refresh_token", authenticationResponse.RefreshToken)

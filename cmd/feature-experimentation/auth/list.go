@@ -47,6 +47,7 @@ var listCmd = &cobra.Command{
 				if err != nil {
 					log.Fatalf("error occurred: %s", err)
 				}
+
 				if authYaml.Username != "" {
 					auth.Username = authYaml.Username
 					auth.ClientID = authYaml.ClientID

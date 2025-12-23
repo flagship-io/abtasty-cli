@@ -18,7 +18,7 @@ import (
 	"github.com/flagship-io/abtasty-cli/cmd/feature-experimentation/project"
 	"github.com/flagship-io/abtasty-cli/cmd/feature-experimentation/resource"
 	targeting_key "github.com/flagship-io/abtasty-cli/cmd/feature-experimentation/targeting-key"
-	"github.com/flagship-io/abtasty-cli/cmd/feature-experimentation/token"
+	t "github.com/flagship-io/abtasty-cli/cmd/feature-experimentation/token"
 	"github.com/flagship-io/abtasty-cli/cmd/feature-experimentation/user"
 	"github.com/flagship-io/abtasty-cli/cmd/feature-experimentation/variation"
 	variation_group "github.com/flagship-io/abtasty-cli/cmd/feature-experimentation/variation-group"
@@ -31,6 +31,8 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
+
+var accountID, accountEnvID, token string
 
 // FeatureExperimentationCmd represents the feature experimentation command
 var FeatureExperimentationCmd = &cobra.Command{
@@ -60,12 +62,17 @@ func addSubCommandPalettes() {
 	FeatureExperimentationCmd.AddCommand(resource.ResourceCmd)
 	FeatureExperimentationCmd.AddCommand(auth.AuthCmd)
 	FeatureExperimentationCmd.AddCommand(account.AccountCmd)
-	FeatureExperimentationCmd.AddCommand(token.TokenCmd)
+	FeatureExperimentationCmd.AddCommand(t.TokenCmd)
 	FeatureExperimentationCmd.AddCommand(account_environment.AccountEnvironmentCmd)
 }
 
 func init() {
 	addSubCommandPalettes()
+
+	FeatureExperimentationCmd.PersistentFlags().StringVarP(&accountID, "account-id", "", "", "override account ID in command")
+	FeatureExperimentationCmd.PersistentFlags().StringVarP(&accountEnvID, "account-env-id", "", "", "override account environment ID in command")
+	FeatureExperimentationCmd.PersistentFlags().StringVarP(&token, "token", "", "", "override token in command")
+
 }
 
 func initConfig() {
@@ -83,9 +90,23 @@ func initConfig() {
 		v.MergeConfigMap(vL.AllSettings())
 	}
 
+	if accountID != "" {
+		v.Set("username", "no-username")
+		v.Set("account_id", accountID)
+	}
+
+	if accountEnvID != "" {
+		v.Set("username", "no-username")
+		v.Set("account_environment_id", accountEnvID)
+	}
+
+	if token != "" {
+		v.Set("username", "no-username")
+		v.Set("token", token)
+	}
+
 	v.Unmarshal(&requestConfig)
 	common.Init(requestConfig)
-	resource.Init(requestConfig)
 	viper.MergeConfigMap(v.AllSettings())
 
 	r := &http_request.ResourceRequester
@@ -96,6 +117,4 @@ func initConfig() {
 	}
 
 	r.Init(&requestConfig)
-	return
-
 }

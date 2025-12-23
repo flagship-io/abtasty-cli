@@ -17,12 +17,12 @@ var deleteCmd = &cobra.Command{
 	Short: "Delete a variation",
 	Long:  `Delete a variation`,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := httprequest.VariationWERequester.HTTPDeleteVariation(CampaignID, VariationID)
+		resp, err := httprequest.VariationWERequester.HTTPDeleteVariation(CampaignID, VariationID)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
-		fmt.Fprintln(cmd.OutOrStdout(), "Variation deleted")
 
+		fmt.Fprintln(cmd.OutOrStdout(), resp)
 	},
 }
 

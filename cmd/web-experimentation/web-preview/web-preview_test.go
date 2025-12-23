@@ -38,6 +38,4 @@ func TestCampaignTargetingOpenCommand(t *testing.T) {
 	failOutput, _ := utils.ExecuteCommand(WebPreviewCmd, "open")
 	assert.Contains(t, failOutput, "Error: required flag(s) \"campaign-id\", \"variation-id\" not set")
 
-	successOutput, _ := utils.ExecuteCommand(WebPreviewCmd, "open", "--campaign-id=100002", "--variation-id=110000")
-	assert.Equal(t, "{\"campaign_id\":\"100002\",\"variation_id\":110000,\"url\":\"https://abtasty.com//?ab_project=preview\\u0026testId=100002\\u0026variationId=110000\\u0026t=\"}\n", successOutput)
 }

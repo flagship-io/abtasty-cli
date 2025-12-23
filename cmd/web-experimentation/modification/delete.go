@@ -21,20 +21,23 @@ var deleteCmd = &cobra.Command{
 	Long:  `Delete a modification`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var modif *web_experimentation.Modification
-		body, _ := httprequest.ModificationRequester.HTTPGetModification(CampaignID, ModificationID)
-		err := httprequest.ModificationRequester.HTTPDeleteModification(CampaignID, ModificationID)
+		body, err := httprequest.ModificationRequester.HTTPGetModification(CampaignID, ModificationID)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
 
-		fmt.Fprintln(cmd.OutOrStdout(), "Modification deleted")
-
-		for _, modification := range body {
-			if modification.Type == "customScriptNew" && modification.Selector != "" {
-				modif = &modification
-			}
+		resp, err := httprequest.ModificationRequester.HTTPDeleteModification(CampaignID, ModificationID)
+		if err != nil {
+			log.Fatalf("error occurred: %v", err)
 		}
 
+		fmt.Fprintln(cmd.OutOrStdout(), resp)
+
+		if body != (web_experimentation.Modification{}) {
+			if body.Type == "customScriptNew" && body.Selector != "" {
+				modif = &body
+			}
+		}
 		config.DeleteModificationCodeDirectory(httprequest.CampaignWERequester.WorkingDir, httprequest.CampaignWERequester.AccountID, strconv.Itoa(CampaignID), strconv.Itoa(modif.VariationID), strconv.Itoa(ModificationID))
 	},
 }
@@ -43,6 +46,11 @@ func init() {
 	deleteCmd.Flags().IntVarP(&ModificationID, "id", "i", 0, "id of the modification you want to delete")
 
 	if err := deleteCmd.MarkFlagRequired("id"); err != nil {
+		log.Fatalf("error occurred: %v", err)
+	}
+
+	deleteCmd.Flags().IntVarP(&CampaignID, "campaign-id", "", 0, "campaign id of your modification")
+	if err := deleteCmd.MarkFlagRequired("campaign-id"); err != nil {
 		log.Fatalf("error occurred: %v", err)
 	}
 

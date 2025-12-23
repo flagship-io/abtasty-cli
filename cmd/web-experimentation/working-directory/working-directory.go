@@ -26,7 +26,12 @@ var WorkingDirectoryCmd = &cobra.Command{
 }
 
 func init() {
-	WorkingDirectoryCmd.PersistentFlags().StringVarP(&Path, "path", "", utils.DefaultGlobalCodeWorkingDir(), "path to set for working dir")
+	defaultPath, err := utils.DefaultGlobalCodeWorkingDir()
+	if err != nil {
+		log.Fatalf("failed to get default working dir: %v", err)
+	}
+
+	WorkingDirectoryCmd.PersistentFlags().StringVarP(&Path, "path", "", defaultPath, "path to set for working dir")
 
 	if err := WorkingDirectoryCmd.MarkPersistentFlagRequired("path"); err != nil {
 		log.Fatalf("error occurred: %v", err)

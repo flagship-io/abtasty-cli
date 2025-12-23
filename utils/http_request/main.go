@@ -43,6 +43,7 @@ var SegmentRequester web_experimentation.SegmentRequester = web_experimentation.
 var TriggerRequester web_experimentation.TriggerRequester = web_experimentation.TriggerRequester{ResourceRequest: &ResourceRequester}
 var FavoriteUrlRequester web_experimentation.FavoriteUrlRequester = web_experimentation.FavoriteUrlRequester{ResourceRequest: &ResourceRequester}
 var CampaignTargetingRequester web_experimentation.CampaignTargetingRequester = web_experimentation.CampaignTargetingRequester{ResourceRequest: &ResourceRequester}
+var FolderRequester web_experimentation.FolderRequester = web_experimentation.FolderRequester{ResourceRequest: &ResourceRequester}
 
 func init() {
 	if os.Getenv("ABT_ENV") == "MOCK" {
@@ -64,6 +65,7 @@ func init() {
 		// WE&P Resources
 		mockfunction_we.APIAccount()
 		mockfunction_we.APIAudience()
+		mockfunction_we.APIFolder()
 		mockfunction_we.APICampaign()
 		mockfunction_we.APIFavoriteUrl()
 		mockfunction_we.APIModification()

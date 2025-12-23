@@ -16,7 +16,7 @@ import (
 	"github.com/flagship-io/abtasty-cli/utils"
 )
 
-func openLink(url string) error {
+func OpenLink(url string) error {
 	var cmd *exec.Cmd
 	switch runtime.GOOS {
 	case "linux":
@@ -125,7 +125,7 @@ func HTTPGetIdentifierWE() (models.UserMe, error) {
 
 func InitiateBrowserAuth(username, clientID, clientSecret string) (models.TokenResponse, error) {
 	if clientID == "" || clientSecret == "" {
-		log.Fatal("Error while login, required fields (username, client ID, client secret)")
+		return models.TokenResponse{}, errors.New("missing required fields (username, client ID, client secret)")
 	}
 
 	server := &http.Server{
@@ -135,8 +135,8 @@ func InitiateBrowserAuth(username, clientID, clientSecret string) (models.TokenR
 	codeChan := make(chan string)
 	var url = utils.GetWebExperimentationBrowserAuth(clientID, clientSecret)
 
-	if err := openLink(url); err != nil {
-		log.Fatalf("Error opening link: %s", err)
+	if err := OpenLink(url); err != nil {
+		return models.TokenResponse{}, errors.New("failed to open browser")
 	}
 
 	go func() {

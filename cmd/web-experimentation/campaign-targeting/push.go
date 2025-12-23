@@ -50,16 +50,22 @@ var pushCmd = &cobra.Command{
 			log.Fatalf("error occurred: %s", err)
 		}
 
-		model := we.JsonModelToModel(jsonModel)
+		model, err := we.JsonModelToModel(jsonModel)
+		if err != nil {
+			fmt.Fprintf(cmd.ErrOrStderr(), "error: %v\n", err)
+			return
+		}
 
 		parsedModel, err := json.Marshal(model)
 		if err != nil {
-			log.Fatalf("error occurred: %s", err)
+			fmt.Fprintf(cmd.ErrOrStderr(), "error: %v\n", err)
+			return
 		}
 
 		body, err := httprequest.CampaignTargetingRequester.HTTPPushCampaignTargeting(CampaignID, parsedModel)
 		if err != nil {
-			log.Fatalf("error occurred: %v", err)
+			fmt.Fprintf(cmd.ErrOrStderr(), "error: %v\n", err)
+			return
 		}
 
 		fmt.Fprintln(cmd.OutOrStdout(), string(body))
@@ -67,7 +73,7 @@ var pushCmd = &cobra.Command{
 }
 
 func init() {
-	pushCmd.Flags().StringVarP(&CampaignID, "id", "i", "", "id of the campaign")
+	pushCmd.Flags().IntVarP(&CampaignID, "id", "i", 0, "id of the campaign")
 	if err := pushCmd.MarkFlagRequired("id"); err != nil {
 		log.Fatalf("error occurred: %v", err)
 	}

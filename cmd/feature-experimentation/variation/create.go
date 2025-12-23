@@ -11,13 +11,22 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func CreateVariation(campaignID, variationGroupID string, dataRaw []byte) ([]byte, error) {
+	body, err := httprequest.VariationFERequester.HTTPCreateVariation(campaignID, variationGroupID, dataRaw)
+	if err != nil {
+		return nil, err
+	}
+
+	return body, nil
+}
+
 // createCmd represents the create command
 var createCmd = &cobra.Command{
 	Use:   "create [--campaign-id=<campaign-id>] [--variation-group-id=<variation-group-id>] [-d <data-raw> | --data-raw <data-raw>]",
 	Short: "Create a variation",
 	Long:  `Create a variation`,
 	Run: func(cmd *cobra.Command, args []string) {
-		body, err := httprequest.VariationFERequester.HTTPCreateVariation(CampaignID, VariationGroupID, DataRaw)
+		body, err := CreateVariation(CampaignID, VariationGroupID, []byte(DataRaw))
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}

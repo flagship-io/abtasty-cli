@@ -20,12 +20,12 @@ func (t *TargetingKeyRequester) HTTPGetTargetingKey(id string) (models.Targeting
 	return common.HTTPGetItem[models.TargetingKey](utils.GetFeatureExperimentationHost() + "/v1/accounts/" + t.AccountID + "/targeting_keys/" + id)
 }
 
-func (t *TargetingKeyRequester) HTTPCreateTargetingKey(data string) ([]byte, error) {
-	return common.HTTPRequest[models.TargetingKey](http.MethodPost, utils.GetFeatureExperimentationHost()+"/v1/accounts/"+t.AccountID+"/targeting_keys", []byte(data))
+func (t *TargetingKeyRequester) HTTPCreateTargetingKey(data []byte) ([]byte, error) {
+	return common.HTTPRequest[models.TargetingKey](http.MethodPost, utils.GetFeatureExperimentationHost()+"/v1/accounts/"+t.AccountID+"/targeting_keys", data)
 }
 
-func (t *TargetingKeyRequester) HTTPEditTargetingKey(id, data string) ([]byte, error) {
-	return common.HTTPRequest[models.TargetingKey](http.MethodPatch, utils.GetFeatureExperimentationHost()+"/v1/accounts/"+t.AccountID+"/targeting_keys/"+id, []byte(data))
+func (t *TargetingKeyRequester) HTTPEditTargetingKey(id string, data []byte) ([]byte, error) {
+	return common.HTTPRequest[models.TargetingKey](http.MethodPatch, utils.GetFeatureExperimentationHost()+"/v1/accounts/"+t.AccountID+"/targeting_keys/"+id, data)
 }
 
 func (t *TargetingKeyRequester) HTTPDeleteTargetingKey(id string) error {

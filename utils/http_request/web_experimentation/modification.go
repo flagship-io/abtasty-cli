@@ -2,6 +2,7 @@ package web_experimentation
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -20,9 +21,13 @@ func (m *ModificationRequester) HTTPListModification(campaignID int) ([]models.M
 	return resp.Data.Modifications, err
 }
 
-func (m *ModificationRequester) HTTPGetModification(campaignID int, id int) ([]models.Modification, error) {
+func (m *ModificationRequester) HTTPGetModification(campaignID int, id int) (models.Modification, error) {
 	resp, err := common.HTTPGetItem[models.ModificationDataWE](utils.GetWebExperimentationHost() + "/v1/accounts/" + m.AccountID + "/tests/" + strconv.Itoa(campaignID) + "/modifications?ids=" + strconv.Itoa(id))
-	return resp.Data.Modifications, err
+	if len(resp.Data.Modifications) == 0 {
+		return models.Modification{}, err
+	}
+
+	return resp.Data.Modifications[0], err
 }
 
 func (m *ModificationRequester) HTTPEditModification(campaignID int, id int, modificationData web_experimentation.ModificationCodeEditStruct) ([]byte, error) {
@@ -43,15 +48,19 @@ func (m *ModificationRequester) HTTPCreateModification(campaignID int, modificat
 	return common.HTTPRequest[models.ModificationDataWE](http.MethodPost, utils.GetWebExperimentationHost()+"/v1/accounts/"+m.AccountID+"/tests/"+strconv.Itoa(campaignID)+"/modifications", data)
 }
 
-func (m *ModificationRequester) HTTPEditModificationDataRaw(campaignID int, id int, data string) ([]byte, error) {
-	return common.HTTPRequest[models.ModificationDataWE](http.MethodPatch, utils.GetWebExperimentationHost()+"/v1/accounts/"+m.AccountID+"/tests/"+strconv.Itoa(campaignID)+"/modifications/"+strconv.Itoa(id), []byte(data))
+func (m *ModificationRequester) HTTPEditModificationDataRaw(campaignID int, id int, data []byte) ([]byte, error) {
+	return common.HTTPRequest[models.ModificationDataWE](http.MethodPatch, utils.GetWebExperimentationHost()+"/v1/accounts/"+m.AccountID+"/tests/"+strconv.Itoa(campaignID)+"/modifications/"+strconv.Itoa(id), data)
 }
 
-func (m *ModificationRequester) HTTPCreateModificationDataRaw(campaignID int, data string) ([]byte, error) {
-	return common.HTTPRequest[models.ModificationDataWE](http.MethodPost, utils.GetWebExperimentationHost()+"/v1/accounts/"+m.AccountID+"/tests/"+strconv.Itoa(campaignID)+"/modifications", []byte(data))
+func (m *ModificationRequester) HTTPCreateModificationDataRaw(campaignID int, data []byte) ([]byte, error) {
+	return common.HTTPRequest[models.ModificationDataWE](http.MethodPost, utils.GetWebExperimentationHost()+"/v1/accounts/"+m.AccountID+"/tests/"+strconv.Itoa(campaignID)+"/modifications", data)
 }
 
-func (m *ModificationRequester) HTTPDeleteModification(campaignID int, id int) error {
+func (m *ModificationRequester) HTTPDeleteModification(campaignID int, id int) (string, error) {
 	_, err := common.HTTPRequest[models.ModificationDataWE](http.MethodDelete, utils.GetWebExperimentationHost()+"/v1/accounts/"+m.AccountID+"/tests/"+strconv.Itoa(campaignID)+"/modifications/"+strconv.Itoa(id)+"?input_type=modification", nil)
-	return err
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("Modification %d deleted", id), nil
 }

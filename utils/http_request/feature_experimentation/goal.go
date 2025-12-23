@@ -20,12 +20,12 @@ func (g *GoalRequester) HTTPGetGoal(id string) (models.Goal, error) {
 	return common.HTTPGetItem[models.Goal](utils.GetFeatureExperimentationHost() + "/v1/accounts/" + g.AccountID + "/account_environments/" + g.AccountEnvironmentID + "/goals/" + id)
 }
 
-func (g *GoalRequester) HTTPCreateGoal(data string) ([]byte, error) {
-	return common.HTTPRequest[models.Flag](http.MethodPost, utils.GetFeatureExperimentationHost()+"/v1/accounts/"+g.AccountID+"/account_environments/"+g.AccountEnvironmentID+"/goals", []byte(data))
+func (g *GoalRequester) HTTPCreateGoal(data []byte) ([]byte, error) {
+	return common.HTTPRequest[models.Flag](http.MethodPost, utils.GetFeatureExperimentationHost()+"/v1/accounts/"+g.AccountID+"/account_environments/"+g.AccountEnvironmentID+"/goals", data)
 }
 
-func (g *GoalRequester) HTTPEditGoal(id, data string) ([]byte, error) {
-	return common.HTTPRequest[models.Flag](http.MethodPatch, utils.GetFeatureExperimentationHost()+"/v1/accounts/"+g.AccountID+"/account_environments/"+g.AccountEnvironmentID+"/goals/"+id, []byte(data))
+func (g *GoalRequester) HTTPEditGoal(id string, data []byte) ([]byte, error) {
+	return common.HTTPRequest[models.Flag](http.MethodPatch, utils.GetFeatureExperimentationHost()+"/v1/accounts/"+g.AccountID+"/account_environments/"+g.AccountEnvironmentID+"/goals/"+id, data)
 }
 
 func (g *GoalRequester) HTTPDeleteGoal(id string) error {

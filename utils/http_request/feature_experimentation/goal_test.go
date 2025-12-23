@@ -38,7 +38,7 @@ func TestHTTPCreateGoal(t *testing.T) {
 
 	data := "{\"label\":\"testGoalLabel\", \"type\":\"screenview\", \"operator\":\"contains\", \"value\":\"VIP\"}"
 
-	respBody, err := goalRequester.HTTPCreateGoal(data)
+	respBody, err := goalRequester.HTTPCreateGoal([]byte(data))
 
 	assert.NotNil(t, respBody)
 	assert.Nil(t, err)
@@ -50,7 +50,7 @@ func TestHTTPEditGoal(t *testing.T) {
 
 	data := "{\"label\":\"testGoalLabel\", \"type\":\"screenview\", \"operator\":\"contains\", \"value\":\"VIP\"}"
 
-	respBody, err := goalRequester.HTTPEditGoal("testGoalID", data)
+	respBody, err := goalRequester.HTTPEditGoal("testGoalID", []byte(data))
 
 	assert.NotNil(t, respBody)
 	assert.Nil(t, err)

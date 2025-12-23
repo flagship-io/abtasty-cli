@@ -11,7 +11,7 @@ var campaignTargetingRequester = CampaignTargetingRequester{&common.ResourceRequ
 
 func TestHTTPCampaignTargeting(t *testing.T) {
 
-	respBody, err := campaignTargetingRequester.HTTPGetCampaignTargeting("100000")
+	respBody, err := campaignTargetingRequester.HTTPGetCampaignTargeting(100000)
 
 	assert.NotNil(t, respBody)
 	assert.Nil(t, err)

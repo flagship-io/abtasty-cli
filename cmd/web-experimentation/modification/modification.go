@@ -4,13 +4,12 @@ Copyright © 2022 Flagship Team flagship@abtasty.com
 package modification
 
 import (
-	"log"
-
 	"github.com/spf13/cobra"
 )
 
 var (
 	CampaignID     int
+	VariationID    int
 	ModificationID int
 	Status         string
 	DataRaw        string
@@ -26,10 +25,9 @@ var ModificationCmd = &cobra.Command{
 	},
 }
 
-func init() {
-	ModificationCmd.PersistentFlags().IntVarP(&CampaignID, "campaign-id", "", 0, "campaign id of your modifications")
-
-	if err := ModificationCmd.MarkPersistentFlagRequired("campaign-id"); err != nil {
-		log.Fatalf("error occurred: %v", err)
+func getTypeFromModificationAPI(t string) string {
+	if t == "addCSS" {
+		return "css"
 	}
+	return "js"
 }

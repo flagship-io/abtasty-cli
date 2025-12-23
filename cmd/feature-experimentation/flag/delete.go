@@ -11,17 +11,25 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func DeleteFlag(id string) (string, error) {
+	err := httprequest.FlagRequester.HTTPDeleteFlag(id)
+	if err != nil {
+		return "", err
+	}
+	return "Flag deleted", nil
+}
+
 // deleteCmd represents delete command
 var deleteCmd = &cobra.Command{
 	Use:   "delete [-i <flag-id> | --id=<flag-id>]",
 	Short: "Delete a flag",
 	Long:  `Delete a flag`,
 	Run: func(cmd *cobra.Command, args []string) {
-		err := httprequest.FlagRequester.HTTPDeleteFlag(FlagID)
+		resp, err := DeleteFlag(FlagID)
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}
-		fmt.Fprintln(cmd.OutOrStdout(), "Flag deleted")
+		fmt.Fprintln(cmd.OutOrStdout(), resp)
 
 	},
 }

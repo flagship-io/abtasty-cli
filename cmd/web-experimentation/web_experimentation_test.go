@@ -18,12 +18,12 @@ func TestMain(m *testing.M) {
 	m.Run()
 }
 
-func TestAccountCommand(t *testing.T) {
+func TestWECommand(t *testing.T) {
 	output, _ := utils.ExecuteCommand(WebExperimentationCmd)
 	assert.Contains(t, output, "Manage resources related to the web experimentation product")
 }
 
-func TestAccountHelpCommand(t *testing.T) {
+func TestWEHelpCommand(t *testing.T) {
 	output, _ := utils.ExecuteCommand(WebExperimentationCmd, "--help")
 	assert.Contains(t, output, "Manage resources related to the web experimentation product")
 }

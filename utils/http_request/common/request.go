@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"reflect"
 	"regexp"
@@ -103,33 +102,34 @@ func Init(credL RequestConfig) {
 	cred = credL
 }
 
-func regenerateToken(product, configName string) {
+func regenerateToken(product, configName string) error {
 	var authenticationResponse models.TokenResponse
 	var err error
 
 	if product == utils.FEATURE_EXPERIMENTATION {
 		authenticationResponse, err = HTTPCreateTokenFE(cred.ClientID, cred.ClientSecret, cred.AccountID)
 		if err != nil {
-			log.Fatalf("error occurred: %v", err)
+			return fmt.Errorf("error occurred: %v", err)
 		}
 	} else {
 		authenticationResponse, err = HTTPRefreshTokenWE(cred)
 		if err != nil {
-			log.Fatalf("error occurred: %v", err)
+			return fmt.Errorf("error occurred: %v", err)
 		}
 	}
 
 	if authenticationResponse.AccessToken == "" {
-		log.Fatal("client_id or client_secret not valid")
+		return fmt.Errorf("client_id or client_secret not valid")
 	}
 
 	cred.RefreshToken = authenticationResponse.RefreshToken
 	cred.Token = authenticationResponse.AccessToken
 	err = config.RewriteToken(product, configName, authenticationResponse)
 	if err != nil {
-		log.Fatalf("error occurred: %v", err)
+		return fmt.Errorf("error occurred: %v", err)
 	}
 
+	return nil
 }
 
 func HTTPRequest[T any](method string, url string, body []byte) ([]byte, error) {
@@ -148,37 +148,36 @@ func HTTPRequest[T any](method string, url string, body []byte) ([]byte, error) 
 
 	if resourceType == reflect.TypeOf(feature_experimentation.Goal{}) || resourceType == reflect.TypeOf(feature_experimentation.CampaignFE{}) {
 		if cred.AccountID == "" || cred.AccountEnvironmentID == "" {
-			log.Fatalf("account_id or account_environment_id required, Please authenticate your CLI")
+			return nil, fmt.Errorf("account_id or account_environment_id required, Please authenticate your CLI")
 		}
 	}
 
 	req, err := http.NewRequest(method, url, bodyIO)
 	if err != nil {
-		log.Panicf("error occurred on request creation: %v", err)
+		return nil, fmt.Errorf("error occurred on request creation: %v", err)
 	}
 
 	if cred.Product == utils.FEATURE_EXPERIMENTATION {
 		if (cred.Username == "" || cred.AccountID == "") && resourceType != reflect.TypeOf(models.Token{}) {
-			log.Fatalf("username and account_id required, Please authenticate your CLI")
+			return nil, fmt.Errorf("username and account_id required, Please authenticate your CLI")
 		}
 		// for resource loader
 		if resourceType.String() == "resource.ResourceData" && !strings.Contains(url, "token") && (cred.AccountID == "" || cred.AccountEnvironmentID == "") {
-			log.Fatalf("account_id or account_environment_id required, Please authenticate your CLI")
+			return nil, fmt.Errorf("account_id or account_environment_id required, Please authenticate your CLI")
 		}
-
-		/* 		if strings.Contains(url, "token") && cred.ClientID == "" && cred.ClientSecret == "" {
-			log.Fatalf("client_id or client_secret required, Please authenticate your CLI")
-		} */
 	}
 
 	if cred.Product == utils.WEB_EXPERIMENTATION {
 		if resourceType != reflect.TypeOf(web_experimentation.AccountWE{}) && resourceType != reflect.TypeOf(web_experimentation.CurrentAccountWE{}) && !strings.Contains(url, "token") && !strings.Contains(url, "/users/me") && cred.AccountID == "" {
-			log.Fatalf("username, account_id required, Please use the account command to select your account")
+			return nil, fmt.Errorf("username, account_id required, Please use the account command to select your account")
 		}
 	}
 
 	if !strings.Contains(url, "token") && cred.Token == "" {
-		regenerateToken(cred.Product, cred.CurrentUsedCredential)
+		err := regenerateToken(cred.Product, cred.CurrentUsedCredential)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	req.Header.Add("Accept", `*/*`)
@@ -224,6 +223,10 @@ func HTTPRequest[T any](method string, url string, body []byte) ([]byte, error) 
 	if match {
 		err := errors.New(string(respBody))
 		return nil, err
+	}
+
+	if cred.Product == utils.WEB_EXPERIMENTATION && method == "POST" && (resourceType == reflect.TypeOf(web_experimentation.CampaignWECommon{}) || resourceType == reflect.TypeOf(web_experimentation.Folder{}) || resourceType == reflect.TypeOf(web_experimentation.VariationWE{}) || resourceType == reflect.TypeOf(web_experimentation.ModificationDataWE{}) || resourceType == reflect.TypeOf(web_experimentation.Audience{})) {
+		return []byte(resp.Header.Get("location")), err
 	}
 
 	return respBody, err
@@ -333,7 +336,7 @@ func sendAnalyticHit(method string, url string) (int, error) {
 
 	body, err := json.Marshal(hit)
 	if err != nil {
-		log.Fatalf("error occurred: %v", err)
+		return 0, fmt.Errorf("error occurred: %v", err)
 	}
 
 	if body != nil {
@@ -342,7 +345,7 @@ func sendAnalyticHit(method string, url string) (int, error) {
 
 	req, err := http.NewRequest(http.MethodPost, utils.HIT_ANALYTICS_URL, bodyIO)
 	if err != nil {
-		log.Panicf("error occurred on request creation: %v", err)
+		return 0, fmt.Errorf("error occurred on request creation: %v", err)
 	}
 
 	req.Header.Add("Accept", `*/*`)
