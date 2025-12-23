@@ -1,6 +1,6 @@
 package types
 
-import "github.com/flagship-io/abtasty-cli/utils/common"
+import "github.com/flagship-io/abtasty-cli/internal/utils/common"
 
 type Resource struct {
 	Type           string                `json:"type"`

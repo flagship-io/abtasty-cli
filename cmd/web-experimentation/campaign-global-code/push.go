@@ -9,9 +9,9 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/flagship-io/abtasty-cli/utils"
-	"github.com/flagship-io/abtasty-cli/utils/config"
-	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
+	"github.com/flagship-io/abtasty-cli/internal/utils"
+	"github.com/flagship-io/abtasty-cli/internal/utils/config"
+	httprequest "github.com/flagship-io/abtasty-cli/internal/utils/http_request"
 	"github.com/spf13/cobra"
 )
 

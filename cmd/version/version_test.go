@@ -3,7 +3,7 @@ package version
 import (
 	"testing"
 
-	"github.com/flagship-io/abtasty-cli/utils"
+	"github.com/flagship-io/abtasty-cli/internal/utils"
 	"github.com/stretchr/testify/assert"
 )
 

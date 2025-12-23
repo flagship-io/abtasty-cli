@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/flagship-io/abtasty-cli/utils"
-	"github.com/flagship-io/abtasty-cli/utils/config"
+	"github.com/flagship-io/abtasty-cli/internal/utils"
+	"github.com/flagship-io/abtasty-cli/internal/utils/config"
 	"github.com/spf13/cobra"
 )
 

@@ -7,12 +7,11 @@ import (
 	"encoding/json"
 	"testing"
 
-	models "github.com/flagship-io/abtasty-cli/models/web_experimentation"
-	"github.com/flagship-io/abtasty-cli/utils"
-	"github.com/flagship-io/abtasty-cli/utils/http_request"
-	mockfunction "github.com/flagship-io/abtasty-cli/utils/mock_function"
-	mockfunction_we "github.com/flagship-io/abtasty-cli/utils/mock_function/web_experimentation"
-
+	models "github.com/flagship-io/abtasty-cli/internal/models/web_experimentation"
+	"github.com/flagship-io/abtasty-cli/internal/utils"
+	"github.com/flagship-io/abtasty-cli/internal/utils/http_request"
+	mockfunction "github.com/flagship-io/abtasty-cli/internal/utils/mock_function"
+	mockfunction_we "github.com/flagship-io/abtasty-cli/internal/utils/mock_function/web_experimentation"
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
 )

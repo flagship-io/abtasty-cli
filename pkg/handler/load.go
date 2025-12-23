@@ -5,9 +5,9 @@ import (
 
 	featureResource "github.com/flagship-io/abtasty-cli/cmd/feature-experimentation/resource"
 	webResource "github.com/flagship-io/abtasty-cli/cmd/web-experimentation/resource"
-	"github.com/flagship-io/abtasty-cli/utils"
-	"github.com/flagship-io/abtasty-cli/utils/http_request"
-	"github.com/flagship-io/abtasty-cli/utils/http_request/common"
+	"github.com/flagship-io/abtasty-cli/internal/utils"
+	"github.com/flagship-io/abtasty-cli/internal/utils/http_request"
+	"github.com/flagship-io/abtasty-cli/internal/utils/http_request/common"
 	"github.com/spf13/viper"
 )
 

@@ -10,9 +10,9 @@ import (
 	"strconv"
 	"strings"
 
-	model "github.com/flagship-io/abtasty-cli/models/web_experimentation"
-	httprequest "github.com/flagship-io/abtasty-cli/utils/http_request"
-	we "github.com/flagship-io/abtasty-cli/utils/http_request/web_experimentation"
+	model "github.com/flagship-io/abtasty-cli/internal/models/web_experimentation"
+	httprequest "github.com/flagship-io/abtasty-cli/internal/utils/http_request"
+	we "github.com/flagship-io/abtasty-cli/internal/utils/http_request/web_experimentation"
 
 	"github.com/spf13/cobra"
 )
