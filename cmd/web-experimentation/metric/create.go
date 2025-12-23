@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log"
 	"net/url"
+	"strconv"
 	"strings"
 
 	httprequest "github.com/flagship-io/abtasty-cli/internal/utils/http_request"
@@ -36,7 +37,12 @@ func CreateMetric(dataRaw []byte) ([]byte, error) {
 		return nil, fmt.Errorf("ids parameter not found in response: %s", string(metricHeader))
 	}
 
-	body, err := httprequest.MetricRequester.HTTPGetMetric(metricID)
+	id, err := strconv.Atoi(metricID)
+	if err != nil {
+		return nil, fmt.Errorf("invalid metric ID: %s", metricID)
+	}
+
+	body, err := httprequest.MetricRequester.HTTPGetMetric(id)
 	if err != nil {
 		return nil, err
 	}

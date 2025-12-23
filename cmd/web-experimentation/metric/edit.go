@@ -32,7 +32,7 @@ func init() {
 		log.Fatalf("error occurred: %v", err)
 	}
 
-	editCmd.Flags().StringVarP(&MetricID, "metric-id", "m", "", "ID of the metric to edit")
+	editCmd.Flags().IntVarP(&MetricID, "metric-id", "m", 0, "ID of the metric to edit")
 
 	if err := editCmd.MarkFlagRequired("metric-id"); err != nil {
 		log.Fatalf("error occurred: %v", err)

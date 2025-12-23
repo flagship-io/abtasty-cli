@@ -18,7 +18,7 @@ var listCmd = &cobra.Command{
 	Short: "List all audiences",
 	Long:  `List all audience of an account`,
 	Run: func(cmd *cobra.Command, args []string) {
-		body, err := httprequest.AudienceRequester.HTTPListAudience()
+		body, err := httprequest.AudienceRequester.HTTPListAudiences()
 		if err != nil {
 			log.Fatalf("error occurred: %v", err)
 		}

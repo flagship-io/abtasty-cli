@@ -13,7 +13,7 @@ type AudienceRequester struct {
 	*common.ResourceRequest
 }
 
-func (a *AudienceRequester) HTTPListAudience() ([]models.Audience, error) {
+func (a *AudienceRequester) HTTPListAudiences() ([]models.Audience, error) {
 	return common.HTTPGetAllPagesWE[models.Audience](utils.GetWebExperimentationHost() + "/v1/accounts/" + a.AccountID + "/audiences?status=unarchive&")
 }
 

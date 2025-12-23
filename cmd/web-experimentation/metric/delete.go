@@ -27,7 +27,7 @@ var deleteCmd = &cobra.Command{
 }
 
 func init() {
-	deleteCmd.Flags().StringVarP(&MetricID, "id", "i", "", "id of the metric you want to delete")
+	deleteCmd.Flags().IntVarP(&MetricID, "id", "i", 0, "id of the metric you want to delete")
 
 	if err := deleteCmd.MarkFlagRequired("id"); err != nil {
 		log.Fatalf("error occurred: %v", err)

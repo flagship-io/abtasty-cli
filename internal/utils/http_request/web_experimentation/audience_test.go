@@ -24,7 +24,7 @@ func TestHTTPGetAudience(t *testing.T) {
 
 func TestHTTPListAudience(t *testing.T) {
 
-	respBody, err := audienceRequester.HTTPListAudience()
+	respBody, err := audienceRequester.HTTPListAudiences()
 
 	assert.NotNil(t, respBody)
 	assert.Nil(t, err)

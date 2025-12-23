@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	MetricID string
+	MetricID int
 	DataRaw  string
 )
 

@@ -28,7 +28,7 @@ var getCmd = &cobra.Command{
 }
 
 func init() {
-	getCmd.Flags().StringVarP(&MetricID, "id", "i", "", "id of the audience you want to display")
+	getCmd.Flags().IntVarP(&MetricID, "id", "i", 0, "id of the audience you want to display")
 
 	if err := getCmd.MarkFlagRequired("id"); err != nil {
 		log.Fatalf("error occurred: %v", err)
