@@ -24,7 +24,7 @@ abtasty-cli web-experimentation working-directory set [flags]
 
 ```
       --output-format string   output format for the get and list subcommands for AB Tasty resources. Only 3 format are possible: table, json, json-pretty (default "table")
-      --path string            path to set for working dir (default "/Users/chadi.laoulaou/abtasty-cli")
+      --path string            path to set for working dir (default "/home/runner/work/abtasty-cli/abtasty-cli")
       --user-agent string      custom user agent (default "abtasty-cli/main")
 ```
 

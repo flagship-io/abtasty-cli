@@ -18,7 +18,7 @@ abtasty-cli web-experimentation working-directory [set] [flags]
 
 ```
   -h, --help          help for working-directory
-      --path string   path to set for working dir (default "/Users/chadi.laoulaou/abtasty-cli")
+      --path string   path to set for working dir (default "/home/runner/work/abtasty-cli/abtasty-cli")
 ```
 
 ### Options inherited from parent commands
