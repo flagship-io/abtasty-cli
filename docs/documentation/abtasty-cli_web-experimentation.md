@@ -41,6 +41,7 @@ abtasty-cli web-experimentation [auth|account|campaign|global-code|variation] [f
 * [abtasty-cli web-experimentation campaign-targeting](abtasty-cli_web-experimentation_campaign-targeting.md)	 - Manage campaign targeting
 * [abtasty-cli web-experimentation favorite-url](abtasty-cli_web-experimentation_favorite-url.md)	 - Manage your favorite urls
 * [abtasty-cli web-experimentation folder](abtasty-cli_web-experimentation_folder.md)	 - Manage your folders
+* [abtasty-cli web-experimentation metric](abtasty-cli_web-experimentation_metric.md)	 - Manage your metrics
 * [abtasty-cli web-experimentation modification](abtasty-cli_web-experimentation_modification.md)	 - Manage your modifications
 * [abtasty-cli web-experimentation modification-code](abtasty-cli_web-experimentation_modification-code.md)	 - Manage modification code
 * [abtasty-cli web-experimentation resource](abtasty-cli_web-experimentation_resource.md)	 - Manage your resources
