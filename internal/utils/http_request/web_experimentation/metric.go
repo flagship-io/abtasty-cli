@@ -14,13 +14,41 @@ type MetricRequester struct {
 }
 
 func (a *MetricRequester) HTTPListMetrics() (models.MetricsData, error) {
-
 	b, err := common.HTTPGetAllPagesWEMetric(utils.GetWebExperimentationHost() + "/v1/accounts/" + a.AccountID + "/metrics?")
 	if err != nil {
 		return models.MetricsData{}, err
 	}
 
 	return b, nil
+}
+
+func (a *MetricRequester) HTTPGetMetric(id string) (interface{}, error) {
+	b, err := common.HTTPGetAllPagesWEMetric(utils.GetWebExperimentationHost() + "/v1/accounts/" + a.AccountID + "/metrics?ids=" + id + "&")
+	if err != nil {
+		return nil, err
+	}
+
+	// Return the first metric type that has len != 0
+	if len(b.Transactions) != 0 {
+		return b.Transactions[0], nil
+	}
+	if len(b.ActionTrackings) != 0 {
+		return b.ActionTrackings[0], nil
+	}
+	if len(b.WidgetTrackings) != 0 {
+		return b.WidgetTrackings[0], nil
+	}
+	if len(b.CustomTrackings) != 0 {
+		return b.CustomTrackings[0], nil
+	}
+	if len(b.PageViews) != 0 {
+		return b.PageViews[0], nil
+	}
+	if len(b.Indicators) != 0 {
+		return b.Indicators[0], nil
+	}
+
+	return nil, nil
 }
 
 func (a *MetricRequester) HTTPCreateMetric(data []byte) ([]byte, error) {

@@ -225,7 +225,7 @@ func HTTPRequest[T any](method string, url string, body []byte) ([]byte, error) 
 		return nil, err
 	}
 
-	if cred.Product == utils.WEB_EXPERIMENTATION && method == "POST" && (resourceType == reflect.TypeOf(web_experimentation.CampaignWECommon{}) || resourceType == reflect.TypeOf(web_experimentation.Folder{}) || resourceType == reflect.TypeOf(web_experimentation.VariationWE{}) || resourceType == reflect.TypeOf(web_experimentation.ModificationDataWE{}) || resourceType == reflect.TypeOf(web_experimentation.Audience{})) {
+	if cred.Product == utils.WEB_EXPERIMENTATION && method == "POST" && (resourceType == reflect.TypeOf(web_experimentation.CampaignWECommon{}) || resourceType == reflect.TypeOf(web_experimentation.Folder{}) || resourceType == reflect.TypeOf(web_experimentation.VariationWE{}) || resourceType == reflect.TypeOf(web_experimentation.ModificationDataWE{}) || resourceType == reflect.TypeOf(web_experimentation.Audience{}) || resourceType == reflect.TypeOf(web_experimentation.MetricsData{})) {
 		return []byte(resp.Header.Get("location")), err
 	}
 
