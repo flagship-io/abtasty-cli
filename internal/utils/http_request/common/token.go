@@ -128,11 +128,20 @@ func InitiateBrowserAuth(username, clientID, clientSecret string) (models.TokenR
 		return models.TokenResponse{}, errors.New("missing required fields (username, client ID, client secret)")
 	}
 
+	codeChan := make(chan string, 1)
+	// Build a dedicated mux so repeat calls don't panic with
+	// "http: multiple registrations for /auth/callback" on the global
+	// DefaultServeMux. Each InitiateBrowserAuth invocation uses its own
+	// mux and registers the handler locally.
+	mux := http.NewServeMux()
+	mux.HandleFunc("/auth/callback", func(w http.ResponseWriter, r *http.Request) {
+		handleCallback(w, r, codeChan)
+	})
 	server := &http.Server{
-		Addr: "127.0.0.1:8010",
+		Addr:    "127.0.0.1:8010",
+		Handler: mux,
 	}
 
-	codeChan := make(chan string)
 	var url = utils.GetWebExperimentationBrowserAuth(clientID, clientSecret)
 
 	if err := OpenLink(url); err != nil {
@@ -140,28 +149,32 @@ func InitiateBrowserAuth(username, clientID, clientSecret string) (models.TokenR
 	}
 
 	go func() {
-		http.HandleFunc("/auth/callback", func(w http.ResponseWriter, r *http.Request) {
-			handleCallback(w, r, codeChan)
-		})
-
-		if err := server.ListenAndServe(); err != nil {
-			log.Fatalf("Error starting callback server: %s", err)
+		// http.ErrServerClosed is the normal return when the server is
+		// shut down after the callback is received; don't treat it as
+		// a crash-the-process condition.
+		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			log.Printf("callback server error: %s", err)
 		}
 	}()
 
-	go func() {
-		select {
-		case <-time.After(5 * time.Minute):
-			if err := server.Shutdown(context.Background()); err != nil {
-				log.Fatalf("Server forced to shutdown: %s", err)
-			}
-		}
+	// Ensure the listener is torn down as soon as InitiateBrowserAuth
+	// returns, otherwise the goroutine + port binding leaks until the
+	// 5-minute timeout fires.
+	defer func() {
+		shutdownCtx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+		defer cancel()
+		_ = server.Shutdown(shutdownCtx)
 	}()
 
-	code := <-codeChan
+	timeoutCh := time.After(5 * time.Minute)
+	var code string
+	select {
+	case code = <-codeChan:
+	case <-timeoutCh:
+		return models.TokenResponse{}, errors.New("authentication timed out waiting for browser callback")
+	}
 
 	if code != "" {
-
 		authenticationResponse, err := HTTPCreateTokenWEAuthorizationCode(clientID, clientSecret, code)
 		if err != nil {
 			return models.TokenResponse{}, err
